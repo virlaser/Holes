@@ -11,7 +11,7 @@
  Target Server Version : 50638
  File Encoding         : 65001
 
- Date: 07/05/2018 20:14:25
+ Date: 07/05/2018 21:37:43
 */
 
 SET NAMES utf8mb4;
@@ -45,6 +45,20 @@ CREATE TABLE `hole_content` (
   `like_num` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '点赞人数',
   `dislike_num` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '点踩人数',
   `report_num` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '举报人数',
+  `create_time` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for hole_notification
+-- ----------------------------
+DROP TABLE IF EXISTS `hole_notification`;
+CREATE TABLE `hole_notification` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned NOT NULL COMMENT '要通知的用户对象',
+  `from_user` int(10) unsigned NOT NULL COMMENT '通知来源',
+  `type` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '通知类型：1：给帖子点赞，2：给评论点赞',
+  `flag` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '用户是否查看：0：未查看，2：查看',
   `create_time` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
