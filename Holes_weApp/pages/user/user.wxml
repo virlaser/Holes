@@ -1,0 +1,45 @@
+<!--user.wxml-->
+<view class="container">
+
+  <view class="user-info-box">
+    <navigator url="/pages/more/login" class="user-info">
+      <view class="info-hd">
+        <image class="user-avatar" src="/images/default/avatar.jpg"></image>
+        <view class="user-title">
+          <text class="user-name">nickName</text>
+          <text class="user-id">未绑定</text>
+        </view>
+        <text class="bind-btn">前往绑定</text>
+        <view class="btn-open">
+          <image class="btn-enter" src="/images/enter.png"></image>
+        </view>
+      </view>
+    </navigator>
+  </view>
+
+  <view class="more-list">
+    <navigator url="/pages/more/issues" class="issue-link">
+      <view class="more-btn">
+        <image class="btn-icon" src="/images/more/issue.png"></image>
+        <text class="btn-text">反馈</text>
+        <view class="btn-open">
+          <image class="btn-enter" src="/images/enter.png"></image>
+        </view>
+      </view>
+    </navigator>
+    <navigator url="about" class="about-link">
+      <view class="more-btn">
+        <image class="btn-icon" src="/images/more/about.png"></image>
+        <text class="btn-text">关于</text>
+        <view class="btn-open">
+          <image class="btn-enter" src="/images/enter.png"></image>
+        </view>
+      </view>
+    </navigator>
+  </view>
+
+  <navigator url="login" class="login-btn">
+    <text>立即绑定</text>
+  </navigator>
+
+</view>

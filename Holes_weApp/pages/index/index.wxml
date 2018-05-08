@@ -1,13 +1,210 @@
-<!--index.wxml-->
-<view class="container">
-  <view class="userinfo">
-    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
-    <block wx:else>
-      <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" background-size="cover"></image>
-      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-    </block>
-  </view>
-  <view class="usermotto">
-    <text class="user-motto">{{motto}}</text>
-  </view>
+<view class="content-list">
+
+  <navigator url="/pages/post/detail?id=1" class="section" hover-class="none">
+    <view class="user-info">
+      <image src="/images/default/avatar.jpg"></image>
+      <view class="middle">
+        <view>
+          <text class="nickname">nickName</text>
+          <text class="top">置顶</text>
+        </view>
+        <text>小米6</text>
+      </view>
+      <image data-id="11" class="icon-more" src="../../images/icon-more.png"></image>
+    </view>
+    <text class="content">内容测试</text>
+    <view class="control-block">
+      <view class="button" data-id="11" catchtap="onLikeTap">
+        <image src="../../images/icon-like.png"></image>
+        <text>赞</text>
+      </view>
+      <view class="button" data-id="11" catchtap="onLikeTap">
+        <image src="../../images/icon-dislike.png"></image>
+        <text>踩</text>
+      </view>
+      <view class="button">
+        <image src="../../images/icon-comment.png"></image>
+        <text>评论</text>
+      </view>
+    </view>
+  </navigator>
+
+  <navigator url="/pages/post/detail?id=1" class="section" hover-class="none">
+    <view class="user-info">
+      <image src="/images/default/avatar.jpg"></image>
+      <view class="middle">
+        <view>
+          <text class="nickname">nickName</text>
+          <text class="top">置顶</text>
+        </view>
+        <text>小米6</text>
+      </view>
+      <image data-id="11" class="icon-more" src="../../images/icon-more.png"></image>
+    </view>
+    <text class="content">内容测试</text>
+    <view class="control-block">
+      <view class="button" data-id="11" catchtap="onLikeTap">
+        <image src="../../images/icon-like.png"></image>
+        <text>赞</text>
+      </view>
+      <view class="button" data-id="11" catchtap="onLikeTap">
+        <image src="../../images/icon-dislike.png"></image>
+        <text>踩</text>
+      </view>
+      <view class="button">
+        <image src="../../images/icon-comment.png"></image>
+        <text>评论</text>
+      </view>
+    </view>
+  </navigator>
+
+  <navigator url="/pages/post/detail?id=1" class="section" hover-class="none">
+    <view class="user-info">
+      <image src="/images/default/avatar.jpg"></image>
+      <view class="middle">
+        <view>
+          <text class="nickname">nickName</text>
+          <text class="top">置顶</text>
+        </view>
+        <text>小米6</text>
+      </view>
+      <image data-id="11" class="icon-more" src="../../images/icon-more.png"></image>
+    </view>
+    <text class="content">内容测试</text>
+    <view class="control-block">
+      <view class="button" data-id="11" catchtap="onLikeTap">
+        <image src="../../images/icon-like.png"></image>
+        <text>赞</text>
+      </view>
+      <view class="button" data-id="11" catchtap="onLikeTap">
+        <image src="../../images/icon-dislike.png"></image>
+        <text>踩</text>
+      </view>
+      <view class="button">
+        <image src="../../images/icon-comment.png"></image>
+        <text>评论</text>
+      </view>
+    </view>
+  </navigator>
+
+  <navigator url="/pages/post/detail?id=1" class="section" hover-class="none">
+    <view class="user-info">
+      <image src="/images/default/avatar.jpg"></image>
+      <view class="middle">
+        <view>
+          <text class="nickname">nickName</text>
+          <text class="top">置顶</text>
+        </view>
+        <text>小米6</text>
+      </view>
+      <image data-id="11" class="icon-more" src="../../images/icon-more.png"></image>
+    </view>
+    <text class="content">内容测试</text>
+    <view class="control-block">
+      <view class="button" data-id="11" catchtap="onLikeTap">
+        <image src="../../images/icon-like.png"></image>
+        <text>赞</text>
+      </view>
+      <view class="button" data-id="11" catchtap="onLikeTap">
+        <image src="../../images/icon-dislike.png"></image>
+        <text>踩</text>
+      </view>
+      <view class="button">
+        <image src="../../images/icon-comment.png"></image>
+        <text>评论</text>
+      </view>
+    </view>
+  </navigator>
+
+  <navigator url="/pages/post/detail?id=1" class="section" hover-class="none">
+    <view class="user-info">
+      <image src="/images/default/avatar.jpg"></image>
+      <view class="middle">
+        <view>
+          <text class="nickname">nickName</text>
+          <text class="top">置顶</text>
+        </view>
+        <text>小米6</text>
+      </view>
+      <image data-id="11" class="icon-more" src="../../images/icon-more.png"></image>
+    </view>
+    <text class="content">内容测试</text>
+    <view class="control-block">
+      <view class="button" data-id="11" catchtap="onLikeTap">
+        <image src="../../images/icon-like.png"></image>
+        <text>赞</text>
+      </view>
+      <view class="button" data-id="11" catchtap="onLikeTap">
+        <image src="../../images/icon-dislike.png"></image>
+        <text>踩</text>
+      </view>
+      <view class="button">
+        <image src="../../images/icon-comment.png"></image>
+        <text>评论</text>
+      </view>
+    </view>
+  </navigator>
+
+  <navigator url="/pages/post/detail?id=1" class="section" hover-class="none">
+    <view class="user-info">
+      <image src="/images/default/avatar.jpg"></image>
+      <view class="middle">
+        <view>
+          <text class="nickname">nickName</text>
+          <text class="top">置顶</text>
+        </view>
+        <text>小米6</text>
+      </view>
+      <image data-id="11" class="icon-more" src="../../images/icon-more.png"></image>
+    </view>
+    <text class="content">内容测试</text>
+    <view class="control-block">
+      <view class="button" data-id="11" catchtap="onLikeTap">
+        <image src="../../images/icon-like.png"></image>
+        <text>赞</text>
+      </view>
+      <view class="button" data-id="11" catchtap="onLikeTap">
+        <image src="../../images/icon-dislike.png"></image>
+        <text>踩</text>
+      </view>
+      <view class="button">
+        <image src="../../images/icon-comment.png"></image>
+        <text>评论</text>
+      </view>
+    </view>
+  </navigator>
+
+  <navigator url="/pages/post/detail?id=1" class="section" hover-class="none">
+    <view class="user-info">
+      <image src="/images/default/avatar.jpg"></image>
+      <view class="middle">
+        <view>
+          <text class="nickname">nickName</text>
+          <text class="top">置顶</text>
+        </view>
+        <text>小米6</text>
+      </view>
+      <image data-id="11" class="icon-more" src="../../images/icon-more.png"></image>
+    </view>
+    <text class="content">内容测试</text>
+    <view class="control-block">
+      <view class="button" data-id="11" catchtap="onLikeTap">
+        <image src="../../images/icon-like.png"></image>
+        <text>赞</text>
+      </view>
+      <view class="button" data-id="11" catchtap="onLikeTap">
+        <image src="../../images/icon-dislike.png"></image>
+        <text>踩</text>
+      </view>
+      <view class="button">
+        <image src="../../images/icon-comment.png"></image>
+        <text>评论</text>
+      </view>
+    </view>
+  </navigator>
+
 </view>
+
+<navigator id="post-btn" url="/pages/post/create" hover-class="none">
+  <image src="../../images/icon-feather.png"></image>
+</navigator>

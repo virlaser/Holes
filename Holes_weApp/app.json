@@ -1,12 +1,33 @@
 {
-  "pages":[
+  "pages": [
     "pages/index/index",
-    "pages/logs/logs"
+    "pages/user/user"
   ],
-  "window":{
-    "backgroundTextStyle":"light",
-    "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "WeChat",
-    "navigationBarTextStyle":"black"
+  "window": {
+    "enablePullDownRefresh": true,
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#705f5d",
+    "navigationBarTitleText": "武理树洞",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#705f5d"
+  },
+  "tabBar": {
+    "color": "#a9b7b7",
+    "selectedColor": "#705f5d",
+    "borderStyle": "white",
+    "list": [
+      {
+        "selectedIconPath": "images/index_s.png",
+        "iconPath": "images/index.png",
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "selectedIconPath": "images/user_s.png",
+        "iconPath": "images/user.png",
+        "pagePath": "pages/user/user",
+        "text": "用户"
+      }
+    ]
   }
 }
