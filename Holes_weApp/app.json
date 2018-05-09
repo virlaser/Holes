@@ -26,7 +26,7 @@
         "selectedIconPath": "images/user_s.png",
         "iconPath": "images/user.png",
         "pagePath": "pages/user/user",
-        "text": "用户"
+        "text": "我的"
       }
     ]
   }
