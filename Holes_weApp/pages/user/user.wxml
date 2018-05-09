@@ -14,7 +14,7 @@
   </view>
 
   <view class="more-list">
-    <navigator url="/pages/issues" class="issue-link">
+    <navigator url="/pages/user/my" class="issue-link">
       <view class="more-btn">
         <image class="btn-icon" src="/images/issue.png"></image>
         <text class="btn-text">我的帖子</text>
@@ -24,9 +24,9 @@
         </view>
       </view>
     </navigator>
-    <navigator url="about" class="about-link">
+    <navigator url="/pages/user/activity" class="about-link">
       <view class="more-btn">
-        <image class="btn-icon" src="/images/about.png"></image>
+        <image class="btn-icon" src="/images/active.png"></image>
         <text class="btn-text">我的动态</text>
         <view class="btn-open">
         <text class="bind-btn">100</text>
@@ -36,7 +36,7 @@
     </navigator>
         <navigator url="/pages/issues" class="info-link">
       <view class="more-btn">
-        <image class="btn-icon" src="/images/issue.png"></image>
+        <image class="btn-icon" src="/images/about.png"></image>
         <text class="btn-text">我的消息</text>
         <view class="btn-open">
         <text class="bind-btn">100</text>

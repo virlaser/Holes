@@ -4,7 +4,9 @@
     "pages/index/reply",
     "pages/index/detail",
     "pages/index/create",
-    "pages/user/user"
+    "pages/user/user",
+    "pages/user/my",
+    "pages/user/activity"
   ],
   "window": {
     "enablePullDownRefresh": true,

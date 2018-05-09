@@ -1,0 +1,153 @@
+/* pages/user/my.wxss */
+page {
+    background: #705f5d;
+}
+
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 200rpx 0;
+  box-sizing: border-box;
+} 
+
+.content-list {
+    overflow: hidden;
+    background-color: #ece5d8;
+}
+.content-list .section {
+    background: #fff;
+    color: #503e2c;
+    margin: 20rpx 0;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.content-list .section .user-info {
+     margin: 20rpx 30rpx;
+     display: flex;
+}
+
+.content-list .section .user-info .middle {
+    margin: 0 20rpx;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.content-list .section .user-info .middle text {
+    display: block;
+    color: #b2b2b2;
+    font-size: 28rpx;
+    margin: 5rpx 0;
+}
+
+.content-list .section .user-info .middle .nickname {
+    color: #7d4a2b;
+    font-size: 30rpx;
+    font-weight: bold;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.content-list .section .user-info .middle .top {
+    color: white;
+    display: inline-block;
+    font-size: 20rpx;
+    font-weight: bold;
+    background: rgb(88, 75, 74);
+    margin: 0 10rpx;
+    padding: 10rpx 18rpx;
+    box-sizing: border-box;
+    vertical-align: middle;
+}
+
+.content-list .section .user-info image{
+    width: 90rpx;
+    height: 90rpx;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.content-list .section .user-info image.icon-more {
+    width: 50rpx;
+    height: 50rpx;
+}
+
+.content-list .section .content {
+    display: block;
+    margin: 20rpx 30rpx;
+    font-size: 32rpx;
+    line-height: 1.5;
+}
+
+.content-list .section .photos {
+    margin: 20rpx 30rpx;
+}
+
+.content-list .section .photos.c-1 image{
+    width: 100%;
+    height: 450rpx;
+}
+
+.content-list .section .photos.c-2 image
+, .content-list .section .photos.c-4 image
+, .content-list .section .photos.c-5 image:first-child
+, .content-list .section .photos.c-5 image:nth-child(2) {
+    width: 50%;
+    height: 300rpx;
+}
+
+.content-list .section .photos image{
+    position: relative;
+    display: inline-block;
+    color: #dbdbdb;
+    font-weight: 300;
+    box-sizing: border-box;
+    padding: 0 10rpx;
+    margin-bottom: 10rpx;
+    width: 33%;
+    height: 200rpx;
+}
+
+.content-list .control-block {
+    display: flex;
+    border-top: 1px solid #dfd5cb;
+    margin: 0 30rpx;
+}
+
+.content-list .control-block .button {
+    display: flex;
+    flex: 1;
+    border: none;
+    border-right: 1rpx solid #dfd5cb;
+    border-radius: 0;
+    background: transparent;
+    padding: 20rpx 0;
+    margin: 0;
+    font-size: 26rpx;
+    color: #9e8c7b;
+    font-weight: 400;
+    align-items: center;
+    justify-content: center;
+}
+
+.content-list .control-block .button image {
+    width: 45rpx;
+    height: 45rpx;
+}
+
+.content-list .control-block .button text {
+    margin: 0 10rpx;
+}
+
+.content-list .control-block .button:last-child {
+    border-right: none;
+}
+
+.content-list .control-block .button::after {
+    display: none;
+}
