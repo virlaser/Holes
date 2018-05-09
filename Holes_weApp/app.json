@@ -6,7 +6,8 @@
     "pages/index/create",
     "pages/user/user",
     "pages/user/my",
-    "pages/user/activity"
+    "pages/user/activity",
+    "pages/user/notification"
   ],
   "window": {
     "enablePullDownRefresh": true,
