@@ -3,6 +3,7 @@
     "pages/index/index",
     "pages/index/reply",
     "pages/index/detail",
+    "pages/index/create",
     "pages/user/user"
   ],
   "window": {

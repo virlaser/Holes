@@ -1,0 +1,7 @@
+<form bindsubmit="doSubmit">
+    <textarea name="content" maxlength="800" placeholder="你想说啥就写在这，800字内哦~" />
+    <view id="is-anoymous">
+        <label>是否匿名</label><switch color="#705f5d" checked="true" name="anoymous"/>
+    </view>
+    <button formType="submit">发送</button>
+</form>

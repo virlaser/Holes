@@ -205,6 +205,6 @@
 
 </view>
 
-<navigator id="post-btn" url="/pages/post/create" hover-class="none">
+<navigator id="post-btn" url="/pages/index/create" hover-class="none">
   <image src="../../images/icon-feather.png"></image>
 </navigator>

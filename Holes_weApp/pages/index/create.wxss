@@ -1,0 +1,30 @@
+/* pages/post/create.wxss */
+page {
+    background: white;
+}
+
+textarea {
+    font-size: 32rpx;
+    padding: 40rpx 30rpx;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#is-anoymous {
+    margin:0 20rpx;
+    display: flex;
+}
+
+#is-anoymous label{
+    color: #666;
+    font-size: 32rpx;
+    flex: 1;
+    line-height: 70rpx;
+}
+
+button {
+    margin: 30rpx;
+    background-color: #705f5d;
+    color: #f6f6f6;
+    border: 1rpx solid #c6c6c6;
+}
