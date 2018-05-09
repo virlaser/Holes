@@ -3,7 +3,7 @@
     <image src="/images/default/avatar.jpg"></image>
     <view>
       <text class="nickname">nickName</text>
-      <text>小米6</text>
+      <text>05-06 17:20 小米6</text>
     </view>
   </view>
   <text class="content">这是一个内容测试啊</text>
@@ -13,7 +13,11 @@
       <image src="/images/icon-like.png"></image>
       <text>11</text>
     </view>
-    <navigator url="/pages/post/reply?id={{post.objectId}}" class="button">
+    <view class="button" data-id="11" catchtap="onLikeTap">
+      <image src="/images/icon-dislike.png"></image>
+      <text>13</text>
+    </view>
+    <navigator url="/pages/index/reply" class="button">
       <image src="/images/icon-comment.png"></image>
       <text>12</text>
     </navigator>
@@ -32,7 +36,7 @@
     </view>
   </view>
 
-    <view class='section'>
+  <view class='section'>
     <image class="avatar" src="/images/default/avatar.jpg"></image>
     <view class="right-column">
       <view class="title">
@@ -43,7 +47,7 @@
     </view>
   </view>
 
-    <view class='section'>
+  <view class='section'>
     <image class="avatar" src="/images/default/avatar.jpg"></image>
     <view class="right-column">
       <view class="title">
@@ -54,7 +58,7 @@
     </view>
   </view>
 
-    <view class='section'>
+  <view class='section'>
     <image class="avatar" src="/images/default/avatar.jpg"></image>
     <view class="right-column">
       <view class="title">
@@ -65,7 +69,7 @@
     </view>
   </view>
 
-    <view class='section'>
+  <view class='section'>
     <image class="avatar" src="/images/default/avatar.jpg"></image>
     <view class="right-column">
       <view class="title">

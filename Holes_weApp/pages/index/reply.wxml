@@ -1,0 +1,7 @@
+<form bindsubmit="onSubmit">
+    <textarea name="content" maxlength="800" placeholder="回复它，800字以内哦~" />
+    <view id="is-anoymous">
+        <label>是否匿名</label><switch checked="true" color="#705f5d" name="anoymous"/>
+    </view>
+    <button formType="submit" >发送</button>
+</form>
