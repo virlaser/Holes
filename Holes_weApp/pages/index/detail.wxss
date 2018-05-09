@@ -163,3 +163,20 @@ page {
     margin: 15rpx 0;
     font-size: 32rpx;
 }
+
+.comment-like {
+  display: flex;
+  width: 150rpx;
+  align-items: center;
+  margin-left: 10rpx;
+  font-size: 26rpx;
+  color: #9e8c7b;
+  font-weight: 400;
+}
+
+.comment-like-button {
+  display: inline-block;
+  margin: 0 10rpx;
+   height: 48rpx;
+  width: 48rpx;
+}

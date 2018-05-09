@@ -47,8 +47,9 @@ page {
 
 .activity {
   display: block;
-  color: black;
-  font-size: 28rpx;
+  color: #9e8c7b;
+  font-weight: 400;
+  font-size: 30rpx;
   margin: 25rpx;
 }
 

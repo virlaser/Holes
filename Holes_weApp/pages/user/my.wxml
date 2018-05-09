@@ -9,7 +9,7 @@
         </view>
         <text>05-06 17:20 小米6</text>
       </view>
-      <image data-id="11" class="icon-more" src="../../images/icon-more.png"></image>
+      <image data-id="11" class="icon-more" catchtap="onMoreTap" src="../../images/icon-more.png"></image>
     </view>
     <text class="content">内容测试，我倒是想看看你到底能够放置多少内容然后换行，下面的元素应该取消置顶。</text>
     <view class="control-block">
@@ -37,7 +37,7 @@
         </view>
         <text>05-06 17:20 小米6</text>
       </view>
-      <image data-id="11" class="icon-more" src="../../images/icon-more.png"></image>
+      <image data-id="11" class="icon-more" catchtap="onMoreTap" src="../../images/icon-more.png"></image>
     </view>
     <text class="content">内容测试</text>
     <view class="control-block">
@@ -65,7 +65,7 @@
         </view>
         <text>05-06 17:20 小米6</text>
       </view>
-      <image data-id="11" class="icon-more" src="../../images/icon-more.png"></image>
+      <image data-id="11" class="icon-more" catchtap="onMoreTap" src="../../images/icon-more.png"></image>
     </view>
     <text class="content">内容测试</text>
     <view class="control-block">
@@ -93,7 +93,7 @@
         </view>
         <text>05-06 17:20 小米6</text>
       </view>
-      <image data-id="11" class="icon-more" src="../../images/icon-more.png"></image>
+      <image data-id="11" class="icon-more" catchtap="onMoreTap" src="../../images/icon-more.png"></image>
     </view>
     <text class="content">内容测试</text>
     <view class="control-block">
@@ -121,7 +121,7 @@
         </view>
         <text>05-06 17:20 小米6</text>
       </view>
-      <image data-id="11" class="icon-more" src="../../images/icon-more.png"></image>
+      <image data-id="11" class="icon-more" catchtap="onMoreTap" src="../../images/icon-more.png"></image>
     </view>
     <text class="content">内容测试</text>
     <view class="control-block">
@@ -149,7 +149,7 @@
         </view>
         <text>05-06 17:20 小米6</text>
       </view>
-      <image data-id="11" class="icon-more" src="../../images/icon-more.png"></image>
+      <image data-id="11" class="icon-more" catchtap="onMoreTap" src="../../images/icon-more.png"></image>
     </view>
     <text class="content">内容测试</text>
     <view class="control-block">
@@ -177,7 +177,7 @@
         </view>
         <text>05-06 17:20 小米6</text>
       </view>
-      <image data-id="11" class="icon-more" src="../../images/icon-more.png"></image>
+      <image data-id="11" class="icon-more" catchtap="onMoreTap" src="../../images/icon-more.png"></image>
     </view>
     <text class="content">内容测试</text>
     <view class="control-block">

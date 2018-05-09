@@ -34,16 +34,9 @@
       </view>
       <text class="content">评论内容测试，我倒是要看看你是怎么换行的，所以就来测试以下吧，这么长应该够你换行了吧，啊哈哈哈</text>
     </view>
-  </view>
-
-  <view class='section'>
-    <image class="avatar" src="/images/default/avatar.jpg"></image>
-    <view class="right-column">
-      <view class="title">
-        <text class="nickname">nickName</text>
-        <text class="reply-time">2 小时前</text>
-      </view>
-      <text class="content">评论内容测试</text>
+    <view class='comment-like'>
+      <image class='comment-like-button' src='/images/icon-like.png'></image>
+      <text> 117 </text>
     </view>
   </view>
 
@@ -56,16 +49,9 @@
       </view>
       <text class="content">评论内容测试</text>
     </view>
-  </view>
-
-  <view class='section'>
-    <image class="avatar" src="/images/default/avatar.jpg"></image>
-    <view class="right-column">
-      <view class="title">
-        <text class="nickname">nickName</text>
-        <text class="reply-time">2 小时前</text>
-      </view>
-      <text class="content">评论内容测试</text>
+    <view class='comment-like'>
+      <image class='comment-like-button' src='/images/icon-like.png'></image>
+      <text>3333</text>
     </view>
   </view>
 
@@ -78,5 +64,40 @@
       </view>
       <text class="content">评论内容测试</text>
     </view>
+    <view class='comment-like'>
+      <image class='comment-like-button' src='/images/icon-like.png'></image>
+      <text>12</text>
+    </view>
   </view>
+
+  <view class='section'>
+    <image class="avatar" src="/images/default/avatar.jpg"></image>
+    <view class="right-column">
+      <view class="title">
+        <text class="nickname">nickName</text>
+        <text class="reply-time">2 小时前</text>
+      </view>
+      <text class="content">评论内容测试</text>
+    </view>
+    <view class='comment-like'>
+      <image class='comment-like-button' src='/images/icon-like.png'></image>
+      <text>323</text>
+    </view>
+  </view>
+
+  <view class='section'>
+    <image class="avatar" src="/images/default/avatar.jpg"></image>
+    <view class="right-column">
+      <view class="title">
+        <text class="nickname">nickName</text>
+        <text class="reply-time">2 小时前</text>
+      </view>
+      <text class="content">评论内容测试</text>
+    </view>
+    <view class='comment-like'>
+      <image class='comment-like-button' src='/images/icon-like.png'></image>
+      <text>23131</text>
+    </view>
+  </view>
+
 </view>
