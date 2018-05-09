@@ -1,6 +1,35 @@
 <view class="content-list">
 
-  <navigator url="/pages/post/detail?id=1" class="section" hover-class="none">
+  <navigator url="/pages/index/detail" class="section" hover-class="none">
+    <view class="user-info">
+      <image src="/images/default/avatar.jpg"></image>
+      <view class="middle">
+        <view>
+          <text class="nickname">nickName</text>
+          <text class="top">置顶</text>
+        </view>
+        <text>小米6</text>
+      </view>
+      <image data-id="11" class="icon-more" src="../../images/icon-more.png"></image>
+    </view>
+    <text class="content">内容测试，我倒是想看看你到底能够放置多少内容然后换行，下面的元素应该取消置顶。</text>
+    <view class="control-block">
+      <view class="button" data-id="11" catchtap="onLikeTap">
+        <image src="../../images/icon-like.png"></image>
+        <text>赞</text>
+      </view>
+      <view class="button" data-id="11" catchtap="onLikeTap">
+        <image src="../../images/icon-dislike.png"></image>
+        <text>踩</text>
+      </view>
+      <view class="button">
+        <image src="../../images/icon-comment.png"></image>
+        <text>评论</text>
+      </view>
+    </view>
+  </navigator>
+
+  <navigator url="/pages/index/detail" class="section" hover-class="none">
     <view class="user-info">
       <image src="/images/default/avatar.jpg"></image>
       <view class="middle">
@@ -29,7 +58,7 @@
     </view>
   </navigator>
 
-  <navigator url="/pages/post/detail?id=1" class="section" hover-class="none">
+  <navigator url="/pages/index/detail" class="section" hover-class="none">
     <view class="user-info">
       <image src="/images/default/avatar.jpg"></image>
       <view class="middle">
@@ -58,7 +87,7 @@
     </view>
   </navigator>
 
-  <navigator url="/pages/post/detail?id=1" class="section" hover-class="none">
+  <navigator url="/pages/index/detail" class="section" hover-class="none">
     <view class="user-info">
       <image src="/images/default/avatar.jpg"></image>
       <view class="middle">
@@ -87,7 +116,7 @@
     </view>
   </navigator>
 
-  <navigator url="/pages/post/detail?id=1" class="section" hover-class="none">
+  <navigator url="/pages/index/detail" class="section" hover-class="none">
     <view class="user-info">
       <image src="/images/default/avatar.jpg"></image>
       <view class="middle">
@@ -116,7 +145,7 @@
     </view>
   </navigator>
 
-  <navigator url="/pages/post/detail?id=1" class="section" hover-class="none">
+  <navigator url="/pages/index/detail" class="section" hover-class="none">
     <view class="user-info">
       <image src="/images/default/avatar.jpg"></image>
       <view class="middle">
@@ -145,36 +174,7 @@
     </view>
   </navigator>
 
-  <navigator url="/pages/post/detail?id=1" class="section" hover-class="none">
-    <view class="user-info">
-      <image src="/images/default/avatar.jpg"></image>
-      <view class="middle">
-        <view>
-          <text class="nickname">nickName</text>
-          <text class="top">置顶</text>
-        </view>
-        <text>小米6</text>
-      </view>
-      <image data-id="11" class="icon-more" src="../../images/icon-more.png"></image>
-    </view>
-    <text class="content">内容测试</text>
-    <view class="control-block">
-      <view class="button" data-id="11" catchtap="onLikeTap">
-        <image src="../../images/icon-like.png"></image>
-        <text>赞</text>
-      </view>
-      <view class="button" data-id="11" catchtap="onLikeTap">
-        <image src="../../images/icon-dislike.png"></image>
-        <text>踩</text>
-      </view>
-      <view class="button">
-        <image src="../../images/icon-comment.png"></image>
-        <text>评论</text>
-      </view>
-    </view>
-  </navigator>
-
-  <navigator url="/pages/post/detail?id=1" class="section" hover-class="none">
+  <navigator url="/pages/index/detail" class="section" hover-class="none">
     <view class="user-info">
       <image src="/images/default/avatar.jpg"></image>
       <view class="middle">

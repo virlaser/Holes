@@ -1,0 +1,78 @@
+<view class="content-block">
+  <view class="user-info">
+    <image src="/images/default/avatar.jpg"></image>
+    <view>
+      <text class="nickname">nickName</text>
+      <text>小米6</text>
+    </view>
+  </view>
+  <text class="content">这是一个内容测试啊</text>
+
+  <view class="control-block">
+    <view class="button" data-id="11" catchtap="onLikeTap">
+      <image src="/images/icon-like.png"></image>
+      <text>11</text>
+    </view>
+    <navigator url="/pages/post/reply?id={{post.objectId}}" class="button">
+      <image src="/images/icon-comment.png"></image>
+      <text>12</text>
+    </navigator>
+  </view>
+</view>
+
+<view class="content-list">
+  <view class='section'>
+    <image class="avatar" src="/images/default/avatar.jpg"></image>
+    <view class="right-column">
+      <view class="title">
+        <text class="nickname">nickName</text>
+        <text class="reply-time">2 小时前</text>
+      </view>
+      <text class="content">评论内容测试，我倒是要看看你是怎么换行的，所以就来测试以下吧，这么长应该够你换行了吧，啊哈哈哈</text>
+    </view>
+  </view>
+
+    <view class='section'>
+    <image class="avatar" src="/images/default/avatar.jpg"></image>
+    <view class="right-column">
+      <view class="title">
+        <text class="nickname">nickName</text>
+        <text class="reply-time">2 小时前</text>
+      </view>
+      <text class="content">评论内容测试</text>
+    </view>
+  </view>
+
+    <view class='section'>
+    <image class="avatar" src="/images/default/avatar.jpg"></image>
+    <view class="right-column">
+      <view class="title">
+        <text class="nickname">nickName</text>
+        <text class="reply-time">2 小时前</text>
+      </view>
+      <text class="content">评论内容测试</text>
+    </view>
+  </view>
+
+    <view class='section'>
+    <image class="avatar" src="/images/default/avatar.jpg"></image>
+    <view class="right-column">
+      <view class="title">
+        <text class="nickname">nickName</text>
+        <text class="reply-time">2 小时前</text>
+      </view>
+      <text class="content">评论内容测试</text>
+    </view>
+  </view>
+
+    <view class='section'>
+    <image class="avatar" src="/images/default/avatar.jpg"></image>
+    <view class="right-column">
+      <view class="title">
+        <text class="nickname">nickName</text>
+        <text class="reply-time">2 小时前</text>
+      </view>
+      <text class="content">评论内容测试</text>
+    </view>
+  </view>
+</view>
