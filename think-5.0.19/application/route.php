@@ -11,6 +11,8 @@
 
 return [
 
-    'login' => 'api/user/login'
+    'login' => 'api/user/login',
+    'report' => 'api/square/report',
+    'delete' => 'api/square/delete',
 
 ];

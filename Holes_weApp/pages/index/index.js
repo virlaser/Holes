@@ -3,6 +3,7 @@
 const app = getApp()
 
 Page({
+
   data: {
     currentPage: 1,
     contents: []
@@ -15,17 +16,126 @@ Page({
     this.loadContent(1);
   },
 
-  onPullDownRefresh: function() {
+  onPullDownRefresh: function () {
     wx.reLaunch({
       url: '/pages/index/index',
     })
   },
 
+  onReachBottom: function () {
+    var currentPage = this.data.currentPage;
+    var newPage = currentPage + 1;
+    this.setData({
+      'currentPage': newPage
+    })
+    this.loadContent(newPage);
+  },
+
   onShareAppMessage: function () {
     return {
       title: "武理树洞",
-      path: "pages/index/index"
+      path: "/pages/index/index"
     }
+  },
+
+  onMoreTap: function (event) {
+    console.log(event);
+    let itemList = [];
+    // 自己只能删除自己的帖子
+    if (event.currentTarget.dataset.ismy === 1) {
+      itemList.push('删除');
+    }
+    // 自己不能举报自己的帖子
+    if (event.currentTarget.dataset.ismy === 0) {
+      if (event.currentTarget.dataset.isreport === 0) {
+        itemList.push('举报');
+      } else if (event.currentTarget.dataset.isreport === 1) {
+        itemList.push('已举报');
+      }
+    }
+    wx.showActionSheet({
+      itemList,
+      itemColor: '#705f5d',
+      success: function (res) {
+        if (itemList[res.tapIndex] === '举报') {
+          wx.request({
+            url: app.globalData.domain + '/report',
+            data: {
+              'content_id': event.currentTarget.dataset.id,
+              'user_openid': wx.getStorageSync('user_openid'),
+            },
+            header: {
+              'content-type': 'application/json'
+            },
+            method: 'POST',
+            success: function (res) {
+              if (res.statusCode === 200) {
+                var callbackData = res.data;
+                if (callbackData.status === 'success') {
+                  wx.showToast({
+                    title: '举报成功',
+                  })
+                } else {
+                  wx.showToast({
+                    title: '举报失败',
+                  })
+                }
+              }
+            },
+            fail: function (res) {
+              wx.showToast({
+                title: '举报失败',
+              })
+            }
+          })
+        } else if (itemList[res.tapIndex] === '删除') {
+          wx.showModal({
+            title: '系统提示',
+            content: '确定删除？',
+            confirmColor: '#7d4a2b',
+            success: function (res) {
+              if (res.confirm) {
+                wx.request({
+                  url: app.globalData.domain + '/delete',
+                  data: {
+                    'user_openid': wx.getStorageSync('user_openid'),
+                    'content_id': event.currentTarget.dataset.id
+                  },
+                  header: {
+                    'content-type': 'application/json'
+                  },
+                  method: 'POST',
+                  success: function (res) {
+                    console.log(res);
+                    wx.reLaunch({
+                      url: '/pages/index/index',
+                    })
+                  },
+                  fail: function (res) {
+                    wx.showToast({
+                      title: '删除失败',
+                      icon: 'error'
+                    })
+                  }
+                })
+              }
+            }
+          })
+        }
+      }
+    })
+  },
+
+  onLikeTap: function (event) {
+
+  },
+
+  onDislikeTap: function (event) {
+
+  },
+
+  onCommentTap: function () {
+
   },
 
   loadContent: function (pageNum) {
@@ -33,16 +143,16 @@ Page({
     var id = wx.getStorageSync('user_openid')
     wx.request({
       url: app.globalData.domain + '/api/square/index?page=' + pageNum,
-      data : {
-        'user_openid' : id
+      data: {
+        'user_openid': id
       },
       header: {
-        'content-type' : 'application/json'
+        'content-type': 'application/json'
       },
-      method: 'post',
-      success: function(res) {
+      method: 'POST',
+      success: function (res) {
         console.log(res.data);
-        if(res.statusCode == "200") {
+        if (res.statusCode == "200") {
           var callBackData = res.data;
           var currentContents = that.data.contents;
           var newContents = currentContents.concat(callBackData);
@@ -69,7 +179,7 @@ Page({
           confirmColor: '#EE8AB0'
         });
       },
-      complete: function() {
+      complete: function () {
         wx.stopPullDownRefresh();
       }
     })
