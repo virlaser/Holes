@@ -4,51 +4,75 @@ const app = getApp()
 
 Page({
   data: {
-    motto: 'Hello World',
-    userInfo: {},
-    hasUserInfo: false,
-    canIUse: wx.canIUse('button.open-type.getUserInfo')
+    currentPage: 1,
+    contents: []
   },
-  //事件处理函数
-  bindViewTap: function() {
-    wx.navigateTo({
-      url: '../logs/logs'
+
+  onLoad: function () {
+    wx.showLoading({
+      title: '正在查询树洞帖子',
+    })
+    this.loadContent(1);
+  },
+
+  onPullDownRefresh: function() {
+    wx.reLaunch({
+      url: '/pages/index/index',
     })
   },
-  onLoad: function () {
-    if (app.globalData.userInfo) {
-      this.setData({
-        userInfo: app.globalData.userInfo,
-        hasUserInfo: true
-      })
-    } else if (this.data.canIUse){
-      // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-      // 所以此处加入 callback 以防止这种情况
-      app.userInfoReadyCallback = res => {
-        this.setData({
-          userInfo: res.userInfo,
-          hasUserInfo: true
-        })
-      }
-    } else {
-      // 在没有 open-type=getUserInfo 版本的兼容处理
-      wx.getUserInfo({
-        success: res => {
-          app.globalData.userInfo = res.userInfo
-          this.setData({
-            userInfo: res.userInfo,
-            hasUserInfo: true
-          })
-        }
-      })
+
+  onShareAppMessage: function () {
+    return {
+      title: "武理树洞",
+      path: "pages/index/index"
     }
   },
-  getUserInfo: function(e) {
-    console.log(e)
-    app.globalData.userInfo = e.detail.userInfo
-    this.setData({
-      userInfo: e.detail.userInfo,
-      hasUserInfo: true
+
+  loadContent: function (pageNum) {
+    var that = this;
+    var id = wx.getStorageSync('user_openid')
+    wx.request({
+      url: app.globalData.domain + '/api/square/index?page=' + pageNum,
+      data : {
+        'user_openid' : id
+      },
+      header: {
+        'content-type' : 'application/json'
+      },
+      method: 'post',
+      success: function(res) {
+        console.log(res.data);
+        if(res.statusCode == "200") {
+          var callBackData = res.data;
+          var currentContents = that.data.contents;
+          var newContents = currentContents.concat(callBackData);
+          that.setData({
+            contents: newContents
+          });
+          wx.hideLoading();
+        } else {
+          wx.showModal({
+            title: '加载失败',
+            content: '服务器出了点问题',
+            showCancel: false,
+            confirmText: '好的',
+            confirmColor: '#EE8AB0'
+          });
+        }
+      },
+      fail: function (res) {
+        wx.showModal({
+          title: '加载失败',
+          content: '服务器出了点问题',
+          showCancel: false,
+          confirmText: '好的',
+          confirmColor: '#EE8AB0'
+        });
+      },
+      complete: function() {
+        wx.stopPullDownRefresh();
+      }
     })
   }
+
 })

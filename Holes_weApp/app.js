@@ -17,6 +17,7 @@ App({
             console.log(code);
             wx.getUserInfo({
               success: function (res) {
+                console.log(res);
                 //用户昵称
                 var userNick = res.userInfo.nickName;
                 //用户头像地址
@@ -50,6 +51,11 @@ App({
                 else {
                   console.log("获取用户登录态失败！");
                 }
+              },
+              fail: function(error) {
+                wx.navigateTo({
+                  url: '/pages/auth/auth',
+                })
               }
             })
           },
@@ -59,27 +65,15 @@ App({
         })
       }
     } catch (e) {
-      console.log(e);
-    }
-  },
-
-  getUserInfo: function (cb) {
-    var that = this
-    if (this.globalData.userInfo) {
-      typeof cb == "function" && cb(this.globalData.userInfo)
-    } else {
-      //调用登录接口
-      wx.getUserInfo({
-        withCredentials: false,
-        success: function (res) {
-          that.globalData.userInfo = res.userInfo
-          typeof cb == "function" && cb(that.globalData.userInfo)
-        }
+      wx.showToast({
+        title: '系统出错',
       })
+      console.log(e);
     }
   },
   
   globalData: {
-    userInfo: null
+    userInfo: null,
+    domain: 'http://localhost'
   }
 })

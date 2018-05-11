@@ -7,7 +7,8 @@
     "pages/user/user",
     "pages/user/my",
     "pages/user/activity",
-    "pages/user/notification"
+    "pages/user/notification",
+    "pages/auth/auth"
   ],
   "window": {
     "enablePullDownRefresh": true,
