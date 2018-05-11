@@ -6,7 +6,7 @@ Page({
 
   data: {
     currentPage: 1,
-    contents: []
+    contents: [],
   },
 
   onLoad: function () {
@@ -127,7 +127,45 @@ Page({
   },
 
   onLikeTap: function (event) {
-
+    var that = this;
+    var callbackData = event.currentTarget.dataset;
+    // 帖子id
+    var contentId = callbackData.id;
+    // 用户是否已经点赞
+    var flag = callbackData.flag;
+    // 帖子在数组中的位置
+    var index = callbackData.index;
+    console.log(index);
+    // 帖子列表
+    var lists = that.data.contents;
+    // 先把结果在页面展示，再调用后端逻辑
+    lists[index].like_flag = lists[index].like_flag?0:1;
+    lists[index].like_num = lists[index].like_flag?(lists[index].like_num+1):(lists[index].like_num-1);
+    // 实时数据渲染
+    that.setData({
+      'contents' : lists
+    })
+    wx.request({
+      url: app.globalData.domain + '/like',
+      data:{
+        'content_id': contentId,
+        'user_openid': wx.getStorageSync('user_openid')
+      },
+      header: {
+        'content-type': 'application/json'
+      },
+      method: 'POST',
+      success: function(res) {
+        if(res.statusCode === 200) {
+          console.log('点赞成功');
+        }
+      },
+      fail: function(res) {
+        wx.showToast({
+          title: '网络异常',
+        })
+      }
+    })
   },
 
   onDislikeTap: function (event) {

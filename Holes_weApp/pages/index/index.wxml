@@ -1,6 +1,6 @@
 <view class="content-list">
 
-  <block wx:for="{{contents}}" wx:for-item="content" wx:key="index">
+  <block wx:for="{{contents}}" wx:for-item="content" wx:for-index="offset" wx:key="index" >
     <navigator url="/pages/index/detail?id={{content.id}}" class="section" hover-class="none">
       <view class="user-info">
         <image src="{{content.avatar?content.avatar:'/images/default/avatar.jpg'}}"></image>
@@ -19,7 +19,7 @@
       <text class="content">{{content.content}}</text>
 
       <view class="control-block">
-        <view class="button" catchtap="onLikeTap">
+        <view class="button" data-id='{{content.id}}' data-flag='{{content.like_flag}}' data-index='{{offset}}' catchtap="onLikeTap">
           <image src="{{content.like_flag===0?'/images/icon-like.png':'/images/icon-like-selected.png'}}"></image>
           <text>{{content.like_num===0?'赞':(content.like_num)}}</text>
         </view>

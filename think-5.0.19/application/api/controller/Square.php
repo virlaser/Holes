@@ -86,8 +86,82 @@ class Square extends Controller {
     }
 
     // 点赞
-    public function like() {
-        return;
+    public function like(Request $request) {
+        $data = array();
+        // 检查用户登录
+        if(isLogin($request)) {
+            $userId = isLogin($request);
+        } else {
+            $data = [
+                'status' => 'fail',
+                'message' => '用户登录信息错误'
+            ];
+            return json($data);
+        }
+        $contentId = $request->param('content_id');
+        // 检查用户是否点赞过，没有就增加记录，有就删除记录
+        $flag = Db::name('operate')
+            ->where([
+                'from_user' => $userId,
+                'object_id' => $contentId,
+                'type' => 1
+            ])
+            ->find();
+        if($flag) {
+            // 删除用户点赞操作
+            Db::name('operate')
+                ->where([
+                    'from_user' => $userId,
+                    'object_id' => $contentId,
+                    'type' => 1
+                ])
+                ->delete();
+            // 将帖子的点赞记录减一
+            Db::name('content')
+                ->where([
+                    'id' => $contentId
+                ])
+                ->setDec('like_num', 1);
+            $data = [
+                'status' => 'success',
+                'message' => '取消赞成功'
+            ];
+            return json($data);
+        } else {
+            // 添加用户操作
+            $toUser = Db::name('content')
+                ->where([
+                    'id' => $contentId
+                ])
+                ->field('user_id')
+                ->find();
+            $result = Db::name('operate')
+                ->insert([
+                    'type' => 1,
+                    'from_user' => $userId,
+                    'to_user' => $toUser['user_id'],
+                    'object_id' => $contentId
+                ]);
+            if ($result) {
+                // 增加点赞记录
+                Db::name('content')
+                    ->where([
+                        'id' => $contentId
+                    ])
+                    ->setInc('like_num', 1);
+                $data = [
+                    'status' => 'success',
+                    'message' => '点赞成功'
+                ];
+                return json($data);
+            } else {
+                $data = [
+                    'status' => 'fail',
+                    'message' => '点赞失败'
+                ];
+                return json($data);
+            }
+        }
     }
 
     // 点踩
