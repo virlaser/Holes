@@ -11,7 +11,7 @@
  Target Server Version : 50638
  File Encoding         : 65001
 
- Date: 10/05/2018 14:33:19
+ Date: 12/05/2018 00:27:54
 */
 
 SET NAMES utf8mb4;
@@ -25,7 +25,7 @@ CREATE TABLE `hole_comment` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `content` varchar(800) NOT NULL DEFAULT '' COMMENT '用户发送评论内容',
   `like_num` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '评论点赞数',
-  `content_id` int(10) unsigned NOT NULL COMMENT '用户评论树洞内容对象id',
+  `content_id` int(10) unsigned NOT NULL COMMENT '帖子id',
   `user_id` int(10) unsigned NOT NULL COMMENT '发送内容用户的id',
   `hide` tinyint(1) unsigned NOT NULL COMMENT '是否匿名，0：匿名，1：实名',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -46,11 +46,13 @@ CREATE TABLE `hole_content` (
   `hide` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否匿名，0：匿名，1：实名',
   `like_num` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '点赞人数',
   `dislike_num` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '点踩人数',
+  `comment_num` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '评论人数',
   `report_num` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '举报人数',
+  `is_delete` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '用户是否删除了帖子，0：未删除，1：删除',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for hole_operate
@@ -58,7 +60,7 @@ CREATE TABLE `hole_content` (
 DROP TABLE IF EXISTS `hole_operate`;
 CREATE TABLE `hole_operate` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `type` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '用户操作类型：1.点赞，2.点踩，3.评论，4.给评论点赞',
+  `type` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '用户操作类型：1.点赞，2.点踩，3.评论，4.举报，5.给评论点赞',
   `from_user` int(10) unsigned NOT NULL COMMENT '操作用户的id',
   `to_user` int(10) unsigned NOT NULL COMMENT '要通知用户的id',
   `flag` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '用户是否查看操作通知，0：未查看，1：查看',
@@ -66,7 +68,7 @@ CREATE TABLE `hole_operate` (
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for hole_user
@@ -83,6 +85,6 @@ CREATE TABLE `hole_user` (
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS = 1;
