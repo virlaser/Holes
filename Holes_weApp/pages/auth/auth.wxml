@@ -1,0 +1,10 @@
+<!--wxml-->
+<view class='container'>
+  <!-- 如果只是展示用户头像昵称，可以使用 <open-data /> 组件 -->
+  <open-data type="userAvatarUrl" class="userImage"></open-data>
+  <open-data type="userNickName" class="userText"></open-data>
+  <text class='userText'>只有授权才能使用相应功能哦</text>
+  <!-- 需要使用 button 来授权登录 -->
+  <button wx:if="{{canIUse}}" open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo" class='conformButton'>授权登录</button>
+  <view wx:else>请升级微信版本</view>
+</view>

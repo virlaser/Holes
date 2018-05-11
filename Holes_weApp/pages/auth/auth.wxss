@@ -1,0 +1,26 @@
+.container {
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+   align-items: center;
+   margin: 10rpx;
+}
+
+.userImage {
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: 10rpx;
+  margin: 20rpx 10rpx;
+}
+
+.userText {
+  font-size: 16pt;
+  line-height: 160%;
+  letter-spacing: 1px;
+  display: block;
+  margin: 10rpx 10rpx;
+}
+
+.container butten {
+  margin: 10rpx 10rpx;
+}
