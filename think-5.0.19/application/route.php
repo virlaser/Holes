@@ -15,5 +15,6 @@ return [
     'report' => 'api/square/report',
     'delete' => 'api/square/delete',
     'like' => 'api/square/like',
+    'dislike' => 'api/square/dislike',
 
 ];

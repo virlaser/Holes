@@ -128,7 +128,7 @@ class Square extends Controller {
             ];
             return json($data);
         } else {
-            // 添加用户操作
+            // 添加用户操作，给 to_user 通知
             $toUser = Db::name('content')
                 ->where([
                     'id' => $contentId
@@ -140,7 +140,8 @@ class Square extends Controller {
                     'type' => 1,
                     'from_user' => $userId,
                     'to_user' => $toUser['user_id'],
-                    'object_id' => $contentId
+                    'object_id' => $contentId,
+                    'flag' => 1
                 ]);
             if ($result) {
                 // 增加点赞记录
@@ -165,8 +166,76 @@ class Square extends Controller {
     }
 
     // 点踩
-    public function dislike() {
-        return;
+    public function dislike(Request $request) {
+        $data = array();
+        // 检查用户登录
+        if(isLogin($request)) {
+            $userId = isLogin($request);
+        } else {
+            $data = [
+                'status' => 'fail',
+                'message' => '用户登录信息错误'
+            ];
+            return json($data);
+        }
+        $contentId = $request->param('content_id');
+        $flag = Db::name('operate')
+            ->where([
+                'from_user' => $userId,
+                'object_id' => $contentId,
+                'type' => 2
+            ])
+            ->find();
+        if($flag) {
+            Db::name('operate')
+                ->where([
+                    'from_user' => $userId,
+                    'object_id' => $contentId,
+                    'type' => 2
+                ])
+                ->delete();
+            Db::name('content')
+                ->where([
+                    'id' => $contentId
+                ])
+                ->setDec('dislike_num', 1);
+            $data = [
+                'status' => 'success',
+                'message' => '取消踩成功'
+            ];
+            return json($data);
+        } else {
+            $toUser = Db::name('content')
+                ->where([
+                    'id' => $contentId
+                ])
+                ->field('user_id')
+                ->find();
+            $result = Db::name('operate')
+                ->insert([
+                    'type' => 2,
+                    'from_user' => $userId,
+                    'to_user' => $toUser['user_id'],
+                    'object_id' => $contentId,
+                    'flag' => 1
+                ]);
+            if($result) {
+                Db::name('content')
+                    ->where('id', '=', $contentId)
+                    ->setInc('dislike_num', 1);
+                $data = [
+                    'status' => 'success',
+                    'message' => '点踩成功'
+                ];
+                return json($data);
+            } else {
+                $data = [
+                    'status' => 'fail',
+                    'message' => '点踩失败'
+                ];
+                return json($data);
+            }
+        }
     }
 
     // 举报

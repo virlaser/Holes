@@ -131,8 +131,6 @@ Page({
     var callbackData = event.currentTarget.dataset;
     // 帖子id
     var contentId = callbackData.id;
-    // 用户是否已经点赞
-    var flag = callbackData.flag;
     // 帖子在数组中的位置
     var index = callbackData.index;
     console.log(index);
@@ -169,7 +167,37 @@ Page({
   },
 
   onDislikeTap: function (event) {
-
+    var that = this;
+    var callbackData = event.currentTarget.dataset;
+    var contentId = callbackData.id;
+    var index = callbackData.index;
+    var lists = that.data.contents;
+    lists[index].dislike_flag = lists[index].dislike_flag?0:1;
+    lists[index].dislike_num = lists[index].dislike_flag?(lists[index].dislike_num+1):(lists[index].dislike_num-1);
+    that.setData({
+      'contents' : lists
+    })
+    wx.request({
+      url: app.globalData.domain + '/dislike',
+      data:{
+        'content_id' : contentId,
+        'user_openid' : wx.getStorageSync('user_openid')
+      },
+      header: {
+        'content-type' : 'application/json'
+      },
+      method: 'POST',
+      success: function(res) {
+        if(res.statusCode === 200) {
+          console.log('点赞成功');
+        }
+      },
+      fail: function(res) {
+        wx.showToast({
+          title: '网络异常',
+        })
+      }
+    })
   },
 
   onCommentTap: function () {
