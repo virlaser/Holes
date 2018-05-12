@@ -9,7 +9,7 @@
   <text class="content">{{rawData.content}}</text>
 
   <view class="control-block">
-    <view class="button" catchtap="onLikeTap">
+    <view class="button" catchtap="onLikeTap" data-id='{{rawData.id}}' data-flag='{{rawData.like_flag}}' data-num='{{rawData.like_num}}'>
       <image src="{{rawData.like_flag?'/images/icon-like-selected.png':'/images/icon-like.png'}}"></image>
       <text>{{rawData.like_num === 0 ? '赞' : rawData.like_num}}</text>
     </view>

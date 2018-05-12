@@ -40,7 +40,44 @@ Page({
   },
 
   onLikeTap: function(event) {
-
+    console.log(event);
+    var that = this;
+    var callbackData = event.currentTarget.dataset;
+    // 帖子id
+    var contentId = callbackData.id;
+    // 当前用户是否为帖子点赞过
+    var like_flag = callbackData.flag;
+    var like_num = callbackData.num;
+    like_flag = like_flag?0:1;
+    like_num = like_flag?(like_num+1):(like_num-1);
+    // 前端先更新数据渲染
+    var data = that.data.rawData;
+    data['like_flag'] = like_flag;
+    data['like_num'] = like_num;
+    that.setData({
+      'rawData' : data
+    })
+    wx.request({
+      url: app.globalData.domain + '/like',
+      data: {
+        'content_id' : contentId,
+        'user_openid' : wx.getStorageSync('user_openid')
+      },
+      header: {
+        'content-type' : 'application/json'
+      },
+      method : 'POST',
+      success:function(res) {
+        if(res.statusCode === 200) {
+          console.log('点赞成功');
+        }
+      },
+      fail: function(res) {
+        wx.showToast({
+          title: '网络异常',
+        })
+      }
+    })
   },
 
   onDislikeTap: function(event) {
