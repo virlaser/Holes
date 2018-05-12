@@ -120,9 +120,7 @@ class Square extends Controller {
                 ->delete();
             // 将帖子的点赞记录减一
             Db::name('content')
-                ->where([
-                    'id' => $contentId
-                ])
+                ->where('id', '=', $contentId)
                 ->setDec('like_num', 1);
             $data = [
                 'status' => 'success',
@@ -132,9 +130,7 @@ class Square extends Controller {
         } else {
             // 添加用户操作，给 to_user 通知
             $toUser = Db::name('content')
-                ->where([
-                    'id' => $contentId
-                ])
+                ->where('id', '=', $contentId)
                 ->field('user_id')
                 ->find();
             $result = Db::name('operate')
@@ -148,9 +144,7 @@ class Square extends Controller {
             if ($result) {
                 // 增加点赞记录
                 Db::name('content')
-                    ->where([
-                        'id' => $contentId
-                    ])
+                    ->where('id', '=', $contentId)
                     ->setInc('like_num', 1);
                 $data = [
                     'status' => 'success',
@@ -197,9 +191,7 @@ class Square extends Controller {
                 ])
                 ->delete();
             Db::name('content')
-                ->where([
-                    'id' => $contentId
-                ])
+                ->where('id', '=', $contentId)
                 ->setDec('dislike_num', 1);
             $data = [
                 'status' => 'success',
@@ -208,9 +200,7 @@ class Square extends Controller {
             return json($data);
         } else {
             $toUser = Db::name('content')
-                ->where([
-                    'id' => $contentId
-                ])
+                ->where('id', '=', $contentId)
                 ->field('user_id')
                 ->find();
             $result = Db::name('operate')
@@ -351,9 +341,7 @@ class Square extends Controller {
         // 得到一个帖子下面的评论并对评论进行分页
         $lists = Db::table('hole_comment')
             ->join('hole_user', 'hole_comment.user_id=hole_user.id')
-            ->where([
-                'content_id' => $contentId
-            ])
+            ->where('content_id', '=', $contentId)
             ->field('hole_comment.*, hole_user.nickname, hole_user.avatar')
             ->paginate(10, true);
         foreach ($lists as $list) {
@@ -373,4 +361,76 @@ class Square extends Controller {
         return json($data);
     }
 
+    // 对帖子的评论点赞， todo 通知用户
+    public function commentlike(Request $request) {
+        $data = array();
+        // 检查用户登录
+        if(isLogin($request)) {
+            $userId = isLogin($request);
+        } else {
+            $data = [
+                'status' => 'fail',
+                'message' => '用户登录信息错误'
+            ];
+            return json($data);
+        }
+        $commentId = $request->param('comment_id');
+        // 检查用户是否点赞过，没有就增加记录，有就删除记录
+        $flag = Db::name('operate')
+            ->where([
+                'from_user' => $userId,
+                'object_id' => $commentId,
+                'type' => 5
+            ])
+            ->find();
+        if($flag) {
+            // 删除用户点赞操作
+            Db::name('operate')
+                ->where([
+                    'from_user' => $userId,
+                    'object_id' => $commentId,
+                    'type' => 5
+                ])
+                ->delete();
+            // 将评论的点赞记录减一
+            Db::name('comment')
+                ->where('id', '=', $commentId)
+                ->setDec('like_num', 1);
+            $data = [
+                'status' => 'success',
+                'message' => '取消评论赞成功'
+            ];
+            return json($data);
+        } else {
+            // 增加用户操作，给 to_user 通知
+            $toUser = Db::name('comment')
+                ->where('id', '=', $commentId)
+                ->field('user_id')
+                ->find();
+            $result = Db::name('operate')
+                ->insert([
+                    'type' => 5,
+                    'from_user' => $userId,
+                    'to_user' => $toUser['user_id'],
+                    'object_id' => $commentId,
+                    'flag' => 1
+                ]);
+            if($result) {
+                Db::name('comment')
+                    ->where('id', '=', $commentId)
+                    ->setInc('like_num', 1);
+                $data = [
+                    'status' => 'success',
+                    'message' => '增加评论赞成功'
+                ];
+                return json($data);
+            } else {
+                $data = [
+                    'status' => 'fail',
+                    'message' => '增加评论赞失败'
+                ];
+                return json($data);
+            }
+        }
+    }
 }

@@ -34,7 +34,7 @@
       </view>
       <text class="content">{{comment.content}}</text>
     </view>
-    <view class='comment-like' catchtap='onCommentLikeTap'>
+    <view class='comment-like' catchtap='onCommentLikeTap' data-index="{{offset}}">
       <image class='comment-like-button' src="{{comment.like_flag?'/images/icon-like-selected.png':'/images/icon-like.png'}}"></image>
       <text>{{comment.like_num===0?'赞':comment.like_num}}</text>
     </view>

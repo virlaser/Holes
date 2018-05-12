@@ -118,11 +118,55 @@ Page({
   },
 
   onCommentTap: function(event) {
-
+    var that = this;
+    // 传递帖子信息到评论页面
+    var data = that.data.rawData;
+    wx.navigateTo({
+      url: '/pages/index/reply?data=' + JSON.stringify(data),
+    })
   },
 
   onCommentLikeTap: function(event) {
-
+    var that = this;
+    var callbackData = event.currentTarget.dataset;
+    var data = that.data.comments;
+    // 评论下标
+    var index = callbackData.index;
+    var like_flag = data[index].like_flag;
+    var like_num = data[index].like_num;
+    // 评论id
+    var comment_id = data[index].id;
+    // 帖子id
+    var content_id = data[index].content_id;
+    // 点击按钮后按钮状态改变，先在前端展示
+    like_flag = like_flag?0:1;
+    like_num = like_flag?(like_num+1):(like_num-1);
+    data[index]['like_flag'] = like_flag;
+    data[index]['like_num'] = like_num;
+    that.setData({
+      'comments' : data
+    });
+    wx.request({
+      url: app.globalData.domain + '/commentlike',
+      data: {
+        'comment_id' : comment_id,
+        'user_openid' : wx.getStorageSync('user_openid')
+      },
+      header: {
+        'content-type' : 'application/json'
+      },
+      method: 'POST',
+      success: function(res) {
+        if(res.statusCode === 200) {
+          console.log('给评论点赞成功');
+        }
+      },
+      fail: function(res) {
+        wx.showToast({
+          title: '网络异常',
+        })
+      }
+    })
   },
 
   loadComment: function (pageNum) {

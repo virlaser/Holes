@@ -10,6 +10,7 @@ Page({
   },
 
   onLoad: function () {
+    // todo 等用户 openid 加载完成再开始载入
     wx.showLoading({
       title: '正在查询树洞帖子',
     })
