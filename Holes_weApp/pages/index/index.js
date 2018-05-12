@@ -200,8 +200,14 @@ Page({
     })
   },
 
-  onCommentTap: function () {
-
+  onDetailTap: function(event) {
+    var that = this;
+    var callbackData = event.currentTarget.dataset;
+    var index = callbackData.index;
+    var data = that.data.contents[index];
+    wx.navigateTo({
+      url: '/pages/index/detail?data=' + JSON.stringify(data)
+    })
   },
 
   loadContent: function (pageNum) {

@@ -30,6 +30,7 @@ class Square extends Controller {
             return json($data);
         }
         // 查出帖子对应的点赞等信息以及分页
+        // todo 页面数据倒序排列
         $lists = Db::table('hole_content')
             ->where('is_delete', '=', 0)
             ->join('hole_user', 'hole_content.user_id=hole_user.id')
@@ -86,6 +87,7 @@ class Square extends Controller {
     }
 
     // 点赞
+    // todo 用户删除帖子后可以在页面缓存中点赞和评论，但是再次刷新帖子会消失
     public function like(Request $request) {
         $data = array();
         // 检查用户登录
@@ -333,8 +335,42 @@ class Square extends Controller {
     }
 
     // 帖子详情
-    public function detail() {
-        return;
+    public function detail(Request $request) {
+        $data = array();
+        // 检查用户登录
+        if(isLogin($request)) {
+            $userId = isLogin($request);
+        } else {
+            $data = [
+                'status' => 'fail',
+                'message' => '用户登录信息错误'
+            ];
+            return json($data);
+        }
+        $contentId = $request->param('content_id');
+        // 得到一个帖子下面的评论并对评论进行分页
+        $lists = Db::table('hole_comment')
+            ->join('hole_user', 'hole_comment.user_id=hole_user.id')
+            ->where([
+                'content_id' => $contentId
+            ])
+            ->field('hole_comment.*, hole_user.nickname, hole_user.avatar')
+            ->paginate(10, true);
+        foreach ($lists as $list) {
+            // 查看此用户是否对此评论点赞过
+            $like_flag = Db::name('operate')
+                ->where([
+                    'from_user' => $userId,
+                    'to_user' => $list['user_id'],
+                    'object_id' => $list['id'],
+                    'type' => 5
+                ])
+                ->find();
+            $like_flag = $like_flag?1:0;
+            $list['like_flag'] = $like_flag;
+            array_push($data, $list);
+        }
+        return json($data);
     }
 
 }

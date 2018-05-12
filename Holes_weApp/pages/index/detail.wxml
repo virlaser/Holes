@@ -1,103 +1,42 @@
 <view class="content-block">
   <view class="user-info">
-    <image src="/images/default/avatar.jpg"></image>
+    <image src="{{rawData.hide?'/images/default/avatar.jpg':rawData.avatar}}"></image>
     <view>
-      <text class="nickname">nickName</text>
-      <text>05-06 17:20 小米6</text>
+      <text class="nickname">{{rawData.hide?'匿名':rawData.nickname}}</text>
+      <text>{{rawData.create_time}}</text>
     </view>
   </view>
-  <text class="content">这是一个内容测试啊</text>
+  <text class="content">{{rawData.content}}</text>
 
   <view class="control-block">
-    <view class="button" data-id="11" catchtap="onLikeTap">
-      <image src="/images/icon-like.png"></image>
-      <text>11</text>
+    <view class="button" catchtap="onLikeTap">
+      <image src="{{rawData.like_flag?'/images/icon-like-selected.png':'/images/icon-like.png'}}"></image>
+      <text>{{rawData.like_num === 0 ? '赞' : rawData.like_num}}</text>
     </view>
-    <view class="button" data-id="11" catchtap="onLikeTap">
-      <image src="/images/icon-dislike.png"></image>
-      <text>13</text>
+    <view class="button" catchtap="onDislikeTap">
+      <image src="{{rawData.dislike_flag?'/images/icon-dislike-selected.png':'/images/icon-dislike.png'}}"></image>
+      <text>{{rawData.dislike_num === 0 ? '踩' : rawData.dislike_num}}</text>
     </view>
     <navigator url="/pages/index/reply" class="button">
-      <image src="/images/icon-comment.png"></image>
-      <text>12</text>
+      <image src="{{rawData.comment_flag?'/images/icon-comment-selected.png':'/images/icon-comment.png'}}"></image>
+      <text>{{rawData.comment_num === 0 ? '评论' : rawData.comment_num}}</text>
     </navigator>
   </view>
 </view>
 
 <view class="content-list">
-  <view class='section'>
-    <image class="avatar" src="/images/default/avatar.jpg"></image>
+  <view class='section' wx:for="{{comments}}" wx:key="index" wx:for-item="comment" wx:for-index="offset">
+    <image class="avatar" src="{{comment.hide?'/images/default/avatar.jpg':comment.avatar}}"></image>
     <view class="right-column">
       <view class="title">
-        <text class="nickname">nickName</text>
-        <text class="reply-time">2 小时前</text>
+        <text class="nickname">{{comment.hide?'匿名':comment.nickname}}</text>
+        <text class="reply-time">{{comment.create_time}}</text>
       </view>
-      <text class="content">评论内容测试，我倒是要看看你是怎么换行的，所以就来测试以下吧，这么长应该够你换行了吧，啊哈哈哈</text>
+      <text class="content">{{comment.content}}</text>
     </view>
-    <view class='comment-like'>
-      <image class='comment-like-button' src='/images/icon-like.png'></image>
-      <text> 117 </text>
+    <view class='comment-like' catchtap='onCommentLikeTap'>
+      <image class='comment-like-button' src="{{comment.like_flag?'/images/icon-like-selected.png':'/images/icon-like.png'}}"></image>
+      <text>{{comment.like_num===0?'赞':comment.like_num}}</text>
     </view>
   </view>
-
-  <view class='section'>
-    <image class="avatar" src="/images/default/avatar.jpg"></image>
-    <view class="right-column">
-      <view class="title">
-        <text class="nickname">nickName</text>
-        <text class="reply-time">2 小时前</text>
-      </view>
-      <text class="content">评论内容测试</text>
-    </view>
-    <view class='comment-like'>
-      <image class='comment-like-button' src='/images/icon-like.png'></image>
-      <text>3333</text>
-    </view>
-  </view>
-
-  <view class='section'>
-    <image class="avatar" src="/images/default/avatar.jpg"></image>
-    <view class="right-column">
-      <view class="title">
-        <text class="nickname">nickName</text>
-        <text class="reply-time">2 小时前</text>
-      </view>
-      <text class="content">评论内容测试</text>
-    </view>
-    <view class='comment-like'>
-      <image class='comment-like-button' src='/images/icon-like.png'></image>
-      <text>12</text>
-    </view>
-  </view>
-
-  <view class='section'>
-    <image class="avatar" src="/images/default/avatar.jpg"></image>
-    <view class="right-column">
-      <view class="title">
-        <text class="nickname">nickName</text>
-        <text class="reply-time">2 小时前</text>
-      </view>
-      <text class="content">评论内容测试</text>
-    </view>
-    <view class='comment-like'>
-      <image class='comment-like-button' src='/images/icon-like.png'></image>
-      <text>323</text>
-    </view>
-  </view>
-
-  <view class='section'>
-    <image class="avatar" src="/images/default/avatar.jpg"></image>
-    <view class="right-column">
-      <view class="title">
-        <text class="nickname">nickName</text>
-        <text class="reply-time">2 小时前</text>
-      </view>
-      <text class="content">评论内容测试</text>
-    </view>
-    <view class='comment-like'>
-      <image class='comment-like-button' src='/images/icon-like.png'></image>
-      <text>23131</text>
-    </view>
-  </view>
-
 </view>

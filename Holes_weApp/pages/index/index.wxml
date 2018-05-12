@@ -1,7 +1,7 @@
 <view class="content-list">
 
   <block wx:for="{{contents}}" wx:for-item="content" wx:for-index="offset" wx:key="index" >
-    <navigator url="/pages/index/detail?id={{content.id}}" class="section" hover-class="none">
+    <view catchtap='onDetailTap' data-index='{{offset}}' class="section" hover-class="none">
       <view class="user-info">
         <image src="{{content.avatar?content.avatar:'/images/default/avatar.jpg'}}"></image>
         <view class="middle">
@@ -27,12 +27,12 @@
           <image src="{{content.dislike_flag===0?'/images/icon-dislike.png':'/images/icon-dislike-selected.png'}}"></image>
           <text>{{content.dislike_num===0?'踩':(content.dislike_num)}}</text>
         </view>
-        <view class="button" catchtap='onCommentTap'>
+        <view class="button">
           <image src="{{content.comment_flag===0?'/images/icon-comment.png':'/images/icon-comment-selected.png'}}"></image>
           <text>{{content.comment_num===0?'评论':(content.comment_num)}}</text>
         </view>
       </view>
-    </navigator>
+    </view>
   </block>
 </view>
 

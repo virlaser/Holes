@@ -153,6 +153,11 @@ page {
     flex: 1;
 }
 
+.title {
+  flex-direction: column;
+  margin-left: 10rpx;
+}
+
 .content-list .right-column .title .reply-time {
     color: #b2b2b2;
     font-size: 28rpx;
