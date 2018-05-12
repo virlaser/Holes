@@ -21,6 +21,8 @@ return [
     // 用户给帖子点踩
     'dislike' => 'api/square/dislike',
     // 用户给帖子的评论点赞
-    'commentlike' => 'api/square/commentlike'
+    'commentlike' => 'api/square/commentlike',
+    // 用户发帖
+    'create' => 'api/post/create',
 
 ];

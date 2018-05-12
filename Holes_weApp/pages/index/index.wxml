@@ -3,7 +3,7 @@
   <block wx:for="{{contents}}" wx:for-item="content" wx:for-index="offset" wx:key="index" >
     <view catchtap='onDetailTap' data-index='{{offset}}' class="section" hover-class="none">
       <view class="user-info">
-        <image src="{{content.avatar?content.avatar:'/images/default/avatar.jpg'}}"></image>
+        <image src="{{(content.hide===0)?content.avatar:'/images/default/avatar.jpg'}}"></image>
         <view class="middle">
           <view>
             <text class="nickname">{{content.hide?'匿名':content.nickname}}</text>

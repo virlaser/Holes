@@ -1,4 +1,4 @@
-<view class="content-block">
+<view class="content-block" catchtap='onCommentTap'>
   <view class="user-info">
     <image src="{{rawData.hide?'/images/default/avatar.jpg':rawData.avatar}}"></image>
     <view>
@@ -17,10 +17,10 @@
       <image src="{{rawData.dislike_flag?'/images/icon-dislike-selected.png':'/images/icon-dislike.png'}}"></image>
       <text>{{rawData.dislike_num === 0 ? '踩' : rawData.dislike_num}}</text>
     </view>
-    <navigator url="/pages/index/reply" class="button">
+    <view class="button">
       <image src="{{rawData.comment_flag?'/images/icon-comment-selected.png':'/images/icon-comment.png'}}"></image>
       <text>{{rawData.comment_num === 0 ? '评论' : rawData.comment_num}}</text>
-    </navigator>
+    </view>
   </view>
 </view>
 

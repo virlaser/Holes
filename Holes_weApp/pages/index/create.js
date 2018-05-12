@@ -1,65 +1,52 @@
+const app = getApp();
+
 Page({
 
-  /**
-   * 页面的初始数据
-   */
+
   data: {
-    
+    disabledSubmitBtn : false
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
-    
-  },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-    
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-    
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-    
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-    
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-    
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-    
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-    
+  doSubmit: function(event) {
+    var that = this;
+    console.log(event);
+    var callbackData = event.detail.value;
+    var content = callbackData.content;
+    var isAnoymous = callbackData.anoymous;
+    if(typeof content === 'string' && (content.length == 0 || content.length > 800)) {
+      return app.showErrorMsg({
+        title: '内容有误'
+      })
+    }
+    wx.request({
+      url: app.globalData.domain + '/create',
+      data: {
+        'content' : content,
+        'hide' : isAnoymous,
+        'user_openid' : wx.getStorageSync('user_openid')
+      },
+      header: {
+        'content-type' : 'application/json'
+      },
+      method : 'POST',
+      success: function(res) {
+        if(res.statusCode === 200) {
+          console.log("创建帖子成功");
+          that.setData({
+            'disabledSubmitBtn' : true
+          });
+          wx.showToast({
+            title: '发帖成功',
+          })
+        }
+      },
+      fail: function(res) {
+        wx.showToast({
+          title: '网络异常',
+        })
+      }
+    })
   }
+
+
 })
