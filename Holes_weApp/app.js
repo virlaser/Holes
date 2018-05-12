@@ -7,6 +7,7 @@ App({
     wx.setStorageSync('logs', logs)
 
     // 登录
+    // todo 异步执行操作会出现问题
     try {
       var value = wx.getStorageSync('user_openid');
       if (!value) {

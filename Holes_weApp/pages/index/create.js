@@ -14,8 +14,8 @@ Page({
     var content = callbackData.content;
     var isAnoymous = callbackData.anoymous;
     if(typeof content === 'string' && (content.length == 0 || content.length > 800)) {
-      return app.showErrorMsg({
-        title: '内容有误'
+      return wx.showToast({
+        title: '内容有误',
       })
     }
     wx.request({

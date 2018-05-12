@@ -24,5 +24,7 @@ return [
     'commentlike' => 'api/square/commentlike',
     // 用户发帖
     'create' => 'api/post/create',
+    // 用户给帖子评论
+    'comment' => 'api/post/comment'
 
 ];
