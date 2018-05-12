@@ -13,7 +13,7 @@
       <image src="{{rawData.like_flag?'/images/icon-like-selected.png':'/images/icon-like.png'}}"></image>
       <text>{{rawData.like_num === 0 ? '赞' : rawData.like_num}}</text>
     </view>
-    <view class="button" catchtap="onDislikeTap">
+    <view class="button" catchtap="onDislikeTap" data-id='{{rawData.id}}' data-flag='{{rawData.dislike_flag}}' data-num='{{rawData.dislike_num}}'>
       <image src="{{rawData.dislike_flag?'/images/icon-dislike-selected.png':'/images/icon-dislike.png'}}"></image>
       <text>{{rawData.dislike_num === 0 ? '踩' : rawData.dislike_num}}</text>
     </view>

@@ -81,7 +81,40 @@ Page({
   },
 
   onDislikeTap: function(event) {
-
+    var that = this;
+    var callbackData =  event.currentTarget.dataset;
+    var contentId = callbackData.id;
+    var dislike_flag = callbackData.flag;
+    var dislike_num = callbackData.num;
+    dislike_flag = dislike_flag?0:1;
+    dislike_num = dislike_flag?(dislike_num+1):(dislike_num-1);
+    var data = that.data.rawData;
+    data['dislike_flag'] = dislike_flag;
+    data['dislike_num'] = dislike_num;
+    that.setData({
+      'rawData' : data
+    })
+    wx.request({
+      url: app.globalData.domain + '/dislike',
+      data: {
+        'content_id' : contentId,
+        'user_openid' : wx.getStorageSync('user_openid')
+      },
+      header: {
+        'content-type' : 'application/json'
+      },
+      method: 'POST',
+      success: function(res) {
+        if(res.statusCode === 200) {
+          console.log('点踩成功');
+        }
+      },
+      fail: function(res) {
+        wx.showToast({
+          title: '网络异常',
+        })
+      }
+    })
   },
 
   onCommentTap: function(event) {
