@@ -283,7 +283,7 @@ class Square extends Controller {
         }
     }
 
-    // 删除自己发布的帖子
+    // todo 删除自己发布的帖子，还要删除对应的操作
     public function delete(Request $request) {
         $data = array();
         // 检查用户登录

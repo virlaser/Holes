@@ -208,9 +208,109 @@ class User extends Controller {
         return json($data);
     }
 
-    // 用户点赞的帖子
-    public function likes() {
-        return;
+    // 用户动态
+    public function activity(Request $request) {
+        $data = array();
+        // 检查用户登录
+        if(isLogin($request)) {
+            $userId = isLogin($request);
+        } else {
+            $data = [
+                'status' => 'fail',
+                'message' => '用户登录信息错误'
+            ];
+            return json($data);
+        }
+        // 查出用户的动态信息，点赞，点踩，评论，举报
+        $contentActivity = Db::name('operate')
+            ->where([
+                'from_user' => $userId,
+                'type' => ['in',[1, 2, 3, 4]]
+            ])
+            ->field('object_id')
+            ->select();
+        // 查出用户评论的帖子
+        $commentActivity = Db::table('hole_operate')
+            ->where([
+                'from_user' => $userId,
+                'type' => 5
+            ])
+            ->join('hole_comment', 'hole_operate.object_id=hole_comment.id')
+            ->field('hole_comment.content_id')
+            ->select();
+        // 所有的帖子id
+        $contents = array();
+        foreach ($contentActivity as $a) {
+            array_push($contents, $a['object_id']);
+        }
+        foreach ($commentActivity as $b) {
+            array_push($contents, $b['content_id']);
+        }
+        // 查出帖子对应的点赞等信息以及分页
+        // todo 页面数据倒序排列
+        $lists = Db::table('hole_content')
+            ->where([
+                'is_delete' => 0,
+                'hole_content.id' => ['in', $contents]
+            ])
+            ->join('hole_user', 'hole_content.user_id=hole_user.id')
+            ->field('hole_content.*, hole_user.nickname, hole_user.avatar')
+            ->paginate(10, true);
+        foreach($lists as $e) {
+            // 判断用户是否同时对一个帖子进行了多个操作
+            $count = 0;
+            // 判断此用户是否点赞过帖子
+            $like_flag = Db::name('operate')
+                ->where([
+                    'from_user' => $userId,
+                    'object_id' => $e['id'],
+                    'type' => 1
+                ])
+                ->find();
+            $like_flag = $like_flag?1:0;
+            $count += $like_flag;
+            // 判断此用户是否点踩过帖子
+            $dislike_flag = Db::name('operate')
+                ->where([
+                    'from_user' => $userId,
+                    'object_id' => $e['id'],
+                    'type' => 2
+                ])
+                ->find();
+            $dislike_flag = $dislike_flag?1:0;
+            $count += $dislike_flag;
+            // 判断此用户是否评论过帖子
+            $comment_flag = Db::name('operate')
+                ->where([
+                    'from_user' => $userId,
+                    'object_id' => $e['id'],
+                    'type' => 3
+                ])
+                ->find();
+            $comment_flag = $comment_flag?1:0;
+            $count += $comment_flag;
+            // 判断此用户是否举报过帖子
+            $report_flag = Db::name('operate')
+                ->where([
+                    'from_user' => $userId,
+                    'object_id' => $e['id'],
+                    'type' => 4
+                ])
+                ->find();
+            $report_flag = $report_flag?1:0;
+            $count += $report_flag;
+            // 判断此帖子是不是此用户写的
+            $my_flag = ($e['user_id']==$userId)?1:0;
+            // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
+            $e['like_flag'] = $like_flag;
+            $e['dislike_flag'] = $dislike_flag;
+            $e['comment_flag'] = $comment_flag;
+            $e['report_flag'] = $report_flag;
+            $e['my_flag'] = $my_flag;
+            $e['count'] = $count;
+            array_push($data, $e);
+        }
+        return json($data);
     }
 
     // 用户消息
