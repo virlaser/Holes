@@ -1,7 +1,7 @@
 //app.js
 App({
   onLaunch: function () {
-    this.userLogin();
+    
   },
 
   userLogin: function () {
@@ -10,7 +10,8 @@ App({
     try {
       // 首先查询用户本地是否存储有用户标识
       var value = wx.getStorageSync('user_openid');
-      if (!value) {
+      var id = wx.getStorageSync('user_id');
+      if (!value && !id) {
         wx.login({
           success: function (res) {
             //发送给服务器的code 

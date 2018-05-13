@@ -11,6 +11,7 @@ Page({
 
   onLoad: function () {
     // todo 等用户 openid 加载完成再开始载入
+    app.userLogin();
     wx.showLoading({
       title: '正在查询树洞帖子',
     })
@@ -18,6 +19,7 @@ Page({
   },
 
   onPullDownRefresh: function () {
+    app.userLogin();
     wx.reLaunch({
       url: '/pages/index/index',
     })
