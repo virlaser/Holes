@@ -1,14 +1,14 @@
 //app.js
 App({
   onLaunch: function () {
-    // 展示本地存储能力
-    var logs = wx.getStorageSync('logs') || []
-    logs.unshift(Date.now())
-    wx.setStorageSync('logs', logs)
+    this.userLogin();
+  },
 
+  userLogin: function () {
     // 登录
     // todo 异步执行操作会出现问题
     try {
+      // 首先查询用户本地是否存储有用户标识
       var value = wx.getStorageSync('user_openid');
       if (!value) {
         wx.login({
@@ -46,6 +46,7 @@ App({
                       wx.setStorageSync('user_openid', res.data.openid);
                       wx.setStorageSync('user_avatar', res.data.imgurl);
                       wx.setStorageSync('user_gender', res.data.sex);
+                      wx.setStorageSync('user_id', res.data.userid);
                     }
                   })
                 }
@@ -53,7 +54,7 @@ App({
                   console.log("获取用户登录态失败！");
                 }
               },
-              fail: function(error) {
+              fail: function (error) {
                 wx.navigateTo({
                   url: '/pages/auth/auth',
                 })
@@ -72,7 +73,7 @@ App({
       console.log(e);
     }
   },
-  
+
   globalData: {
     userInfo: null,
     domain: 'http://localhost'

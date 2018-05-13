@@ -34,8 +34,8 @@ class User extends Controller {
 
         if(!$openid){
             $data = [
-                'status' => 0,
-                'message' => '获取用户认证出错'
+                'status' => 'fail',
+                'message' => '获取用户openid出错'
             ];
             return json($data);
         }
@@ -57,29 +57,34 @@ class User extends Controller {
             // 插入失败，返回错误状态码
             if(!$result) {
                 $data = [
-                    'status' => 0,
+                    'status' => 'fail',
                     'message' => '系统错误'
                 ];
                 return json($data);
             } else {
+                // 得到用户 id
+                $id = Db::name('user')
+                    ->where('openid', '=', $openid)
+                    ->find();
                 $data = [
                     'name' => $nickName,
                     'openid' => $openid,
                     'imgurl' => $avatar,
                     'sex' => $gender,
-                    'status' => 1,
-                    'message' => '成功'
+                    'userid' => $id['id']
                 ];
                 return json($data);
             }
         } else {
+            $id = Db::name('user')
+                ->where('openid', '=', $openid)
+                ->find();
             $data = [
                 'name' => $nickName,
                 'openid' => $openid,
                 'imgurl' => $avatar,
                 'sex' => $gender,
-                'status' => 1,
-                'message' => '成功'
+                'userid' => $id['id']
             ];
             return json($data);
         }
