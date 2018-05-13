@@ -48,6 +48,7 @@ App({
                       wx.setStorageSync('user_avatar', res.data.imgurl);
                       wx.setStorageSync('user_gender', res.data.sex);
                       wx.setStorageSync('user_id', res.data.userid);
+                      wx.setStorageSync('create_time', res.data.createtime);
                     }
                   })
                 }

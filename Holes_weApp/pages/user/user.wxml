@@ -2,15 +2,15 @@
 <view class="container">
 
   <view class="user-info-box">
-    <navigator url="/pages/more/login" class="user-info">
+    <view class="user-info">
       <view class="info-hd">
-        <image class="user-avatar" src="/images/default/avatar.jpg"></image>
+        <image class="user-avatar" src="{{userAvatar?userAvatar:'/images/default/avatar.jpg'}}"></image>
         <view class="user-title">
-          <text class="user-name">nickName</text>
-          <text class="user-id">来到树洞的第 100 天</text>
+          <text class="user-name">{{nickName}}</text>
+          <text class="user-id">来到树洞的第{{myDay}}天</text>
         </view>
       </view>
-    </navigator>
+    </view>
   </view>
 
   <view class="more-list">
@@ -19,7 +19,7 @@
         <image class="btn-icon" src="/images/issue.png"></image>
         <text class="btn-text">我的帖子</text>
         <view class="btn-open">
-        <text class="bind-btn">100</text>
+        <text class="bind-btn">{{myContent === 0 ? '' : myContent}}</text>
           <image class="btn-enter" src="/images/enter.png"></image>
         </view>
       </view>
@@ -29,7 +29,7 @@
         <image class="btn-icon" src="/images/active.png"></image>
         <text class="btn-text">我的动态</text>
         <view class="btn-open">
-        <text class="bind-btn">100</text>
+        <text class="bind-btn">{{myActivity === 0 ? '' : myActivity}}</text>
           <image class="btn-enter" src="/images/enter.png"></image>
         </view>
       </view>
@@ -39,7 +39,7 @@
         <image class="btn-icon" src="/images/about.png"></image>
         <text class="btn-text">我的消息</text>
         <view class="btn-open">
-        <text class="bind-btn">100</text>
+        <text class="bind-btn">{{myNotification === 0 ? '' : myNotification}}</text>
           <image class="btn-enter" src="/images/enter.png"></image>
         </view>
       </view>

@@ -13,6 +13,7 @@ use think\Controller;
 use app\api\common;
 use think\Db;
 use think\Request;
+use function app\api\common\isLogin;
 
 class User extends Controller {
 
@@ -65,26 +66,30 @@ class User extends Controller {
                 // 得到用户 id
                 $id = Db::name('user')
                     ->where('openid', '=', $openid)
+                    ->field('id, create_time')
                     ->find();
                 $data = [
                     'name' => $nickName,
                     'openid' => $openid,
                     'imgurl' => $avatar,
                     'sex' => $gender,
-                    'userid' => $id['id']
+                    'userid' => $id['id'],
+                    'createtime' => strtotime($id['create_time'])
                 ];
                 return json($data);
             }
         } else {
             $id = Db::name('user')
                 ->where('openid', '=', $openid)
+                ->field('id, create_time')
                 ->find();
             $data = [
                 'name' => $nickName,
                 'openid' => $openid,
                 'imgurl' => $avatar,
                 'sex' => $gender,
-                'userid' => $id['id']
+                'userid' => $id['id'],
+                'createtime' => strtotime($id['create_time'])
             ];
             return json($data);
         }
@@ -92,8 +97,42 @@ class User extends Controller {
     }
 
     // 用户信息
-    public function info() {
-        return;
+    public function info(Request $request) {
+        $data = array();
+        // 检查用户登录
+        if(isLogin($request)) {
+            $userId = isLogin($request);
+        } else {
+            $data = [
+                'status' => 'fail',
+                'message' => '用户登录信息错误'
+            ];
+            return json($data);
+        }
+        // 查找用户的帖子
+        $contentNum = Db::name('content')
+            ->where([
+                'user_id' => $userId,
+                'is_delete' => 0
+            ])
+            ->count();
+        // 查找用户通知
+        $notificationNum = Db::name('operate')
+            ->where([
+                'to_user' => $userId,
+                'flag' => 0
+            ])
+            ->count();
+        // 查找用户动态
+        $activityNum = Db::name('operate')
+            ->where('from_user', '=', $userId)
+            ->count();
+        $data = [
+            'contentNum' => $contentNum,
+            'notificationNum' => $notificationNum,
+            'activityNum' => $activityNum
+        ];
+        return json($data);
     }
 
     // 用户发的帖子

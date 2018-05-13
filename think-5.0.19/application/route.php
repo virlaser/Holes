@@ -25,6 +25,8 @@ return [
     // 用户发帖
     'create' => 'api/post/create',
     // 用户给帖子评论
-    'comment' => 'api/post/comment'
+    'comment' => 'api/post/comment',
+    // 用户信息
+    'info' => 'api/user/info',
 
 ];
