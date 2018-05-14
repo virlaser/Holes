@@ -5,7 +5,7 @@
       <text class='activity' wx:if="{{content.count > 1}}">我操作过：</text>
       <text class='activity' wx:elif="{{content.like_flag == 1}}">我点赞过：</text>
       <text class='activity' wx:elif="{{content.dislike_flag == 1}}">我点踩过：</text>
-      <text class='activity' wx:elif="{{content.comment_flag == 1}}">我点评论过：</text>
+      <text class='activity' wx:elif="{{content.comment_flag == 1}}">我评论过：</text>
       <text class='activity' wx:elif="{{content.report_flag == 1}}">我举报过：</text>
       <text class='activity' wx:else>我点赞过评论：</text>
       <view class="user-info">

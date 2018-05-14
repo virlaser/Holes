@@ -1,206 +1,37 @@
 <view class="content-list">
 
-  <navigator url="/pages/index/detail" class="section" hover-class="none">
-  <text class='activity'>nickName 10 个小时前赞过我的帖子：</text>
-    <view class="user-info">
-      <image src="/images/default/avatar.jpg"></image>
-      <view class="middle">
-        <view>
-          <text class="nickname">nickName</text>
+  <block wx:for="{{contents}}" wx:for-item="content" wx:for-index="offset" wx:key="index">
+    <view catchtap='onDetailTap' data-index='{{offset}}' class="section" hover-class='none'>
+      <text class='activity' wx:if="{{content.type === 1}}">{{content.nickname}}赞过我的帖子：</text>
+      <text class='activity' wx:elif="{{content.type === 3}}">{{content.nickname}}评论过我的帖子：</text>
+      <text class='activity' wx:elif="{{content.type === 5}}">{{content.nickname}}赞过我的评论：</text>
+      <view class="user-info">
+      <!-- // todo 帖子头像需要修改 -->
+        <image src="{{(content.hide===0)?(content.avatar?content.avatar:userAvatar):'/images/default/avatar.jpg'}}"></image>
+        <view class="middle">
+          <view>
+            <text class="nickname">{{content.hide?'匿名':content.nickname}}</text>
+          </view>
+          <text>{{content.create_time}}</text>
         </view>
-        <text>05-06 17:20 小米6</text>
-      </view>
 
-    </view>
-    <text class="content">内容测试，我倒是想看看你到底能够放置多少内容然后换行，下面的元素应该取消置顶。</text>
-    <view class="control-block">
-      <view class="button" data-id="11" catchtap="onLikeTap">
-        <image src="../../images/icon-like.png"></image>
-        <text>赞</text>
       </view>
-      <view class="button" data-id="11" catchtap="onLikeTap">
-        <image src="../../images/icon-dislike.png"></image>
-        <text>踩</text>
-      </view>
-      <view class="button">
-        <image src="../../images/icon-comment.png"></image>
-        <text>评论</text>
-      </view>
-    </view>
-  </navigator>
-
-  <navigator url="/pages/index/detail" class="section" hover-class="none">
-    <text class='activity'>木子子 11 小时前赞过我的评论：</text>
-    <view class="user-info">
-      <image src="/images/default/avatar.jpg"></image>
-      <view class="middle">
-        <view>
-          <text class="nickname">nickName</text>
+      <text class="content">{{content.content}}</text>
+      <view class="control-block">
+        <view class="button" data-id='{{content.id}}' data-index='{{offset}}' catchtap="onLikeTap">
+          <image src="{{content.like_flag===0?'/images/icon-like.png':'/images/icon-like-selected.png'}}"></image>
+          <text>{{content.like_num===0?'赞':(content.like_num)}}</text>
         </view>
-        <text>05-06 17:20 小米6</text>
-      </view>
-
-    </view>
-    <text class="content">内容测试</text>
-    <view class="control-block">
-      <view class="button" data-id="11" catchtap="onLikeTap">
-        <image src="../../images/icon-like.png"></image>
-        <text>赞</text>
-      </view>
-      <view class="button" data-id="11" catchtap="onLikeTap">
-        <image src="../../images/icon-dislike.png"></image>
-        <text>踩</text>
-      </view>
-      <view class="button">
-        <image src="../../images/icon-comment.png"></image>
-        <text>评论</text>
-      </view>
-    </view>
-  </navigator>
-
-  <navigator url="/pages/index/detail" class="section" hover-class="none">
-    <text class='activity'>匿名 3 天前 评论过我的帖子：</text>
-    <view class="user-info">
-      <image src="/images/default/avatar.jpg"></image>
-      <view class="middle">
-        <view>
-          <text class="nickname">nickName</text>
+        <view class="button" data-id='{{content.id}}' data-index='{{offset}}' catchtap="onDislikeTap">
+          <image src="{{content.dislike_flag===0?'/images/icon-dislike.png':'/images/icon-dislike-selected.png'}}"></image>
+          <text>{{content.dislike_num===0?'踩':(content.dislike_num)}}</text>
         </view>
-        <text>05-06 17:20 小米6</text>
-      </view>
-
-    </view>
-    <text class="content">内容测试</text>
-    <view class="control-block">
-      <view class="button" data-id="11" catchtap="onLikeTap">
-        <image src="../../images/icon-like.png"></image>
-        <text>赞</text>
-      </view>
-      <view class="button" data-id="11" catchtap="onLikeTap">
-        <image src="../../images/icon-dislike.png"></image>
-        <text>踩</text>
-      </view>
-      <view class="button">
-        <image src="../../images/icon-comment.png"></image>
-        <text>评论</text>
-      </view>
-    </view>
-  </navigator>
-
-  <navigator url="/pages/index/detail" class="section" hover-class="none">
-    <text class='activity'>匿名 4 天前赞过的我评论：</text>
-    <view class="user-info">
-      <image src="/images/default/avatar.jpg"></image>
-      <view class="middle">
-        <view>
-          <text class="nickname">nickName</text>
+        <view class="button">
+          <image src="{{content.comment_flag===0?'/images/icon-comment.png':'/images/icon-comment-selected.png'}}"></image>
+          <text>{{content.comment_num===0?'评论':(content.comment_num)}}</text>
         </view>
-        <text>05-06 17:20 小米6</text>
-      </view>
-
-    </view>
-    <text class="content">内容测试</text>
-    <view class="control-block">
-      <view class="button" data-id="11" catchtap="onLikeTap">
-        <image src="../../images/icon-like.png"></image>
-        <text>赞</text>
-      </view>
-      <view class="button" data-id="11" catchtap="onLikeTap">
-        <image src="../../images/icon-dislike.png"></image>
-        <text>踩</text>
-      </view>
-      <view class="button">
-        <image src="../../images/icon-comment.png"></image>
-        <text>评论</text>
       </view>
     </view>
-  </navigator>
-
-  <navigator url="/pages/index/detail" class="section" hover-class="none">
-    <text class='activity'>匿名 6 天前 评论过我的帖子：</text>
-    <view class="user-info">
-      <image src="/images/default/avatar.jpg"></image>
-      <view class="middle">
-        <view>
-          <text class="nickname">nickName</text>
-        </view>
-        <text>05-06 17:20 小米6</text>
-      </view>
-
-    </view>
-    <text class="content">内容测试</text>
-    <view class="control-block">
-      <view class="button" data-id="11" catchtap="onLikeTap">
-        <image src="../../images/icon-like.png"></image>
-        <text>赞</text>
-      </view>
-      <view class="button" data-id="11" catchtap="onLikeTap">
-        <image src="../../images/icon-dislike.png"></image>
-        <text>踩</text>
-      </view>
-      <view class="button">
-        <image src="../../images/icon-comment.png"></image>
-        <text>评论</text>
-      </view>
-    </view>
-  </navigator>
-
-  <navigator url="/pages/index/detail" class="section" hover-class="none">
-    <text class='activity'>匿名 一个月前赞过我的评论</text>
-    <view class="user-info">
-      <image src="/images/default/avatar.jpg"></image>
-      <view class="middle">
-        <view>
-          <text class="nickname">nickName</text>
-        </view>
-        <text>05-06 17:20 小米6</text>
-      </view>
-
-    </view>
-    <text class="content">内容测试</text>
-    <view class="control-block">
-      <view class="button" data-id="11" catchtap="onLikeTap">
-        <image src="../../images/icon-like.png"></image>
-        <text>赞</text>
-      </view>
-      <view class="button" data-id="11" catchtap="onLikeTap">
-        <image src="../../images/icon-dislike.png"></image>
-        <text>踩</text>
-      </view>
-      <view class="button">
-        <image src="../../images/icon-comment.png"></image>
-        <text>评论</text>
-      </view>
-    </view>
-  </navigator>
-
-  <navigator url="/pages/index/detail" class="section" hover-class="none">
-    <text class='activity'>匿名 一个月前 评论过我的帖子：</text>
-    <view class="user-info">
-      <image src="/images/default/avatar.jpg"></image>
-      <view class="middle">
-        <view>
-          <text class="nickname">nickName</text>
-        </view>
-        <text>05-06 17:20 小米6</text>
-      </view>
-
-    </view>
-    <text class="content">内容测试</text>
-    <view class="control-block">
-      <view class="button" data-id="11" catchtap="onLikeTap">
-        <image src="../../images/icon-like.png"></image>
-        <text>赞</text>
-      </view>
-      <view class="button" data-id="11" catchtap="onLikeTap">
-        <image src="../../images/icon-dislike.png"></image>
-        <text>踩</text>
-      </view>
-      <view class="button">
-        <image src="../../images/icon-comment.png"></image>
-        <text>评论</text>
-      </view>
-    </view>
-  </navigator>
+  </block>
 
 </view>

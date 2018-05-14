@@ -139,7 +139,7 @@ class Square extends Controller {
                     'from_user' => $userId,
                     'to_user' => $toUser['user_id'],
                     'object_id' => $contentId,
-                    'flag' => 1
+                    'flag' => 0
                 ]);
             if ($result) {
                 // 增加点赞记录
@@ -209,7 +209,7 @@ class Square extends Controller {
                     'from_user' => $userId,
                     'to_user' => $toUser['user_id'],
                     'object_id' => $contentId,
-                    'flag' => 1
+                    'flag' => 0
                 ]);
             if($result) {
                 Db::name('content')
@@ -263,13 +263,14 @@ class Square extends Controller {
                 ->where('id','=', $contentId)
                 ->field('user_id')
                 ->find();
-            // 举报不通知用户，因此 flag 为默认值 0
+            // 举报不通知用户，因此 flag 值为 1
             Db::name('operate')
                 ->insert([
                     'type' => 4,
                     'from_user' => $userId,
                     'to_user' => $to_user['user_id'],
-                    'object_id' => $contentId
+                    'object_id' => $contentId,
+                    'flag' => 1
                 ]);
             // 帖子表中举报用户加一
             Db::name('content')
@@ -413,7 +414,7 @@ class Square extends Controller {
                     'from_user' => $userId,
                     'to_user' => $toUser['user_id'],
                     'object_id' => $commentId,
-                    'flag' => 1
+                    'flag' => 0
                 ]);
             if($result) {
                 Db::name('comment')

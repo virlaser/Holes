@@ -229,7 +229,7 @@ class User extends Controller {
             ])
             ->field('object_id')
             ->select();
-        // 查出用户评论的帖子
+        // 查出用户给点赞的评论属于哪篇帖子
         $commentActivity = Db::table('hole_operate')
             ->where([
                 'from_user' => $userId,
@@ -314,8 +314,161 @@ class User extends Controller {
     }
 
     // 用户消息
-    public function notifications() {
-        return;
+    public function notifications(Request $request) {
+        // 检查用户登录
+        if(isLogin($request)) {
+            $userId = isLogin($request);
+        } else {
+            $data = [
+                'status' => 'fail',
+                'message' => '用户登录信息错误'
+            ];
+            return json($data);
+        }
+        // 查出我未读的通知:被点赞，评论来自的帖子id
+        // todo merge时去掉重复的项目
+        // todo 微信小程序页面的onPulldownRefresh修改
+        $contentActivity = Db::name('operate')
+            ->where([
+                'to_user' => $userId,
+                'type' => ['in',[1, 3]],
+                'flag' => 0
+            ])
+            ->field('object_id,from_user,type')
+            ->select();
+        // 查出用户给点赞的评论属于哪篇帖子
+        $commentActivity = Db::table('hole_operate')
+            ->where([
+                'to_user' => $userId,
+                'type' => 5,
+                'flag' => 0
+            ])
+            ->join('hole_comment', 'hole_operate.object_id=hole_comment.id')
+            ->field('hole_comment.content_id,from_user,type')
+            ->select();
+        // 所有通知来源的帖子id，以及通知来源用户的id
+        $contents = array();
+        // 得到帖子动态
+        foreach ($contentActivity as $a) {
+            $content = array();
+            // 判断用户操作次数
+            $count = 0;
+            // 得到通知来源用户昵称
+            $fromUserInfo = Db::name('user')
+                ->where('id', '=', $a['from_user'])
+                ->field('nickname')
+                ->find();
+            // 得到通知来源帖子信息
+            $contentInfo = Db::name('content')
+                ->where('id', '=', $a['object_id'])
+                ->find();
+            // 判断此用户是否点赞过帖子
+            $like_flag = Db::name('operate')
+                ->where([
+                    'from_user' => $userId,
+                    'object_id' => $a['object_id'],
+                    'type' => 1
+                ])
+                ->find();
+            $like_flag = $like_flag?1:0;
+            $count += 1;
+            // 判断此用户是否点踩过帖子
+            $dislike_flag = Db::name('operate')
+                ->where([
+                    'from_user' => $userId,
+                    'object_id' => $a['object_id'],
+                    'type' => 2
+                ])
+                ->find();
+            $dislike_flag = $dislike_flag?1:0;
+            $count += 1;
+            // 判断此用户是否评论过帖子
+            $comment_flag = Db::name('operate')
+                ->where([
+                    'from_user' => $userId,
+                    'object_id' => $a['object_id'],
+                    'type' => 3
+                ])
+                ->find();
+            $comment_flag = $comment_flag?1:0;
+            $count += 1;
+            // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
+            $content['like_flag'] = $like_flag;
+            $content['dislike_flag'] = $dislike_flag;
+            $content['comment_flag'] = $comment_flag;
+            $content['count'] = $count;
+            $content['type'] = $a['type'];
+            $content = array_merge($content, $fromUserInfo);
+            $content = array_merge($content, $contentInfo);
+            array_push($contents, $content);
+        }
+        foreach ($commentActivity as $b) {
+            $content = array();
+            // 判断用户操作次数
+            $count = 0;
+            // 得到通知来源用户昵称
+            $fromUserInfo = Db::name('user')
+                ->where('id', '=', $b['from_user'])
+                ->field('nickname')
+                ->find();
+            // 得到通知来源帖子信息
+//            $contentInfo = Db::name('content')
+//                ->where('id', '=', $b['hole_comment.content_id'])
+//                ->find();
+
+            $contentInfo = Db::table('hole_content')
+                ->where('hole_content.id', '=', $b['content_id'])
+                ->join('hole_user', 'hole_user.id=hole_content.user_id')
+                ->field('hole_content.*,hole_user.avatar')
+                ->find();
+            // 判断此用户是否点赞过帖子
+            $like_flag = Db::name('operate')
+                ->where([
+                    'from_user' => $userId,
+                    'object_id' => $b['content_id'],
+                    'type' => 1
+                ])
+                ->find();
+            $like_flag = $like_flag?1:0;
+            $count += 1;
+            // 判断此用户是否点踩过帖子
+            $dislike_flag = Db::name('operate')
+                ->where([
+                    'from_user' => $userId,
+                    'object_id' => $b['content_id'],
+                    'type' => 2
+                ])
+                ->find();
+            $dislike_flag = $dislike_flag?1:0;
+            $count += 1;
+            // 判断此用户是否评论过帖子
+            $comment_flag = Db::name('operate')
+                ->where([
+                    'from_user' => $userId,
+                    'object_id' => $b['content_id'],
+                    'type' => 3
+                ])
+                ->find();
+            $comment_flag = $comment_flag?1:0;
+            $count += 1;
+            // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
+            $content['like_flag'] = $like_flag;
+            $content['dislike_flag'] = $dislike_flag;
+            $content['comment_flag'] = $comment_flag;
+            $content['count'] = $count;
+            $content['type'] = $b['type'];
+            $content = array_merge($content, $fromUserInfo);
+            $content = array_merge($content, $contentInfo);
+            array_push($contents, $content);
+        }
+        // 将所有通知设置为已读
+        Db::name('operate')
+            ->where([
+                'to_user' => $userId,
+                'flag' => 0
+            ])
+            ->update(['flag' => 1]);
+        return json($contents);
     }
 
 }

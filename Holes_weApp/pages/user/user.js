@@ -39,7 +39,7 @@ Page({
             myActivity : activityNum,
             myNotification : notificationNum,
             // 计算用户来到树洞的第几天，使用时间戳计算
-            myDay : parseInt((Date.parse(new Date()) - createTime*1000)/(60*60*24*1000))+2,
+            myDay : parseInt((Date.parse(new Date()) - createTime*1000)/(60*60*24*1000))+1,
             nickName: wx.getStorageSync('user_nick'),
             userAvatar: wx.getStorageSync('user_avatar')
           })

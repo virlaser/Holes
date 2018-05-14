@@ -11,7 +11,7 @@ App({
       // 首先查询用户本地是否存储有用户标识
       var value = wx.getStorageSync('user_openid');
       var id = wx.getStorageSync('user_id');
-      if (!value && !id) {
+      if (!value || !id) {
         wx.login({
           success: function (res) {
             //发送给服务器的code 
