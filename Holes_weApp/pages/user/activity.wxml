@@ -1,5 +1,4 @@
 <view class="content-list">
-
   <block wx:for="{{contents}}" wx:for-item="content" wx:for-index="offset" wx:key="index">
     <view catchtap='onDetailTap' data-index='{{offset}}' class="section" hover-class='none'>
       <text class='activity' wx:if="{{content.count > 1}}">我操作过：</text>
@@ -16,7 +15,6 @@
           </view>
           <text>{{content.create_time}}</text>
         </view>
-
       </view>
       <text class="content">{{content.content}}</text>
       <view class="control-block">
@@ -35,5 +33,4 @@
       </view>
     </view>
   </block>
-
 </view>

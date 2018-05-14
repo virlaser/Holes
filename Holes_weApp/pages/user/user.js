@@ -3,12 +3,17 @@ const app = getApp();
 Page({
 
   data: {
-    myContent : 0,
-    myActivity : 0,
-    myNotification : 0,
-    myDay : 0,
-    nickName : wx.getStorageSync('user_nick'),
-    userAvatar : wx.getStorageSync('user_avatar')
+    // 我的帖子数
+    myContent: 0,
+    // 我的动态数
+    myActivity: 0,
+    // 我的通知数
+    myNotification: 0,
+    // 我来到树洞的天数
+    myDay: 0,
+    // 我的昵称与头像
+    nickName: wx.getStorageSync('user_nick'),
+    userAvatar: wx.getStorageSync('user_avatar')
   },
 
   onLoad: function (options) {
@@ -16,15 +21,15 @@ Page({
     app.userLogin();
     wx.request({
       url: app.globalData.domain + '/info',
-      data : {
-        'user_openid' : wx.getStorageSync('user_openid')
+      data: {
+        'user_openid': wx.getStorageSync('user_openid')
       },
-      header:{
-        'content-type' : 'application/json'
+      header: {
+        'content-type': 'application/json'
       },
-      method : 'POST',
-      success: function(res) {
-        if(res.statusCode === 200) {
+      method: 'POST',
+      success: function (res) {
+        if (res.statusCode === 200) {
           var callbackData = res.data;
           // 用户发表帖子数
           var contentNum = callbackData.contentNum;
@@ -35,11 +40,11 @@ Page({
           // 用户注册时间
           var createTime = wx.getStorageSync('create_time');
           that.setData({
-            myContent : contentNum,
-            myActivity : activityNum,
-            myNotification : notificationNum,
+            myContent: contentNum,
+            myActivity: activityNum,
+            myNotification: notificationNum,
             // 计算用户来到树洞的第几天，使用时间戳计算
-            myDay : parseInt((Date.parse(new Date()) - createTime*1000)/(60*60*24*1000))+1,
+            myDay: parseInt((Date.parse(new Date()) - createTime * 1000) / (60 * 60 * 24 * 1000)) + 1,
             nickName: wx.getStorageSync('user_nick'),
             userAvatar: wx.getStorageSync('user_avatar')
           })
@@ -50,7 +55,7 @@ Page({
           })
         }
       },
-      fail: function(res) {
+      fail: function (res) {
         wx.showToast({
           title: '网络错误',
           icon: 'none'

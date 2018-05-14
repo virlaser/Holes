@@ -10,8 +10,20 @@ Page({
   onLoad: function (options) {
     app.userLogin();
     wx.showLoading({
-      title: '正在查询动态',
+      title: '查询中',
     })
+    this.loadContent(1);
+  },
+
+  onPullDownRefresh: function () {
+    app.userLogin();
+    this.setData({
+      'contents': [],
+      currentPage: 1
+    });
+    wx.showLoading({
+      title: '查询中',
+    });
     this.loadContent(1);
   },
 
@@ -31,7 +43,6 @@ Page({
     var contentId = callbackData.id;
     // 帖子在数组中的位置
     var index = callbackData.index;
-    console.log(index);
     // 帖子列表
     var lists = that.data.contents;
     // 先把结果在页面展示，再调用后端逻辑
@@ -52,13 +63,12 @@ Page({
       },
       method: 'POST',
       success: function (res) {
-        if (res.statusCode === 200) {
-          console.log('点赞成功');
-        }
+        if (res.statusCode === 200) {}
       },
       fail: function (res) {
         wx.showToast({
           title: '网络异常',
+          icon: 'none'
         })
       }
     })
@@ -86,13 +96,12 @@ Page({
       },
       method: 'POST',
       success: function (res) {
-        if (res.statusCode === 200) {
-          console.log('点赞成功');
-        }
+        if (res.statusCode === 200) {}
       },
       fail: function (res) {
         wx.showToast({
           title: '网络异常',
+          icon: 'none'
         })
       }
     })
@@ -121,7 +130,6 @@ Page({
       },
       method: 'POST',
       success: function (res) {
-        console.log(res.data);
         if (res.statusCode == "200") {
           var callBackData = res.data;
           var currentContents = that.data.contents;

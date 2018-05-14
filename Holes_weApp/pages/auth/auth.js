@@ -1,4 +1,3 @@
-//js
 Page({
   data: {
     canIUse: wx.canIUse('button.open-type.getUserInfo')
@@ -10,8 +9,12 @@ Page({
         if (res.authSetting['scope.userInfo']) {
           // 已经授权，可以直接调用 getUserInfo 获取头像昵称
           wx.getUserInfo({
-            success: function (res) {
-              console(res.userInfo)
+            success: function (res) { },
+            fail: function (res) {
+              wx.showToast({
+                title: '授权失败',
+                icon: 'none'
+              })
             }
           })
         }
@@ -19,7 +22,6 @@ Page({
     })
   },
   bindGetUserInfo: function (e) {
-    console.log(e.detail.userInfo)
     wx.reLaunch({
       url: '/pages/index/index',
     })

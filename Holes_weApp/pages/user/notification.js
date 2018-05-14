@@ -5,8 +5,8 @@ Page({
   data: {
     currentPage: 1,
     contents: [],
-    userAvatar : wx.getStorageSync('user_avatar'),
-    userNick : wx.getStorageSync('user_nick')
+    userAvatar: wx.getStorageSync('user_avatar'),
+    userNick: wx.getStorageSync('user_nick')
   },
 
   onLoad: function (options) {
@@ -33,7 +33,6 @@ Page({
     var contentId = callbackData.id;
     // 帖子在数组中的位置
     var index = callbackData.index;
-    console.log(index);
     // 帖子列表
     var lists = that.data.contents;
     // 先把结果在页面展示，再调用后端逻辑
@@ -54,14 +53,12 @@ Page({
       },
       method: 'POST',
       success: function (res) {
-        if (res.statusCode === 200) {
-          console.log('点赞成功');
-        }
+        if (res.statusCode === 200) { }
       },
       fail: function (res) {
-        // todo 添加 icon 的 none 属性
         wx.showToast({
           title: '网络异常',
+          icon: 'none'
         })
       }
     })
@@ -89,13 +86,12 @@ Page({
       },
       method: 'POST',
       success: function (res) {
-        if (res.statusCode === 200) {
-          console.log('点赞成功');
-        }
+        if (res.statusCode === 200) { }
       },
       fail: function (res) {
         wx.showToast({
           title: '网络异常',
+          icon: 'none'
         })
       }
     })
@@ -108,7 +104,7 @@ Page({
     var data = that.data.contents[index];
     // 如果当前页面没有头像信息则使用用户的头像
     var avatar = data['avatar'];
-    if(!avatar) {
+    if (!avatar) {
       data['avatar'] = wx.getStorageSync('user_avatar');
     }
     wx.navigateTo({
@@ -129,7 +125,6 @@ Page({
       },
       method: 'POST',
       success: function (res) {
-        console.log(res.data);
         if (res.statusCode == "200") {
           var callBackData = res.data;
           var currentContents = that.data.contents;

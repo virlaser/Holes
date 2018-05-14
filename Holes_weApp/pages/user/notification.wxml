@@ -1,12 +1,10 @@
 <view class="content-list">
-
   <block wx:for="{{contents}}" wx:for-item="content" wx:for-index="offset" wx:key="index">
     <view catchtap='onDetailTap' data-index='{{offset}}' class="section" hover-class='none'>
       <text class='activity' wx:if="{{content.type === 1}}">{{content.nickname}}赞过我的帖子：</text>
       <text class='activity' wx:elif="{{content.type === 3}}">{{content.nickname}}评论过我的帖子：</text>
       <text class='activity' wx:elif="{{content.type === 5}}">{{content.nickname}}赞过我的评论：</text>
       <view class="user-info">
-      <!-- // todo 帖子头像需要修改 -->
         <image src="{{(content.hide===0)?(content.avatar?content.avatar:userAvatar):'/images/default/avatar.jpg'}}"></image>
         <view class="middle">
           <view>
@@ -14,7 +12,6 @@
           </view>
           <text>{{content.create_time}}</text>
         </view>
-
       </view>
       <text class="content">{{content.content}}</text>
       <view class="control-block">
@@ -33,5 +30,4 @@
       </view>
     </view>
   </block>
-
 </view>

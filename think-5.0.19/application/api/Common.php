@@ -10,19 +10,28 @@ namespace app\api\common;
 
 
 use think\Db;
+use think\Exception;
 use think\Request;
 
 // 判断用户是否注册，如果注册则返回userId
 // todo 判断用户登录时间是否过期
 function isLogin(Request $request) {
-    $openId = $request->param('user_openid');
-    $find = Db::name('user')
-        ->where('openid', '=', $openId)
-        ->find();
-    if($find)
-        return $find['id'];
-    else
-        return false;
+    try {
+        $openId = $request->param('user_openid');
+        $find = Db::name('user')
+            ->where('openid', '=', $openId)
+            ->find();
+        if ($find)
+            return $find['id'];
+        else
+            return false;
+    } catch (Exception $exception) {
+        $data = [
+            'status' => 'fail',
+            'message' => $exception->getMessage()
+        ];
+        return json($data);
+    }
 }
 
 // 发送请求给微信服务器获取 openId

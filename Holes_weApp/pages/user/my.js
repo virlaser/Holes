@@ -3,8 +3,10 @@ const app = getApp();
 Page({
 
   data: {
-    currentPage : 1,
-    contents : []
+    // 分页的当前页数
+    currentPage: 1,
+    // 我的帖子信息
+    contents: []
   },
 
   onLoad: function (options) {
@@ -15,25 +17,30 @@ Page({
     this.loadContent(1);
   },
 
+  // 下拉刷新，重置页面数据
   onPullDownRefresh: function () {
     app.userLogin();
-    wx.reLaunch({
-      url: '/pages/user/my',
-    })
+    this.setData({
+      'contents': [],
+      currentPage: 1
+    });
+    wx.showLoading({
+      title: '正在查询我的帖子',
+    });
+    this.loadContent(1);
   },
 
   onReachBottom: function () {
     var currentPage = this.data.currentPage;
     var newPage = currentPage + 1;
     this.setData({
-      'currentPage' : newPage
+      'currentPage': newPage
     })
     this.loadContent(newPage);
   },
 
-  // todo 用户删除帖子之后对应的操作也应该删除，对应的消息也应该删除
   onMoreTap: function (event) {
-    console.log(event);
+    var that = this;
     let itemList = [];
     // 自己只能删除自己的帖子
     if (event.currentTarget.dataset.ismy === 1) {
@@ -72,6 +79,7 @@ Page({
                 } else {
                   wx.showToast({
                     title: '举报失败',
+                    icon: 'none'
                   })
                 }
               }
@@ -79,6 +87,7 @@ Page({
             fail: function (res) {
               wx.showToast({
                 title: '举报失败',
+                icon: 'none'
               })
             }
           })
@@ -100,15 +109,20 @@ Page({
                   },
                   method: 'POST',
                   success: function (res) {
-                    console.log(res);
-                    wx.reLaunch({
-                      url: '/pages/user/my',
-                    })
+                    app.userLogin();
+                    that.setData({
+                      'contents': [],
+                      currentPage: 1
+                    });
+                    wx.showLoading({
+                      title: '正在查询我的帖子',
+                    });
+                    that.loadContent(1);
                   },
                   fail: function (res) {
                     wx.showToast({
                       title: '删除失败',
-                      icon: 'error'
+                      icon: 'none'
                     })
                   }
                 })
@@ -127,7 +141,6 @@ Page({
     var contentId = callbackData.id;
     // 帖子在数组中的位置
     var index = callbackData.index;
-    console.log(index);
     // 帖子列表
     var lists = that.data.contents;
     // 先把结果在页面展示，再调用后端逻辑
@@ -148,13 +161,12 @@ Page({
       },
       method: 'POST',
       success: function (res) {
-        if (res.statusCode === 200) {
-          console.log('点赞成功');
-        }
+        if (res.statusCode === 200) { }
       },
       fail: function (res) {
         wx.showToast({
           title: '网络异常',
+          icon: 'none'
         })
       }
     })
@@ -182,13 +194,12 @@ Page({
       },
       method: 'POST',
       success: function (res) {
-        if (res.statusCode === 200) {
-          console.log('点赞成功');
-        }
+        if (res.statusCode === 200) { }
       },
       fail: function (res) {
         wx.showToast({
           title: '网络异常',
+          icon: 'none'
         })
       }
     })
@@ -217,7 +228,6 @@ Page({
       },
       method: 'POST',
       success: function (res) {
-        console.log(res.data);
         if (res.statusCode == "200") {
           var callBackData = res.data;
           var currentContents = that.data.contents;

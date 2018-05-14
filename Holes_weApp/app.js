@@ -1,7 +1,7 @@
 //app.js
 App({
   onLaunch: function () {
-    
+
   },
 
   userLogin: function () {
@@ -16,10 +16,8 @@ App({
           success: function (res) {
             //发送给服务器的code 
             var code = res.code;
-            console.log(code);
             wx.getUserInfo({
               success: function (res) {
-                console.log(res);
                 //用户昵称
                 var userNick = res.userInfo.nickName;
                 //用户头像地址
@@ -41,7 +39,6 @@ App({
                     },
                     method: 'POST',
                     success: function (res) {
-                      console.log(res.data);
                       //将获取信息写入本地缓存
                       wx.setStorageSync('user_nick', res.data.name);
                       wx.setStorageSync('user_openid', res.data.openid);
@@ -53,7 +50,10 @@ App({
                   })
                 }
                 else {
-                  console.log("获取用户登录态失败！");
+                  wx.showToast({
+                    title: '登录失败',
+                    icon: 'none'
+                  })
                 }
               },
               fail: function (error) {
@@ -64,15 +64,18 @@ App({
             })
           },
           fail: function (error) {
-            console.log('login failed ' + error);
+            wx.showToast({
+              title: '登录失败',
+              icon: 'none'
+            })
           }
         })
       }
     } catch (e) {
       wx.showToast({
         title: '系统出错',
+        icon: 'none'
       })
-      console.log(e);
     }
   },
 
