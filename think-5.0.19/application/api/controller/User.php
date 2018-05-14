@@ -209,6 +209,7 @@ class User extends Controller {
     }
 
     // 用户动态
+    // todo 不计入用户给评论点赞的动态
     public function activity(Request $request) {
         $data = array();
         // 检查用户登录
@@ -411,11 +412,6 @@ class User extends Controller {
                 ->where('id', '=', $b['from_user'])
                 ->field('nickname')
                 ->find();
-            // 得到通知来源帖子信息
-//            $contentInfo = Db::name('content')
-//                ->where('id', '=', $b['hole_comment.content_id'])
-//                ->find();
-
             $contentInfo = Db::table('hole_content')
                 ->where('hole_content.id', '=', $b['content_id'])
                 ->join('hole_user', 'hole_user.id=hole_content.user_id')
