@@ -3,8 +3,11 @@ const app = getApp()
 Page({
 
   data: {
+    // 从上个页面传来的帖子信息
     rawData: [],
+    // 帖子的评论信息
     comments: [],
+    // 分页信息
     currentPage: 1
   },
 
@@ -17,8 +20,8 @@ Page({
 
   onPullDownRefresh: function () {
     this.setData({
-      'comments' : [],
-      'currentPage' : 1
+      'comments': [],
+      'currentPage': 1
     })
     this.loadComment(1);
   },
@@ -27,7 +30,7 @@ Page({
     var currentPage = this.data.currentPage;
     var nextPage = currentPage + 1;
     this.setData({
-      'currentPage' : nextPage
+      'currentPage': nextPage
     })
     this.loadComment(nextPage);
   },
@@ -39,94 +42,91 @@ Page({
     }
   },
 
-  onLikeTap: function(event) {
-    console.log(event);
+  onLikeTap: function (event) {
     var that = this;
     var callbackData = event.currentTarget.dataset;
     // 帖子id
     var contentId = callbackData.id;
     // 当前用户是否为帖子点赞过
     var like_flag = callbackData.flag;
+    // 当前帖子喜欢人数
     var like_num = callbackData.num;
-    like_flag = like_flag?0:1;
-    like_num = like_flag?(like_num+1):(like_num-1);
-    // 前端先更新数据渲染
+    like_flag = like_flag ? 0 : 1;
+    like_num = like_flag ? (like_num + 1) : (like_num - 1);
+    // 前端先更新数据渲染，然后发送请求给后端
     var data = that.data.rawData;
     data['like_flag'] = like_flag;
     data['like_num'] = like_num;
     that.setData({
-      'rawData' : data
+      'rawData': data
     })
     wx.request({
       url: app.globalData.domain + '/like',
       data: {
-        'content_id' : contentId,
-        'user_openid' : wx.getStorageSync('user_openid')
+        'content_id': contentId,
+        'user_openid': wx.getStorageSync('user_openid')
       },
       header: {
-        'content-type' : 'application/json'
+        'content-type': 'application/json'
       },
-      method : 'POST',
-      success:function(res) {
-        if(res.statusCode === 200) {
-          console.log('点赞成功');
-        }
+      method: 'POST',
+      success: function (res) {
+        if (res.statusCode === 200) { }
       },
-      fail: function(res) {
+      fail: function (res) {
         wx.showToast({
           title: '网络异常',
+          icon: 'none'
         })
       }
     })
   },
 
-  onDislikeTap: function(event) {
+  onDislikeTap: function (event) {
     var that = this;
-    var callbackData =  event.currentTarget.dataset;
+    var callbackData = event.currentTarget.dataset;
     var contentId = callbackData.id;
     var dislike_flag = callbackData.flag;
     var dislike_num = callbackData.num;
-    dislike_flag = dislike_flag?0:1;
-    dislike_num = dislike_flag?(dislike_num+1):(dislike_num-1);
+    dislike_flag = dislike_flag ? 0 : 1;
+    dislike_num = dislike_flag ? (dislike_num + 1) : (dislike_num - 1);
     var data = that.data.rawData;
     data['dislike_flag'] = dislike_flag;
     data['dislike_num'] = dislike_num;
     that.setData({
-      'rawData' : data
+      'rawData': data
     })
     wx.request({
       url: app.globalData.domain + '/dislike',
       data: {
-        'content_id' : contentId,
-        'user_openid' : wx.getStorageSync('user_openid')
+        'content_id': contentId,
+        'user_openid': wx.getStorageSync('user_openid')
       },
       header: {
-        'content-type' : 'application/json'
+        'content-type': 'application/json'
       },
       method: 'POST',
-      success: function(res) {
-        if(res.statusCode === 200) {
-          console.log('点踩成功');
-        }
+      success: function (res) {
+        if (res.statusCode === 200) { }
       },
-      fail: function(res) {
+      fail: function (res) {
         wx.showToast({
           title: '网络异常',
+          icon: 'none'
         })
       }
     })
   },
 
-  onCommentTap: function(event) {
-    var that = this;
+  onCommentTap: function (event) {
     // 传递帖子信息到评论页面
-    var data = that.data.rawData;
+    var data = this.data.rawData;
     wx.navigateTo({
       url: '/pages/index/reply?data=' + JSON.stringify(data),
     })
   },
 
-  onCommentLikeTap: function(event) {
+  onCommentLikeTap: function (event) {
     var that = this;
     var callbackData = event.currentTarget.dataset;
     var data = that.data.comments;
@@ -139,31 +139,30 @@ Page({
     // 帖子id
     var content_id = data[index].content_id;
     // 点击按钮后按钮状态改变，先在前端展示
-    like_flag = like_flag?0:1;
-    like_num = like_flag?(like_num+1):(like_num-1);
+    like_flag = like_flag ? 0 : 1;
+    like_num = like_flag ? (like_num + 1) : (like_num - 1);
     data[index]['like_flag'] = like_flag;
     data[index]['like_num'] = like_num;
     that.setData({
-      'comments' : data
+      'comments': data
     });
     wx.request({
       url: app.globalData.domain + '/commentlike',
       data: {
-        'comment_id' : comment_id,
-        'user_openid' : wx.getStorageSync('user_openid')
+        'comment_id': comment_id,
+        'user_openid': wx.getStorageSync('user_openid')
       },
       header: {
-        'content-type' : 'application/json'
+        'content-type': 'application/json'
       },
       method: 'POST',
-      success: function(res) {
-        if(res.statusCode === 200) {
-          console.log('给评论点赞成功');
-        }
+      success: function (res) {
+        if (res.statusCode === 200) { }
       },
-      fail: function(res) {
+      fail: function (res) {
         wx.showToast({
           title: '网络异常',
+          icon: 'none'
         })
       }
     })
@@ -183,7 +182,6 @@ Page({
       },
       method: 'POST',
       success: function (res) {
-        console.log(res.data);
         if (res.statusCode == "200") {
           var callBackData = res.data;
           var currentComments = that.data.comments;
@@ -195,7 +193,7 @@ Page({
         } else {
           wx.showModal({
             title: '加载失败',
-            content: '服务器出了点问题',
+            content: '服务器出了点问题，请退出重试',
             showCancel: false,
             confirmText: '好的',
             confirmColor: '#EE8AB0'
@@ -205,7 +203,7 @@ Page({
       fail: function (res) {
         wx.showModal({
           title: '加载失败',
-          content: '服务器出了点问题',
+          content: '服务器出了点问题，请退出重试',
           showCancel: false,
           confirmText: '好的',
           confirmColor: '#EE8AB0'

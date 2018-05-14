@@ -160,7 +160,7 @@ Page({
       },
       method: 'POST',
       success: function (res) {
-        if (res.statusCode === 200) {}
+        if (res.statusCode === 200) { }
       },
       fail: function (res) {
         wx.showToast({
@@ -194,7 +194,7 @@ Page({
       },
       method: 'POST',
       success: function (res) {
-        if (res.statusCode === 200) {}
+        if (res.statusCode === 200) { }
       },
       fail: function (res) {
         wx.showToast({

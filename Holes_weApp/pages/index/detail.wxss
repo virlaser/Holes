@@ -1,156 +1,155 @@
-/* pages/post/detail.wxss */
 page {
-    background-color: #ece5d8;
+  background-color: #ece5d8;
 }
 
 .content-block {
-    background: #fff;
-    color: #503e2c;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+  background: #fff;
+  color: #503e2c;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
 }
 
 .content-block .user-info {
-     margin: 20rpx 30rpx;
-     display: flex;
+  margin: 20rpx 30rpx;
+  display: flex;
 }
 
 .content-block .user-info view {
-    margin: 0 20rpx;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
+  margin: 0 20rpx;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .content-block .user-info view text {
-    display: block;
-    color: #b2b2b2;
-    font-size: 28rpx;
-    margin: 5rpx 0;
+  display: block;
+  color: #b2b2b2;
+  font-size: 28rpx;
+  margin: 5rpx 0;
 }
 
 .content-block .user-info view .nickname {
-    color: #7d4a2b;
-    font-size: 30rpx;
-    font-weight: bold;
+  color: #7d4a2b;
+  font-size: 30rpx;
+  font-weight: bold;
 }
 
-.content-block .user-info image{
-    width: 90rpx;
-    height: 90rpx;
-    border-radius: 50%;
-    overflow: hidden;
+.content-block .user-info image {
+  width: 90rpx;
+  height: 90rpx;
+  border-radius: 50%;
+  overflow: hidden;
 }
 
 .content-block .user-info image.icon-more {
-    width: 45rpx;
-    height: 45rpx;
+  width: 45rpx;
+  height: 45rpx;
 }
 
 .content-block .content {
-    display: block;
-    margin: 20rpx 30rpx;
-    font-size: 32rpx;
-    line-height: 1.5;
+  display: block;
+  margin: 20rpx 30rpx;
+  font-size: 32rpx;
+  line-height: 1.5;
 }
 
 .content-block .photos {
-    margin: 20rpx 30rpx;
+  margin: 20rpx 30rpx;
 }
 
-.content-block .photos image{
-    position: relative;
-    display: inline-block;
-    color: #dbdbdb;
-    font-weight: 300;
-    margin-bottom: 20rpx;
+.content-block .photos image {
+  position: relative;
+  display: inline-block;
+  color: #dbdbdb;
+  font-weight: 300;
+  margin-bottom: 20rpx;
 }
 
 .content-block .control-block {
-    display: flex;
-    border-top: 1px solid #dfd5cb;
-    margin: 0 30rpx;
+  display: flex;
+  border-top: 1px solid #dfd5cb;
+  margin: 0 30rpx;
 }
 
 .content-block .control-block .button {
-    display: flex;
-    flex: 1;
-    border: none;
-    border-right: 1rpx solid #dfd5cb;
-    border-radius: 0;
-    background: transparent;
-    padding: 20rpx 0;
-    margin: 0;
-    font-size: 26rpx;
-    color: #9e8c7b;
-    font-weight: 400;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  flex: 1;
+  border: none;
+  border-right: 1rpx solid #dfd5cb;
+  border-radius: 0;
+  background: transparent;
+  padding: 20rpx 0;
+  margin: 0;
+  font-size: 26rpx;
+  color: #9e8c7b;
+  font-weight: 400;
+  align-items: center;
+  justify-content: center;
 }
 
 .content-block .control-block .button image {
-    width: 45rpx;
-    height: 45rpx;
+  width: 45rpx;
+  height: 45rpx;
 }
 
 .content-block .control-block .button text {
-    margin: 0 10rpx;
+  margin: 0 10rpx;
 }
 
 .content-block .control-block .button:last-child {
-    border-right: none;
+  border-right: none;
 }
 
 .content-block .control-block .button::after {
-    display: none;
+  display: none;
 }
 
 .content-list {
-    background: #fff;
-    color: #503e2c;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
-    margin: 20rpx 0;
+  background: #fff;
+  color: #503e2c;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+  margin: 20rpx 0;
 }
 
 .content-list .section {
-    background: #fff;
-    color: #503e2c;
-    padding: 20rpx 30rpx;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    border-bottom: 1px solid #dfd5cb;
+  background: #fff;
+  color: #503e2c;
+  padding: 20rpx 30rpx;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  border-bottom: 1px solid #dfd5cb;
 }
 
 .content-list .section:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 .content-list .section .avatar {
-    width: 90rpx;
-    height: 90rpx;
-    border-radius: 50%;
-    overflow: hidden;
+  width: 90rpx;
+  height: 90rpx;
+  border-radius: 50%;
+  overflow: hidden;
 }
 
 .content-list .right-column {
-    flex: 1;
-    margin-left: 10rpx;
+  flex: 1;
+  margin-left: 10rpx;
 }
 
 .content-list .right-column .title {
-    display: flex;
+  display: flex;
 }
 
 .content-list .right-column .title .nickname {
-    display: block;
-    color: #7d4a2b;
-    font-size: 30rpx;
-    font-weight: bold;
-    flex: 1;
+  display: block;
+  color: #7d4a2b;
+  font-size: 30rpx;
+  font-weight: bold;
+  flex: 1;
 }
 
 .title {
@@ -159,14 +158,14 @@ page {
 }
 
 .content-list .right-column .title .reply-time {
-    color: #b2b2b2;
-    font-size: 28rpx;
+  color: #b2b2b2;
+  font-size: 28rpx;
 }
 
 .content-list .right-column .content {
-    display: block;
-    margin: 15rpx 0;
-    font-size: 32rpx;
+  display: block;
+  margin: 15rpx 0;
+  font-size: 32rpx;
 }
 
 .comment-like {
@@ -182,6 +181,6 @@ page {
 .comment-like-button {
   display: inline-block;
   margin: 0 10rpx;
-   height: 48rpx;
+  height: 48rpx;
   width: 48rpx;
 }
