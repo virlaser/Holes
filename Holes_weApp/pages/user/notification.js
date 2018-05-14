@@ -106,6 +106,11 @@ Page({
     var callbackData = event.currentTarget.dataset;
     var index = callbackData.index;
     var data = that.data.contents[index];
+    // 如果当前页面没有头像信息则使用用户的头像
+    var avatar = data['avatar'];
+    if(!avatar) {
+      data['avatar'] = wx.getStorageSync('user_avatar');
+    }
     wx.navigateTo({
       url: '/pages/index/detail?data=' + JSON.stringify(data)
     })
