@@ -11,7 +11,7 @@
  Target Server Version : 50638
  File Encoding         : 65001
 
- Date: 12/05/2018 00:27:54
+ Date: 15/05/2018 00:15:22
 */
 
 SET NAMES utf8mb4;
@@ -52,7 +52,7 @@ CREATE TABLE `hole_content` (
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for hole_operate
@@ -64,11 +64,11 @@ CREATE TABLE `hole_operate` (
   `from_user` int(10) unsigned NOT NULL COMMENT '操作用户的id',
   `to_user` int(10) unsigned NOT NULL COMMENT '要通知用户的id',
   `flag` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '用户是否查看操作通知，0：未查看，1：查看',
-  `object_id` int(10) unsigned NOT NULL COMMENT '用户操作对象id，type=4时为评论id，其余为内容id',
+  `object_id` int(10) unsigned NOT NULL COMMENT '用户操作对象id，type=5时为评论id，其余为内容id',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for hole_user
@@ -85,6 +85,6 @@ CREATE TABLE `hole_user` (
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS = 1;
