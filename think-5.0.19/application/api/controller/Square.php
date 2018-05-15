@@ -30,9 +30,12 @@ class Square extends Controller {
                 ];
                 return json($data);
             }
-            // 查出帖子对应的点赞等信息以及以及发帖的用户信息，最后分页
+            // 查出帖子对应的点赞等信息以及以及发帖的用户信息，最后分页。置顶的帖子不算
             $lists = Db::table('hole_content')
-                ->where('is_delete', '=', 0)
+                ->where([
+                    'is_delete' => 0,
+                    'flag' => 0
+                ])
                 ->join('hole_user', 'hole_content.user_id=hole_user.id')
                 ->field('hole_content.*, hole_user.nickname, hole_user.avatar')
                 ->order('hole_content.create_time desc')
