@@ -5,10 +5,13 @@
       <text class='activity' wx:elif="{{content.type === 3}}">{{content.nickname}}评论过我的帖子：</text>
       <text class='activity' wx:elif="{{content.type === 5}}">{{content.nickname}}赞过我的评论：</text>
       <view class="user-info">
+        <!-- 别人赞过我的评论，只有当 content 中有 avatar 属性时才会出现我评论的帖子的用户的头像 -->
         <image src="{{(content.hide===0)?(content.avatar?content.avatar:userAvatar):'/images/default/avatar.jpg'}}"></image>
         <view class="middle">
           <view>
-            <text class="nickname">{{content.hide?'匿名':content.nickname}}</text>
+            <text class="nickname" wx:if="{{content.type === 5}}">{{content.hide?'匿名':content.nickname}}</text>
+            <!-- 通知来源我的帖子，因此直接显示我的昵称 -->
+            <text class="nickname" wx:else>{{content.hide?'匿名':userNick}}</text>
           </view>
           <text>{{content.create_time}}</text>
         </view>

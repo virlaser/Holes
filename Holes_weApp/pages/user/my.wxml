@@ -6,8 +6,6 @@
         <view class="middle">
           <view>
             <text class="nickname">{{content.hide?'匿名':content.nickname}}</text>
-            <!-- //todo 将置顶单独分出一块视图 -->
-            <text class="top" wx:if="{{content.flag === 1}}">置顶</text>
           </view>
           <text>{{content.create_time}}</text>
         </view>
