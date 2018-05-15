@@ -28,5 +28,7 @@ return [
     'comment' => 'api/post/comment',
     // 用户信息
     'info' => 'api/user/info',
+    // 用户查询置顶的帖子
+    'top' => 'api/square/top'
 
 ];

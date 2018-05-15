@@ -94,6 +94,73 @@ class Square extends Controller {
         }
     }
 
+    // 显示主页置顶帖子列表
+    public function top(Request $request) {
+        try {
+            $data = array();
+            if (isLogin($request)) {
+                $userId = isLogin($request);
+            } else {
+                $data = [
+                    'status' => 'fail',
+                    'message' => '用户登录信息错误'
+                ];
+                return json($data);
+            }
+            // 查出帖子对应的点赞等信息以及以及发帖的用户信息，最后分页
+            $lists = Db::table('hole_content')
+                ->where([
+                    'is_delete' => 0,
+                    'flag' => 1
+                ])
+                ->join('hole_user', 'hole_content.user_id=hole_user.id')
+                ->field('hole_content.*, hole_user.nickname, hole_user.avatar')
+                ->order('hole_content.create_time desc')
+                ->select();
+            foreach ($lists as $e) {
+                // 判断此用户是否点赞过帖子
+                $like_flag = Db::name('operate')
+                    ->where([
+                        'from_user' => $userId,
+                        'object_id' => $e['id'],
+                        'type' => 1
+                    ])
+                    ->find();
+                $like_flag = $like_flag ? 1 : 0;
+                // 判断此用户是否点踩过帖子
+                $dislike_flag = Db::name('operate')
+                    ->where([
+                        'from_user' => $userId,
+                        'object_id' => $e['id'],
+                        'type' => 2
+                    ])
+                    ->find();
+                $dislike_flag = $dislike_flag ? 1 : 0;
+                // 判断此用户是否评论过帖子
+                $comment_flag = Db::name('operate')
+                    ->where([
+                        'from_user' => $userId,
+                        'object_id' => $e['id'],
+                        'type' => 3
+                    ])
+                    ->find();
+                $comment_flag = $comment_flag ? 1 : 0;
+                // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
+                $e['like_flag'] = $like_flag;
+                $e['dislike_flag'] = $dislike_flag;
+                $e['comment_flag'] = $comment_flag;
+                array_push($data, $e);
+            }
+            return json($data);
+        } catch (Exception $exception){
+            $data = [
+                'status' => 'fail',
+                'message' => $exception->getMessage()
+            ];
+            return json($data);
+        }
+    }
+
     // 用户对帖子点赞
     public function like(Request $request) {
         try {

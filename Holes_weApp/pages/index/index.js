@@ -4,15 +4,37 @@ Page({
 
   data: {
     currentPage: 1,
+    topContents: [],
     contents: [],
   },
 
   onLoad: function () {
+    var that = this;
     // todo 应该改为同步操作
     app.userLogin();
     wx.showLoading({
       title: '正在查询树洞帖子',
     })
+    // 首先查询要置顶的帖子，不分页
+    wx.request({
+      url: app.globalData.domain + '/top',
+      data: {
+        'user_openid': wx.getStorageSync('user_openid')
+      },
+      header: {
+        'content-type': 'application/json'
+      },
+      method: 'POST',
+      success: function(res) {
+        if(res.statusCode == 200) {
+          var callbackData = res.data;
+          that.setData({
+            topContents: callbackData
+          })
+        }
+      }
+    })
+    // 之后查询普通帖子，分页
     this.loadContent(1);
   },
 
@@ -211,6 +233,18 @@ Page({
     var callbackData = event.currentTarget.dataset;
     var index = callbackData.index;
     var data = that.data.contents[index];
+    // 进入帖子详情的时候携带当前帖子的点赞、点踩、评论等数据
+    wx.navigateTo({
+      url: '/pages/index/detail?data=' + JSON.stringify(data)
+    })
+  },
+
+  // 用户点击帖子详情
+  onTopDetailTap: function (event) {
+    var that = this;
+    var callbackData = event.currentTarget.dataset;
+    var index = callbackData.index;
+    var data = that.data.topContents[index];
     // 进入帖子详情的时候携带当前帖子的点赞、点踩、评论等数据
     wx.navigateTo({
       url: '/pages/index/detail?data=' + JSON.stringify(data)

@@ -1,10 +1,10 @@
-//app.js
 App({
   onLaunch: function () {
 
   },
 
   userLogin: function () {
+    var that = this;
     // 登录
     // todo 异步执行操作会出现问题
     try {
@@ -27,7 +27,7 @@ App({
                 if (code) {
                   wx.request({
                     //服务器的地址，现在微信小程序只支持https请求，所以调试的时候请勾选不校监安全域名
-                    url: 'http://localhost/login',
+                    url: getApp().globalData.domain + '/login',
                     data: {
                       code: code,
                       nick: userNick,
