@@ -27,8 +27,8 @@ class User extends Controller {
             $code = $request->param('code');
             $gender = $request->param('sex');
             // 使用 code 换取 openID
-            $appId = 'wxed70f591f216227e';
-            $appSecret = 'bc6baf64baa48060581fbd0cc9f007f4';
+            $appId = config('appId');
+            $appSecret = config('appSecret');
             $url = 'https://api.weixin.qq.com/sns/jscode2session?appid=' . $appId . '&secret=' . $appSecret . '&js_code=' . $code . '&grant_type=authorization_code';
             $json = common\curl_get_https($url);
             // 存储得到的用户 openID ，使用 openID 当做用户在系统的凭证
