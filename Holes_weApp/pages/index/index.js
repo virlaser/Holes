@@ -193,6 +193,45 @@ Page({
     })
   },
 
+  // 用户点击置顶点赞按钮
+  onTopLikeTap: function (event) {
+    var that = this;
+    var callbackData = event.currentTarget.dataset;
+    // 帖子id
+    var contentId = callbackData.id;
+    // 帖子在数组中的位置
+    var index = callbackData.index;
+    // 帖子列表
+    var lists = that.data.topContents;
+    // 先把结果在页面展示，再调用后端逻辑
+    lists[index].like_flag = lists[index].like_flag ? 0 : 1;
+    lists[index].like_num = lists[index].like_flag ? (lists[index].like_num + 1) : (lists[index].like_num - 1);
+    // 实时数据渲染
+    that.setData({
+      'topContents': lists
+    })
+    wx.request({
+      url: app.globalData.domain + '/like',
+      data: {
+        'content_id': contentId,
+        'user_openid': wx.getStorageSync('user_openid')
+      },
+      header: {
+        'content-type': 'application/json'
+      },
+      method: 'POST',
+      success: function (res) {
+        if (res.statusCode === 200) { }
+      },
+      fail: function (res) {
+        wx.showToast({
+          title: '网络异常',
+          icon: 'none'
+        })
+      }
+    })
+  },
+
   // 用户点击点踩按钮
   onDislikeTap: function (event) {
     var that = this;
@@ -204,6 +243,40 @@ Page({
     lists[index].dislike_num = lists[index].dislike_flag ? (lists[index].dislike_num + 1) : (lists[index].dislike_num - 1);
     that.setData({
       'contents': lists
+    })
+    wx.request({
+      url: app.globalData.domain + '/dislike',
+      data: {
+        'content_id': contentId,
+        'user_openid': wx.getStorageSync('user_openid')
+      },
+      header: {
+        'content-type': 'application/json'
+      },
+      method: 'POST',
+      success: function (res) {
+        if (res.statusCode === 200) { }
+      },
+      fail: function (res) {
+        wx.showToast({
+          title: '网络异常',
+          icon: 'none'
+        })
+      }
+    })
+  },
+
+  // 用户点击置顶点踩按钮
+  onTopDislikeTap: function (event) {
+    var that = this;
+    var callbackData = event.currentTarget.dataset;
+    var contentId = callbackData.id;
+    var index = callbackData.index;
+    var lists = that.data.topContents;
+    lists[index].dislike_flag = lists[index].dislike_flag ? 0 : 1;
+    lists[index].dislike_num = lists[index].dislike_flag ? (lists[index].dislike_num + 1) : (lists[index].dislike_num - 1);
+    that.setData({
+      'topContents': lists
     })
     wx.request({
       url: app.globalData.domain + '/dislike',
@@ -239,7 +312,7 @@ Page({
     })
   },
 
-  // 用户点击帖子详情
+  // 用户点击置顶帖子详情
   onTopDetailTap: function (event) {
     var that = this;
     var callbackData = event.currentTarget.dataset;

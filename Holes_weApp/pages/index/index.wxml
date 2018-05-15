@@ -14,11 +14,11 @@
       </view>
       <text class="content">{{content.content}}</text>
       <view class="control-block">
-        <view class="button" data-id='{{content.id}}' data-index='{{offset}}' catchtap="onLikeTap">
+        <view class="button" data-id='{{content.id}}' data-index='{{offset}}' catchtap="onTopLikeTap">
           <image src="{{content.like_flag===0?'/images/icon-like.png':'/images/icon-like-selected.png'}}"></image>
           <text>{{content.like_num===0?'赞':(content.like_num)}}</text>
         </view>
-        <view class="button" data-id='{{content.id}}' data-index='{{offset}}' catchtap="onDislikeTap">
+        <view class="button" data-id='{{content.id}}' data-index='{{offset}}' catchtap="onTopDislikeTap">
           <image src="{{content.dislike_flag===0?'/images/icon-dislike.png':'/images/icon-dislike-selected.png'}}"></image>
           <text>{{content.dislike_num===0?'踩':(content.dislike_num)}}</text>
         </view>
