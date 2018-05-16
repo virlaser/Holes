@@ -13,7 +13,7 @@ Page({
     // todo 应该改为同步操作
     app.userLogin();
     wx.showLoading({
-      title: '正在查询树洞帖子',
+      title: '正在查询帖子',
     })
     // 首先查询要置顶的帖子，不分页
     wx.request({

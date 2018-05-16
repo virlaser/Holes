@@ -81,6 +81,6 @@ App({
 
   globalData: {
     userInfo: null,
-    domain: 'http://localhost'
+    domain: 'https://shudong.wutnews.net'
   }
 })

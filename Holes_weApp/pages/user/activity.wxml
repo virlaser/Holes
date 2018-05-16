@@ -6,7 +6,7 @@
       <text class='activity' wx:elif="{{content.dislike_flag == 1}}">我点踩过：</text>
       <text class='activity' wx:elif="{{content.comment_flag == 1}}">我评论过：</text>
       <text class='activity' wx:elif="{{content.report_flag == 1}}">我举报过：</text>
-      <text class='activity' wx:else>我点赞过评论：</text>
+      <text class='activity' wx:else>我操作过：</text>
       <view class="user-info">
         <image src="{{(content.hide===0)?content.avatar:'/images/default/avatar.jpg'}}"></image>
         <view class="middle">
