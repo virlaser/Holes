@@ -14,7 +14,6 @@ use app\api\common;
 use think\Db;
 use think\Exception;
 use think\Request;
-use function app\api\common\isLogin;
 
 class User extends Controller {
 
@@ -104,8 +103,8 @@ class User extends Controller {
 
     // 用户信息，如用户发的帖子，动态等
     public function info(Request $request) {
-        if(isLogin($request)) {
-            $userId = isLogin($request);
+        if(common\isLogin($request)) {
+            $userId = common\isLogin($request);
         } else {
             $data = [
                 'status' => 'fail',
@@ -147,8 +146,8 @@ class User extends Controller {
     public function posts(Request $request) {
         try {
             $data = array();
-            if (isLogin($request)) {
-                $userId = isLogin($request);
+            if (common\isLogin($request)) {
+                $userId = common\isLogin($request);
             } else {
                 $data = [
                     'status' => 'fail',
@@ -227,8 +226,8 @@ class User extends Controller {
     public function activity(Request $request) {
         try {
             $data = array();
-            if (isLogin($request)) {
-                $userId = isLogin($request);
+            if (common\isLogin($request)) {
+                $userId = common\isLogin($request);
             } else {
                 $data = [
                     'status' => 'fail',
@@ -323,8 +322,8 @@ class User extends Controller {
     // 用户消息，用户被点踩和被举报不通知用户
     public function notifications(Request $request) {
         try {
-            if (isLogin($request)) {
-                $userId = isLogin($request);
+            if (common\isLogin($request)) {
+                $userId = common\isLogin($request);
             } else {
                 $data = [
                     'status' => 'fail',

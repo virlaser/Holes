@@ -8,8 +8,7 @@
 
 namespace app\api\controller;
 
-
-use function app\api\common\isLogin;
+use app\api\common;
 use think\Controller;
 use think\Db;
 use think\Exception;
@@ -21,8 +20,8 @@ class Square extends Controller {
     public function index(Request $request) {
         try {
             $data = array();
-            if (isLogin($request)) {
-                $userId = isLogin($request);
+            if (common\isLogin($request)) {
+                $userId = common\isLogin($request);
             } else {
                 $data = [
                     'status' => 'fail',
@@ -101,8 +100,8 @@ class Square extends Controller {
     public function top(Request $request) {
         try {
             $data = array();
-            if (isLogin($request)) {
-                $userId = isLogin($request);
+            if (common\isLogin($request)) {
+                $userId = common\isLogin($request);
             } else {
                 $data = [
                     'status' => 'fail',
@@ -167,8 +166,8 @@ class Square extends Controller {
     // 用户对帖子点赞
     public function like(Request $request) {
         try {
-            if (isLogin($request)) {
-                $userId = isLogin($request);
+            if (common\isLogin($request)) {
+                $userId = common\isLogin($request);
             } else {
                 $data = [
                     'status' => 'fail',
@@ -247,8 +246,8 @@ class Square extends Controller {
     // 用户给帖子点踩
     public function dislike(Request $request) {
         try {
-            if (isLogin($request)) {
-                $userId = isLogin($request);
+            if (common\isLogin($request)) {
+                $userId = common\isLogin($request);
             } else {
                 $data = [
                     'status' => 'fail',
@@ -319,8 +318,8 @@ class Square extends Controller {
     // 用户举报帖子
     public function report(Request $request) {
         try {
-            if (isLogin($request)) {
-                $userId = isLogin($request);
+            if (common\isLogin($request)) {
+                $userId = common\isLogin($request);
             } else {
                 $data = [
                     'status' => 'fail',
@@ -373,8 +372,8 @@ class Square extends Controller {
     // 删除帖子，只是把帖子的 is_delete 标志位变成 1 然后删除相应的操作
     public function delete(Request $request) {
         try {
-            if (isLogin($request)) {
-                $userId = isLogin($request);
+            if (common\isLogin($request)) {
+                $userId = common\isLogin($request);
             } else {
                 $data = [
                     'status' => 'fail',
@@ -434,8 +433,8 @@ class Square extends Controller {
     public function detail(Request $request) {
         try {
             $data = array();
-            if (isLogin($request)) {
-                $userId = isLogin($request);
+            if (common\isLogin($request)) {
+                $userId = common\isLogin($request);
             } else {
                 $data = [
                     'status' => 'fail',
@@ -478,8 +477,8 @@ class Square extends Controller {
     // 对帖子的评论点赞
     public function commentlike(Request $request) {
         try {
-            if (isLogin($request)) {
-                $userId = isLogin($request);
+            if (common\isLogin($request)) {
+                $userId = common\isLogin($request);
             } else {
                 $data = [
                     'status' => 'fail',

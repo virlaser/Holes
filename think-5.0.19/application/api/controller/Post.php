@@ -9,17 +9,17 @@
 namespace app\api\controller;
 
 
+use app\api\common;
 use think\Db;
 use think\Exception;
 use think\Request;
-use function app\api\common\isLogin;
 
 class Post {
 
     // 用户发帖
     public function create(Request $request) {
-            if (isLogin($request)) {
-                $userId = isLogin($request);
+            if (common\isLogin($request)) {
+                $userId = common\isLogin($request);
             } else {
                 $data = [
                     'status' => 'fail',
@@ -55,8 +55,8 @@ class Post {
     // 用户评论帖子
     public function comment(Request $request) {
         try {
-            if (isLogin($request)) {
-                $userId = isLogin($request);
+            if (common\isLogin($request)) {
+                $userId = common\isLogin($request);
             } else {
                 $data = [
                     'status' => 'fail',
