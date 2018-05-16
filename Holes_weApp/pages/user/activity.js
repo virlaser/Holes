@@ -139,23 +139,17 @@ Page({
           });
           wx.hideLoading();
         } else {
-          wx.showModal({
-            title: '加载失败',
-            content: '服务器出了点问题',
-            showCancel: false,
-            confirmText: '好的',
-            confirmColor: '#EE8AB0'
-          });
+          wx.showToast({
+            title: '网络异常',
+            icon: 'none'
+          })
         }
       },
       fail: function (res) {
-        wx.showModal({
-          title: '加载失败',
-          content: '服务器出了点问题',
-          showCancel: false,
-          confirmText: '好的',
-          confirmColor: '#EE8AB0'
-        });
+        wx.showToast({
+          title: '网络异常',
+          icon: 'none'
+        })
       },
       complete: function () {
         wx.stopPullDownRefresh();

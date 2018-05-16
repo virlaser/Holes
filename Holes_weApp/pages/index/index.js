@@ -9,31 +9,12 @@ Page({
   },
 
   onLoad: function () {
-    var that = this;
     // todo 应该改为同步操作
     app.userLogin();
     wx.showLoading({
       title: '正在查询帖子',
     })
-    // 首先查询要置顶的帖子，不分页
-    wx.request({
-      url: app.globalData.domain + '/top',
-      data: {
-        'user_openid': wx.getStorageSync('user_openid')
-      },
-      header: {
-        'content-type': 'application/json'
-      },
-      method: 'POST',
-      success: function(res) {
-        if(res.statusCode == 200) {
-          var callbackData = res.data;
-          that.setData({
-            topContents: callbackData
-          })
-        }
-      }
-    })
+    this.loadTopContent();
     // 之后查询普通帖子，分页
     this.loadContent(1);
   },
@@ -41,9 +22,16 @@ Page({
   // 用户下拉页面刷新是直接重新载入此页面
   onPullDownRefresh: function () {
     app.userLogin();
-    wx.reLaunch({
-      url: '/pages/index/index',
-    })
+    this.setData({
+      contents: [],
+      currentPage: 1,
+      topContents: []
+    });
+    wx.showLoading({
+      title: '正在查询帖子',
+    });
+    this.loadTopContent();
+    this.loadContent(1);
   },
 
   // 用户触底时将请求的分页页面加一
@@ -347,26 +335,44 @@ Page({
           });
           wx.hideLoading();
         } else {
-          wx.showModal({
-            title: '加载失败',
-            content: '服务器出了点问题',
-            showCancel: false,
-            confirmText: '好的',
-            confirmColor: '#EE8AB0'
-          });
+          wx.showToast({
+            title: '网络异常',
+            icon: 'none'
+          })
         }
       },
       fail: function (res) {
-        wx.showModal({
-          title: '加载失败',
-          content: '服务器出了点问题',
-          showCancel: false,
-          confirmText: '好的',
-          confirmColor: '#EE8AB0'
-        });
+        wx.showToast({
+          title: '网络异常',
+          icon: 'none'
+        })
       },
       complete: function () {
         wx.stopPullDownRefresh();
+      }
+    })
+  },
+
+  // 置顶帖子加载函数
+  loadTopContent: function () {
+    var that = this;
+    // 首先查询要置顶的帖子，不分页
+    wx.request({
+      url: app.globalData.domain + '/top',
+      data: {
+        'user_openid': wx.getStorageSync('user_openid')
+      },
+      header: {
+        'content-type': 'application/json'
+      },
+      method: 'POST',
+      success: function (res) {
+        if (res.statusCode == 200) {
+          var callbackData = res.data;
+          that.setData({
+            topContents: callbackData
+          })
+        }
       }
     })
   }
