@@ -10,25 +10,5 @@
 // +----------------------------------------------------------------------
 
 return [
-    // 用户登录
-    'login' => 'api/user/login',
-    // 用户举报帖子
-    'report' => 'api/square/report',
-    // 用户删除帖子
-    'delete' => 'api/square/delete',
-    // 用户给帖子点赞
-    'like' => 'api/square/like',
-    // 用户给帖子点踩
-    'dislike' => 'api/square/dislike',
-    // 用户给帖子的评论点赞
-    'commentlike' => 'api/square/commentlike',
-    // 用户发帖
-    'create' => 'api/post/create',
-    // 用户给帖子评论
-    'comment' => 'api/post/comment',
-    // 用户信息
-    'info' => 'api/user/info',
-    // 用户查询置顶的帖子
-    'top' => 'api/square/top'
 
 ];

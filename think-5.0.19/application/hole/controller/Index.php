@@ -9,9 +9,12 @@
 namespace app\hole\controller;
 
 
-class Index {
+use think\Controller;
+
+class Index extends Controller {
 
     public function index() {
-        return '欢迎来到武理树洞H5';
+        return $this->fetch();
     }
+
 }
