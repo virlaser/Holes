@@ -17,4 +17,12 @@ class Index extends Controller {
         return $this->fetch();
     }
 
+    public function create() {
+        return $this->fetch();
+    }
+
+    public function comment() {
+        return $this->fetch();
+    }
+
 }

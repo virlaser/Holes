@@ -10,5 +10,7 @@
 // +----------------------------------------------------------------------
 
 return [
-
+    'index' => 'hole/index/index',
+    'create' => 'hole/index/create',
+    'comment' => 'hole/index/comment',
 ];

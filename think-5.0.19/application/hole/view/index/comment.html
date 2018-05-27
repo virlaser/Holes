@@ -14,16 +14,16 @@
     }
 </style>
 <body>
-    <div class="header">
-        <p>发帖</p>
+<div class="header">
+    <p>评论</p>
+</div>
+<from class="create" method="post" action="#">
+    <textarea class="comment" maxlength="800" placeholder="想评论啥就写在这，800字内哦~"></textarea>
+    <div id="is-anoymous">
+        <p>是否匿名</p>
+        <input type="checkbox" class="al-toggle-button" id="hide">
     </div>
-    <from class="create" method="post" action="#">
-        <textarea class="comment" maxlength="800" placeholder="想说啥就写在这，800字内哦~"></textarea>
-        <div id="is-anoymous">
-            <p>是否匿名</p>
-            <input type="checkbox" class="al-toggle-button" id="hide">
-        </div>
-        <input type="submit" class="submitBtn" value="发送">
-    </from>
+    <input type="submit" class="submitBtn" value="发送">
+</from>
 </body>
 </html>
