@@ -410,3 +410,12 @@ a {
     width: 9px;
     height: 13px;
 }
+
+/* ----------- active ------------ */
+.activity {
+    display: block;
+    color: #9e8c7b;
+    font-weight: 400;
+    font-size: 16px;
+    margin: 15px;
+}
