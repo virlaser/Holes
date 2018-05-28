@@ -18,6 +18,7 @@ return [
     'my' => 'hole/user/my',
     'active' => 'hole/user/active',
     'info' => 'hole/user/info',
+    'check' => 'hole/check/index',
 
     'login' => 'hole/user/login',
     'register' => 'hole/user/register'
