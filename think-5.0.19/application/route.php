@@ -17,5 +17,8 @@ return [
     'user' => 'hole/user/index',
     'my' => 'hole/user/my',
     'active' => 'hole/user/active',
-    'info' => 'hole/user/info'
+    'info' => 'hole/user/info',
+
+    'login' => 'hole/user/login',
+    'register' => 'hole/user/register'
 ];
