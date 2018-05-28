@@ -13,7 +13,19 @@ use think\Controller;
 
 class User extends Controller {
 
+    public function index() {
+        return $this->fetch();
+    }
+
     public function my() {
+        return $this->fetch();
+    }
+
+    public function active() {
+        return $this->fetch();
+    }
+
+    public function info() {
         return $this->fetch();
     }
 

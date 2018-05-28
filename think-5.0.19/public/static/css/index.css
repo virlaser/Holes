@@ -315,7 +315,7 @@ a {
     box-sizing: border-box;
 }
 
-.user-info,
+.user-info-box .user-info,
 .more-btn {
     display: flex;
     background-color: #fff;
@@ -328,7 +328,7 @@ a {
     margin-bottom: 20px;
 }
 
-.user-info {
+.user-info-box .user-info {
     flex-direction: column;
     margin: 15px 0 -1px;
     padding: 12px 15px 10px;
