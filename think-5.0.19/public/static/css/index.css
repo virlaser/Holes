@@ -420,7 +420,7 @@ a {
     margin: 15px;
 }
 
-/* ------------- login ---------- */
+/* ------------- login & register ---------- */
 .logo img{
     width: 80px;
     height: 80px;
@@ -447,14 +447,17 @@ a {
 }
 
 .username,
-.password {
+.password,
+.mail,
+.conform-password {
     display: flex;
     margin: 20px 20px;
     align-items: center;
     justify-content: center;
 }
 
-.password {
+.password,
+.conform-password {
     margin-bottom: 50px;
 }
 
@@ -465,7 +468,9 @@ a {
 }
 
 .username input,
-.password input {
+.password input,
+.mail input,
+.conform-password input {
     width: 250px;
     height: 30px;
     margin-left: 20px;
