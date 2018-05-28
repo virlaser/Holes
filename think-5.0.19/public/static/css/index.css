@@ -3,6 +3,10 @@ body {
     margin: 0;
 }
 
+a {
+    text-decoration: none;
+}
+
 /*--------------- index ---------------*/
 
 .header {
@@ -197,7 +201,7 @@ body {
     margin: 0;
 }
 
-/*------------------- create ------------------*/
+/*------------------- create & comment ------------------*/
 .comment {
     font-size: 16px;
     color: #503e2c;
@@ -295,4 +299,114 @@ body {
     color:#f6f6f6;
     border:1px solid #c6c6c6;
     outline: none;
+}
+
+/* -------------------- user -------------------*/
+
+.container {
+    background-color: #f6f6f6;
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    margin-top: 40px;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.user-info,
+.more-btn {
+    display: flex;
+    background-color: #fff;
+    min-height: 42px;
+    border-top: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.user-info-box {
+    margin-bottom: 20px;
+}
+
+.user-info {
+    flex-direction: column;
+    margin: 15px 0 -1px;
+    padding: 12px 15px 10px;
+}
+
+.info-hd {
+    display: flex;
+    align-items: center;
+}
+
+.bind-btn {
+    color: #aaa;
+    margin: 0 10px 0 0;
+}
+
+.user-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 5px;
+}
+
+.user-title {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding-left: 25px;
+}
+
+.user-name {
+    font-size: 16pt;
+    line-height: 160%;
+    letter-spacing: 1px;
+    color: #717171;
+    margin: 0;
+}
+
+.user-id {
+    font-size: 11pt;
+    margin: 0;
+    color: #8b8b8b
+}
+
+.more-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.more-btn {
+    align-items: center;
+    font-size: 13pt;
+    padding: 0 15px;
+}
+
+.issue-link, .about-link, .info-link {
+    margin-bottom: 10px;
+}
+
+.btn-icon {
+    width: 22px;
+    height: 22px;
+    margin-right: 16px;
+}
+
+.btn-text {
+    flex: 1;
+    margin: 0;
+    color: #717172;
+}
+
+.btn-open {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-left: 5px;
+}
+
+.btn-enter {
+    width: 9px;
+    height: 13px;
 }

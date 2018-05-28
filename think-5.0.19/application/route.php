@@ -14,4 +14,5 @@ return [
     'create' => 'hole/index/create',
     'comment' => 'hole/index/comment',
     'detail' => 'hole/index/detail',
+    'my' => 'hole/user/my'
 ];
