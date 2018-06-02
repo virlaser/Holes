@@ -13,6 +13,7 @@
     .container {
         background-color: #faf6ed;
     }
+
     .password {
         margin-bottom: 20px;
     }
@@ -27,25 +28,27 @@
         <p>武理树洞</p>
     </div>
     <div class="login">
-        <form action="/register">
+        <form action="/doRegister" method="post" onsubmit="return doRegister()">
             <div class="username">
-                <input type="text" placeholder="用户名：">
+                <input type="text" name="userName" id="name" placeholder="用户名：">
             </div>
             <div class="mail">
-                <input type="text" placeholder="电子邮箱：">
+                <input type="text" name="userMail" id="mail" placeholder="电子邮箱：">
             </div>
             <div class="password">
-                <input type="password" placeholder="密码：">
+                <input type="password" name="userPassword" id="pwd1" placeholder="密码(六位以上)：">
             </div>
             <div class="conform-password">
-                <input type="password" placeholder="确认密码：">
+                <input type="password" name="userPassword" id="pwd2" placeholder="确认密码(六位以上)：">
             </div>
             <input type="submit" class="submitBtn" value="注册">
         </form>
-        <a href="#">
+        <a href="/login">
             <p id="forget">已有账号？点此登录</p>
         </a>
     </div>
 </div>
+<script src="__STATIC__/js/zepto.min.js"></script>
+<script src="__STATIC__/js/index.js"></script>
 </body>
 </html>
