@@ -21,5 +21,7 @@ return [
     'check' => 'hole/check/index',
 
     'login' => 'hole/user/login',
-    'register' => 'hole/user/register'
+    'doLogin' => 'hole/user/doLogin',
+    'register' => 'hole/user/register',
+    'doRegister' => 'hole/user/doRegister'
 ];
