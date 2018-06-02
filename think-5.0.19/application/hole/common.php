@@ -13,7 +13,7 @@ use think\Db;
 use think\Request;
 
 function isLogin(Request $request) {
-    $userT = $request->cookie('hole_useT');
+    $userT = $request->cookie('hole_userT');
     $userV = $request->cookie('hole_userV');
     if($userV) {
         $user = Db::name('user')

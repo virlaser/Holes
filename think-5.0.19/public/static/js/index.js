@@ -48,3 +48,12 @@ function doLogin() {
         return false;
     }
 }
+
+function doCreate() {
+    let content = $('#content').val();
+
+    if(!content) {
+        alert("请输入内容");
+        return false;
+    }
+}

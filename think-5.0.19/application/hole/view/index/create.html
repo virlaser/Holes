@@ -10,20 +10,22 @@
 </head>
 <style>
     body {
-        background: white;
+        background-color: #faf6ef;
     }
 </style>
 <body>
-    <div class="header">
-        <p>发帖</p>
+<div class="header">
+    <p>发帖</p>
+</div>
+<form class="create" method="post" action="/doCreate" onsubmit="return doCreate()">
+    <textarea class="comment" maxlength="800" id="content" name="content" placeholder="想说啥就写在这，800字内哦~"></textarea>
+    <div id="is-anoymous">
+        <p>是否匿名</p>
+        <input type="checkbox" name="hide" class="al-toggle-button" id="hide">
     </div>
-    <from class="create" method="post" action="#">
-        <textarea class="comment" maxlength="800" placeholder="想说啥就写在这，800字内哦~"></textarea>
-        <div id="is-anoymous">
-            <p>是否匿名</p>
-            <input type="checkbox" class="al-toggle-button" id="hide">
-        </div>
-        <input type="submit" class="submitBtn" value="发送">
-    </from>
+    <input type="submit" class="submitBtn" value="发送">
+</form>
+<script src="__STATIC__/js/zepto.min.js"></script>
+<script src="__STATIC__/js/index.js"></script>
 </body>
 </html>
