@@ -14,8 +14,8 @@ use think\Request;
 
 function isLogin(Request $request) {
     $data = array();
-    $userT = $request->cookie('useT');
-    $userV = $request->cookie('userV');
+    $userT = $request->cookie('hole_useT');
+    $userV = $request->cookie('hole_userV');
     if($userV) {
         $user = Db::name('user')
             ->where('identity', '=', $userV)
@@ -67,12 +67,9 @@ function setUserT() {
 }
 
 // hash username and password
-function setUserV($userId) {
-    $identity = Db::name('user')
-        ->where('id', '=', $userId)
-        ->field('identity')
-        ->find();
-    Cookie::set('userV', $identity['identity'], ['prefix' => 'hole_', 'expire' => 60*60*24*30]);
+function setUserV($identity) {
+
+    Cookie::set('userV', $identity, ['prefix' => 'hole_', 'expire' => 60*60*24*30*3]);
 }
 
 function sendMail($emailAddress) {

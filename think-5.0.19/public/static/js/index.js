@@ -30,5 +30,21 @@ function doRegister() {
             return false;
         }
     }
+}
 
+function doLogin() {
+    let userMail = $('#mail').val();
+    let pwd = $('#password').val();
+
+    let mailReg = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
+    console.log(userMail);
+    if(!mailReg.test(userMail)) {
+        alert("请填写正确邮箱");
+        return false;
+    }
+
+    if(!pwd || pwd.length < 6) {
+        alert("请正确填写密码");
+        return false;
+    }
 }

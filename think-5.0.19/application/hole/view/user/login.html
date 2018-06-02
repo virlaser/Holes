@@ -24,14 +24,14 @@
         <p>武理树洞</p>
     </div>
     <div class="login">
-        <form action="/login" method="post">
+        <form action="/doLogin" method="post" onsubmit="return doLogin()">
             <div class="username">
                 <img src="__STATIC__/images/username.png"/>
-                <input type="text" name="userMail" placeholder="邮箱">
+                <input type="text" name="userMail" id="mail" placeholder="邮箱">
             </div>
             <div class="password">
                 <img src="__STATIC__/images/password.png"/>
-                <input type="password" name="userPassword" placeholder="请输入密码">
+                <input type="password" name="userPassword" id="password" placeholder="请输入密码">
             </div>
             <input type="submit" class="submitBtn" value="登录">
         </form>
@@ -44,5 +44,7 @@
         </a>
     </div>
 </div>
+<script src="__STATIC__/js/zepto.min.js"></script>
+<script src="__STATIC__/js/index.js"></script>
 </body>
 </html>

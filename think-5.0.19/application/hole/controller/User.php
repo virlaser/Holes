@@ -42,9 +42,32 @@ class User extends Controller {
     }
 
     public function doLogin(Request $request) {
-        $email = $request->param('userMail');
-        $password = $request->param('userPassword');
-        return $email.$password;
+        $userMail = $request->param('userMail');
+        $userPassword = $request->param('userPassword');
+        $user = Db::name('user')
+            ->where([
+                'mail' => $userMail,
+                'password' => md5($userPassword)
+            ])
+            ->find();
+        if($user) {
+            // todo cookie 安全性
+            $identity = md5($user['mail'] . $user['password']);
+            Db::name('user')
+                ->where([
+                    'mail' => $userMail,
+                    'password' => md5($userPassword)
+                ])
+                ->insert([
+                    'identity' => $identity
+                ]);
+            common\setUserV($identity);
+            return $this->fetch('index');
+        } else {
+            $errorMessage = "用户名或密码错误";
+            $this->assign('errorMessage', $errorMessage);
+            return $this->fetch('message/error');
+        }
     }
 
     public function register() {
@@ -54,7 +77,7 @@ class User extends Controller {
     public function doRegister(Request $request) {
         $userName = $request->param('userName');
         $userMail = $request->param('userMail');
-        $userPassword = $request->param('password');
+        $userPassword = $request->param('userPassword');
         $isRegisted = Db::name('user')
             ->where('mail', '=', $userMail)
             ->find();
@@ -73,7 +96,10 @@ class User extends Controller {
             $this->assign('errorMessage', $errorMessage);
             return $this->fetch('message/error');
         }
+    }
 
+    public function logout() {
+        return $this->fetch('index/index');
     }
 
 }
