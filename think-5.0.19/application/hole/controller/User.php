@@ -99,9 +99,14 @@ class User extends Controller {
         }
     }
 
-    public function logout() {
+    public function logout(Request $request) {
+        $identity = Cookie::get('hole_userV');
         Cookie::delete('userV', 'hole_');
-        // todo 清除 identity
+        Db::name('user')
+            ->where('identity', '=', $identity)
+            ->update([
+                'identity' => ' '
+            ]);
         return $this->fetch('index/index');
     }
 

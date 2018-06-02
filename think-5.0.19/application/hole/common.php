@@ -13,7 +13,6 @@ use think\Db;
 use think\Request;
 
 function isLogin(Request $request) {
-    $data = array();
     $userT = $request->cookie('hole_useT');
     $userV = $request->cookie('hole_userV');
     if($userV) {
@@ -58,12 +57,15 @@ function isLogin(Request $request) {
 }
 
 // hash time
-function setUserT() {
-    $microTime = explode(" ", microtime());
-    $time = $microTime[1] . ($microTime[0] * 1000);
-    $time = explode(".", $time)[0];
-    $userT = md5($time);
-    Cookie::set('userT', $userT, ['prefix' => 'hole_', 'expire' => 60*60*24*365]);
+function setUserT(Request $request) {
+    $userT = $request->cookie('hole_userT');
+    if(!$userT) {
+        $microTime = explode(" ", microtime());
+        $time = $microTime[1] . ($microTime[0] * 1000);
+        $time = explode(".", $time)[0];
+        $userT = md5($time);
+        Cookie::set('userT', $userT, ['prefix' => 'hole_', 'expire' => 60 * 60 * 24 * 365]);
+    }
 }
 
 // hash username and password
