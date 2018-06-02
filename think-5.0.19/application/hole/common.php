@@ -68,7 +68,6 @@ function setUserT() {
 
 // hash username and password
 function setUserV($identity) {
-
     Cookie::set('userV', $identity, ['prefix' => 'hole_', 'expire' => 60*60*24*30*3]);
 }
 

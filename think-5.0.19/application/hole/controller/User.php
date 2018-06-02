@@ -10,6 +10,7 @@ namespace app\hole\controller;
 
 
 use think\Controller;
+use think\Cookie;
 use think\Db;
 use think\Request;
 use app\hole\common;
@@ -58,7 +59,7 @@ class User extends Controller {
                     'mail' => $userMail,
                     'password' => md5($userPassword)
                 ])
-                ->insert([
+                ->update([
                     'identity' => $identity
                 ]);
             common\setUserV($identity);
@@ -99,6 +100,8 @@ class User extends Controller {
     }
 
     public function logout() {
+        Cookie::delete('userV', 'hole_');
+        // todo 清除 identity
         return $this->fetch('index/index');
     }
 
