@@ -13,34 +13,35 @@
     <p>武理树洞</p>
 </div>
 <div class="content-list">
-    <div class="section">
+    {volist name="contents" id="content"}
+    <div class="section" >
         <div class="user-info">
-            <img src="__STATIC__/images/default/avatar.jpg"/>
+            <img src="{$content.avatar?$content.avatar:'__STATIC__/images/default/avatar.jpg'}"/>
             <div class="middle">
                 <div>
-                    <p class="nickname">nickname</p>
+                    <p class="nickname">{$content.userV==0?'匿名':$content.nickname}</p>
                     <p class="top">置顶</p>
                 </div>
-                <p>2018.05.06</p>
+                <p>{$content.create_time}</p>
             </div>
-            <img src="__STATIC__/images/icon-more.png" class="icon-more"/>
         </div>
-        <p class="content">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam asperiores dolor doloribus eaque explicabo hic impedit, incidunt iste molestiae nulla odio provident quam quas quis quod sed unde veniam, voluptatem!</p>
+        <p class="content" id="content">{$content.content}</p>
         <div class="control-block">
-            <div class="button">
-                <img src="__STATIC__/images/icon-like.png"/>
-                <p>100</p>
+            <div class="button" id="like" onclick="doVote({$content.id}, 1)">
+                <img src="{$content.like_flag==0?'__STATIC__/images/icon-like.png':'__STATIC__/images/icon-like-selected.png'}"/>
+                <p>{$content.like_num==0?'赞':$content.like_num}</p>
             </div>
-            <div class="button">
-                <img src="__STATIC__/images/icon-dislike.png"/>
-                <p>10</p>
+            <div class="button" id="dislike" onclick="doVote({$content.id}, 2)">
+                <img src="{$content.dislike_flag==0?'__STATIC__/images/icon-dislike.png':'__STATIC__/images/icon-dislike-selected.png'}"/>
+                <p>{$content.dislike_num==0?'踩':$content.dislike_num}</p>
             </div>
-            <div class="button">
-                <img src="__STATIC__/images/icon-comment.png"/>
-                <p>1</p>
+            <div class="button" id="comment" onclick="doVote({$content.id}, 3)">
+                <img src="{$content.comment_flag==0?'__STATIC__/images/icon-comment.png':'__STATIC__/images/icon-comment-selected.png'}"/>
+                <p>{$content.comment_num==0?'评论':$content.comment_num}</p>
             </div>
         </div>
     </div>
+    {/volist}
 </div>
 <div id="post-btn">
     <a href="/create">
@@ -51,23 +52,25 @@
     <div class="box">
         <div class="button">
             <a href="/hole">
-            <img src="__STATIC__/images/index_s.png"/>
-            <p style="color: #705f5d">首页</p>
+                <img src="__STATIC__/images/index_s.png"/>
+                <p style="color: #705f5d">首页</p>
             </a>
         </div>
         <div class="button">
             <a href="/check">
-            <img src="__STATIC__/images/survey.png"/>
-            <p style="color: #bcc6c6">审帖</p>
+                <img src="__STATIC__/images/survey.png"/>
+                <p style="color: #bcc6c6">审帖</p>
             </a>
         </div>
         <div class="button">
             <a href="/user">
-            <img src="__STATIC__/images/user.png"/>
-            <p style="color: #bcc6c6">我的</p>
+                <img src="__STATIC__/images/user.png"/>
+                <p style="color: #bcc6c6">我的</p>
             </a>
         </div>
     </div>
 </div>
+<script src="__STATIC__/js/zepto.min.js"></script>
+<script src="__STATIC__/js/index.js"></script>
 </body>
 </html>
