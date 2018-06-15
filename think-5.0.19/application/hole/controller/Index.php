@@ -67,6 +67,56 @@ class Index extends Controller {
         return $this->fetch();
     }
 
+    public function contentApi(Request $request) {
+        common\setUserT($request);
+        $isLogin = common\isLogin($request);
+        $contents = Db::name('content')
+            ->where([
+                'verified' => 5,
+                'is_delete' => 0,
+                'flag' => 0
+            ])
+            ->join('hole_user', 'hole_content.userV=hole_user.id', 'LEFT')
+            ->field('hole_content.*, hole_user.nickname, hole_user.avatar')
+            ->order('hole_content.create_time desc')
+            ->paginate(10, true);
+        $data = array();
+        foreach ($contents as $e) {
+            $like_flag = Db::name('operate')
+                ->where([
+                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                    'object_id' => $e['id'],
+                    'type' => 1
+                ])
+                ->find();
+            $like_flag = $like_flag ? 1 : 0;
+            // 判断此用户是否点踩过帖子
+            $dislike_flag = Db::name('operate')
+                ->where([
+                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                    'object_id' => $e['id'],
+                    'type' => 2
+                ])
+                ->find();
+            $dislike_flag = $dislike_flag ? 1 : 0;
+            // 判断此用户是否评论过帖子
+            $comment_flag = Db::name('operate')
+                ->where([
+                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                    'object_id' => $e['id'],
+                    'type' => 3
+                ])
+                ->find();
+            $comment_flag = $comment_flag ? 1 : 0;
+            // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
+            $e['like_flag'] = $like_flag;
+            $e['dislike_flag'] = $dislike_flag;
+            $e['comment_flag'] = $comment_flag;
+            array_push($data, $e);
+        }
+        return json($data);
+    }
+
     public function create(Request $request) {
         return $this->fetch('create');
     }
@@ -88,8 +138,18 @@ class Index extends Controller {
         $this->redirect('/hole');
     }
 
-    public function comment() {
-        return $this->fetch();
+    public function comment(Request $request) {
+        common\setUserT($this->request);
+        $isLogin = common\isLogin($request);
+        if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
+            return $this->fetch();
+        } else {
+            $this->redirect('/login');
+        }
+    }
+
+    public function doComment(Request $request) {
+
     }
 
     public function detail(Request $request) {
@@ -104,6 +164,7 @@ class Index extends Controller {
         $contentId = $request->param('contentId');
         $type = $request->param('type');
 
+        // 点赞/取消赞
         if($type == 1) {
             $result = Db::name('operate')
                 ->where([
@@ -157,6 +218,8 @@ class Index extends Controller {
                 return json($data);
             }
         }
+
+        // 点踩/取消踩
         if($type == 2) {
             $result = Db::name('operate')
                 ->where([
@@ -203,6 +266,26 @@ class Index extends Controller {
                 ];
                 return json($data);
             }
+        }
+
+        // 评论
+        if($type == 3) {
+
+        }
+
+        // 举报
+        if($type == 4) {
+
+        }
+
+        // 给评论点赞
+        if($type == 5) {
+
+        }
+
+        // 给帖子审阅
+        if($type == 6) {
+
         }
     }
 
