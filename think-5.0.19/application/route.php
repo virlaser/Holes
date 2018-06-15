@@ -11,10 +11,13 @@
 
 return [
     'index' => 'hole/index/index',
+    'contentApi' => 'hole/index/contentApi',
     'create' => 'hole/index/create',
     'doCreate' => 'hole/index/doCreate',
     'comment' => 'hole/index/comment',
+    'doComment' => 'hole/index/doComment',
     'detail' => 'hole/index/detail',
+    'operate' => 'hole/index/operate',
     'user' => 'hole/user/index',
     'my' => 'hole/user/my',
     'active' => 'hole/user/active',

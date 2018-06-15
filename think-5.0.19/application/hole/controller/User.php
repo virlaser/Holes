@@ -107,7 +107,7 @@ class User extends Controller {
             ->update([
                 'identity' => ' '
             ]);
-        return $this->fetch('index/index');
+        $this->redirect('/hole');
     }
 
 }

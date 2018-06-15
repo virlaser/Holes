@@ -206,9 +206,9 @@ a {
     font-size: 16px;
     color: #503e2c;
     background-color: #faf6f0;
-    margin: 70px 0 50px;
+    margin: 70px auto 50px;
     padding: 20px 15px;
-    width: 100%;
+    width: 90%;
     height: 200px;
     display: block;
     box-sizing: border-box;
