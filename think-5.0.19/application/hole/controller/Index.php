@@ -33,7 +33,7 @@ class Index extends Controller {
         foreach ($contents as $e) {
             $like_flag = Db::name('operate')
                 ->where([
-                    'from_user' => $isLogin['user'],
+                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
                     'object_id' => $e['id'],
                     'type' => 1
                 ])
@@ -42,7 +42,7 @@ class Index extends Controller {
             // 判断此用户是否点踩过帖子
             $dislike_flag = Db::name('operate')
                 ->where([
-                    'from_user' => $isLogin['user'],
+                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
                     'object_id' => $e['id'],
                     'type' => 2
                 ])
@@ -51,7 +51,7 @@ class Index extends Controller {
             // 判断此用户是否评论过帖子
             $comment_flag = Db::name('operate')
                 ->where([
-                    'from_user' => $isLogin['user'],
+                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
                     'object_id' => $e['id'],
                     'type' => 3
                 ])
@@ -85,15 +85,125 @@ class Index extends Controller {
                 'verified' => $isLogin['type']=='userV'?5:0,
                 'hide' => $hide,
             ]);
-        return $this->fetch('index');
+        $this->redirect('/hole');
     }
 
     public function comment() {
         return $this->fetch();
     }
 
-    public function detail() {
+    public function detail(Request $request) {
+        $contentId = (int) $request->param('contentId');
         return $this->fetch();
+    }
+
+    // todo 换为 redis
+    public function operate(Request $request) {
+        common\setUserT($request);
+        $isLogin = common\isLogin($request);
+        $contentId = $request->param('contentId');
+        $type = $request->param('type');
+
+        if($type == 1) {
+            $result = Db::name('operate')
+                ->where([
+                    'type' => 1,
+                    $isLogin['type']=='userT'?'identity':'from_user' => $isLogin['user'],
+                    'object_id' => $contentId
+                ])
+                ->find();
+            if($result) {
+                Db::name('operate')
+                    ->where([
+                        'type' => 1,
+                        $isLogin['type']=='userT'?'identity':'from_user' => $isLogin['user'],
+                        'object_id' => $contentId
+                    ])
+                    ->delete();
+                Db::name('content')
+                    ->where([
+                        'id' => $contentId
+                    ])
+                    ->setDec('like_num');
+                $data = [
+                    'status' => 'success',
+                    'message' => '取消赞成功'
+                ];
+                return json($data);
+            } else {
+                $toUser = Db::name('content')
+                    ->where([
+                        'id' => $contentId,
+                        'userV' => ['>', 0],
+                    ])
+                    ->field('userV')
+                    ->find();
+                Db::name('operate')
+                    ->insert([
+                        'type' => 1,
+                        $isLogin['type']=='userT'?'identity':'from_user' => $isLogin['user'],
+                        'to_user' => $toUser['userV']?$toUser['userV']:0,
+                        'object_id' => $contentId
+                    ]);
+                Db::name('content')
+                    ->where([
+                        'id' => $contentId
+                    ])
+                    ->setInc('like_num');
+                $data = [
+                    'status' => 'success',
+                    'message' => '点赞成功'
+                ];
+                return json($data);
+            }
+        }
+        if($type == 2) {
+            $result = Db::name('operate')
+                ->where([
+                    'type' => 2,
+                    $isLogin['type']=='userT'?'identity':'from_user' => $isLogin['user'],
+                    'object_id' => $contentId
+                ])
+                ->find();
+            if($result) {
+                Db::name('operate')
+                    ->where([
+                        'type' => 2,
+                        $isLogin['type']=='userT'?'identity':'from_user' => $isLogin['user'],
+                        'object_id' => $contentId
+                    ])
+                    ->delete();
+                Db::name('content')
+                    ->where([
+                        'id' => $contentId
+                    ])
+                    ->setDec('dislike_num');
+                $data = [
+                    'status' => 'success',
+                    'message' => '取消踩成功'
+                ];
+                return json($data);
+            } else {
+                Db::name('operate')
+                    ->insert([
+                        'type' => 2,
+                        $isLogin['type']=='userT'?'identity':'from_user' => $isLogin['user'],
+                        // 点踩不通知用户
+                        'to_user' => 0,
+                        'object_id' => $contentId
+                    ]);
+                Db::name('content')
+                    ->where([
+                        'id' => $contentId
+                    ])
+                    ->setInc('dislike_num');
+                $data = [
+                    'status' => 'success',
+                    'message' => '点踩成功'
+                ];
+                return json($data);
+            }
+        }
     }
 
 }
