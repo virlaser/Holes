@@ -117,7 +117,7 @@ class Index extends Controller {
         return json($data);
     }
 
-    public function create(Request $request) {
+    public function create() {
         return $this->fetch('create');
     }
 
@@ -142,6 +142,8 @@ class Index extends Controller {
         common\setUserT($this->request);
         $isLogin = common\isLogin($request);
         if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
+            $contentId = $request->param('contentId');
+            $this->assign('contentId', $contentId);
             return $this->fetch();
         } else {
             $this->redirect('/login');
@@ -149,11 +151,110 @@ class Index extends Controller {
     }
 
     public function doComment(Request $request) {
-
+        common\setUserT($request);
+        $isLogin = common\isLogin($request);
+        $content = $request->param('content');
+        $contentId = $request->param('contentId');
+        $hide = $request->param('hide');
+        $to_user = Db::name('content')
+            ->where([
+                'id' => $contentId
+            ])
+            ->find();
+        Db::name('comment')
+            ->insert([
+                'content' => $content,
+                'content_id' => $contentId,
+                'user_id' => $isLogin['user'],
+                'hide' => $hide
+            ]);
+        Db::name('operate')
+            ->insert([
+                'type' => 3,
+                'from_user' => $isLogin['user'],
+                'to_user' => $to_user['userV']?$to_user['userV']:0,
+                'object_id' => $contentId
+            ]);
+        Db::name('content')
+            ->where([
+                'id' => $contentId
+            ])
+            ->setInc('comment_num');
     }
 
     public function detail(Request $request) {
+        common\setUserT($request);
+        $isLogin = common\isLogin($request);
         $contentId = (int) $request->param('contentId');
+        $data = array();
+        $data2 = array();
+        $content = Db::name('content')
+            ->where([
+                'hole_content.id' => $contentId
+            ])
+            ->join('hole_user', 'hole_content.userV=hole_user.id', 'LEFT')
+            ->field('hole_content.*, hole_user.nickname, hole_user.avatar')
+            ->find();
+        $like_flag = Db::name('operate')
+            ->where([
+                $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                'object_id' => $content['id'],
+                'type' => 1
+            ])
+            ->find();
+        $like_flag = $like_flag ? 1 : 0;
+        $dislike_flag = Db::name('operate')
+            ->where([
+                $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                'object_id' => $content['id'],
+                'type' => 2
+            ])
+            ->find();
+        $dislike_flag = $dislike_flag ? 1 : 0;
+        $comment_flag = Db::name('operate')
+            ->where([
+                $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                'object_id' => $content['id'],
+                'type' => 3
+            ])
+            ->find();
+        $comment_flag = $comment_flag ? 1 : 0;
+        $content['like_flag'] = $like_flag;
+        $content['dislike_flag'] = $dislike_flag;
+        $content['comment_flag'] = $comment_flag;
+        array_push($data, $content);
+
+        $comments = Db::name('comment')
+            ->where([
+                'content_id' => $contentId
+            ])
+            ->join('hole_user', 'hole_comment.user_id=hole_user.id')
+            ->field('hole_comment.*, hole_user.nickname')
+            ->order('hole_comment.create_time desc')
+            ->paginate(5, true);
+        foreach($comments as $comment) {
+            $like_flag = Db::name('operate')
+                ->where([
+                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                    'object_id' => $comment['id'],
+                    'type' => 5
+                ])
+                ->find();
+            $like_flag = $like_flag ? 1 : 0;
+            $dislike_flag = Db::name('operate')
+                ->where([
+                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                    'object_id' => $comment['id'],
+                    'type' => 6
+                ])
+                ->find();
+            $dislike_flag = $dislike_flag ? 1 : 0;
+            $comment['like_flag'] = $like_flag;
+            $comment['dislike_flag'] = $dislike_flag;
+            array_push($data2, $comment);
+        }
+        $this->assign('content', $data[0]);
+        $this->assign('comments', $data2);
         return $this->fetch();
     }
 

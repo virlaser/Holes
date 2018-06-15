@@ -121,6 +121,35 @@ function doComment(contentId) {
     window.location.href = '/comment?contentId=' + contentId;
 }
 
+function sendComment(contentId) {
+    let content = $('#content').val();
+    let hide = $('#hide').is(":checked");
+    if(!content) {
+        alert("请输入内容");
+        return false;
+    } else {
+        $.ajax({
+            type: 'POST',
+            url: '/doComment',
+            data: {
+                'contentId': contentId,
+                'content': content,
+                'hide': hide?1:0
+            },
+            dataType: 'json',
+            timeout: 300,
+            success: function (res) {
+                $('.submitBtn').attr('type', 'button');
+                alert("评论成功");
+            },
+            error: function () {
+                alert("网络错误");
+            }
+        });
+        return false;
+    }
+}
+
 function getDetail(event, contentId) {
     console.log('click getDetail');
     window.location.href = '/detail?contentId=' + contentId;
@@ -170,7 +199,6 @@ function doLoading() {
         dataType: 'json',
         timeout: 300,
         success: function (res) {
-            console.log(res);
             for(let i=0;i<res.length;i++) {
                 let content = res[i];
                 let avatar = "";
@@ -187,7 +215,7 @@ function doLoading() {
                     } else {
                         avatar = staticRes + '/default/avatar.jpg';
                     }
-                    nickname = content.nickname;
+                    nickname = content.userV?content.nickname:'匿名';
                 } else {
                     avatar = staticRes + '/default/avatar.jpg';
                     nickname = '匿名';
@@ -217,7 +245,8 @@ function doLoading() {
                     "                <p>" + commentNum + "</p>\n" +
                     "            </div>\n" +
                     "        </div>\n" +
-                    "    </div>"
+                    "    </div>";
+
                 $('.content-list').append($(html));
             }
         },
