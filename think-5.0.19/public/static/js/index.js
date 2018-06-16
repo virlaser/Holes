@@ -73,7 +73,7 @@ function doVote(event, contentId, type) {
         dataType: 'json',
         timeout: 300,
         success: function () {
-            if(type === 1) {
+            if(type === 1 || type === 5) {
                 let src = img.attr('src').slice(-6, -4);
                 if(src === 'ed') {
                     img.attr('src', staticRes+'icon-like.png');
@@ -91,7 +91,7 @@ function doVote(event, contentId, type) {
                     }
                 }
             }
-            if(type === 2) {
+            if(type === 2 || type === 6) {
                 let src = img.attr('src').slice(-6, -4);
                 if(src === 'ed') {
                     img.attr('src', staticRes+'icon-dislike.png');
@@ -139,8 +139,14 @@ function sendComment(contentId) {
             dataType: 'json',
             timeout: 300,
             success: function (res) {
-                $('.submitBtn').attr('type', 'button');
-                alert("评论成功");
+                if(res.status === 'success') {
+                    $('.submitBtn').attr('type', 'button');
+                    // todo 刷新页面
+                    alert("评论成功，请返回刷新");
+                    window.history.go(-1);
+                } else {
+                    alert("网络错误");
+                }
             },
             error: function () {
                 alert("网络错误");
@@ -205,7 +211,7 @@ function doLoading() {
                 let nickname = "";
                 let like = content.like_flag === 0?(staticRes+"/icon-like.png"):(staticRes+"/icon-like-selected.png");
                 let likeNum = content.like_num === 0?"赞":content.like_num;
-                let dislike = content.dislike_flat === 0?(staticRes+"/icon-dislike.png"):(staticRes+"/icon-dislike-selected.png");
+                let dislike = content.dislike_flag === 0?(staticRes+"/icon-dislike.png"):(staticRes+"/icon-dislike-selected.png");
                 let dislikeNum = content.dislike_num === 0?"踩":content.dislike_num;
                 let comment = content.comment_flag === 0?(staticRes+"/icon-comment.png"):(staticRes+"/icon-comment-selected.png");
                 let commentNum = content.comment_num === 0?"评论":content.comment_num;
@@ -248,6 +254,58 @@ function doLoading() {
                     "    </div>";
 
                 $('.content-list').append($(html));
+            }
+        },
+        error: function () {
+            alert("网络错误");
+        }
+    })
+}
+
+function loadComment(contentId) {
+    let page = $('.user-comment');
+    let currentPage = parseInt(page.attr('id').split('-')[1]);
+    let nextPage = currentPage + 1;
+    page.attr('id', 'page-'+nextPage);
+
+    let url = '/commentApi?page='+nextPage;
+    let staticRes = '/static/images';
+    $.ajax({
+        type: 'GET',
+        url: url,
+        data: {
+            'contentId': contentId
+        },
+        dataType: 'json',
+        timeout: 300,
+        success: function (res) {
+            for(let i=0;i<res.length;i++) {
+                let content = res[i];
+                let nickname = "";
+                let like = content.like_flag === 0?(staticRes+"/icon-like.png"):(staticRes+"/icon-like-selected.png");
+                let likeNum = content.like_num === 0?"赞":content.like_num;
+                let dislike = content.dislike_flag === 0?(staticRes+"/icon-dislike.png"):(staticRes+"/icon-dislike-selected.png");
+                let dislikeNum = content.dislike_num === 0?"踩":content.dislike_num;
+                if(content.hide===0){
+                    nickname = content.userV?content.nickname:'匿名';
+                } else {
+                    nickname = '匿名';
+                }
+                let html = "<div class=\"section\">\n" +
+                    "        <p class=\"content\"><strong>" + nickname + " : </strong>" + content.content + "</p>\n" +
+                    "        <div class=\"control-block\">\n" +
+                    "            <div class=\"button\" id=\"comment-like\" onclick=\"doVote(this, " + content.id + ", 5)\">\n" +
+                    "                <img src=\"" + like + "\"/>\n" +
+                    "                <p>" + likeNum + "</p>\n" +
+                    "            </div>\n" +
+                    "            <div class=\"button\" id=\"comment-dislike\" onclick=\"doVote(this, " + content.id + ", 6)\">\n" +
+                    "                <img src=\""+ dislike + "\"/>\n" +
+                    "                <p>" + dislikeNum + "</p>\n" +
+                    "            </div>\n" +
+                    "        </div>\n" +
+                    "    </div>";
+
+                $('.user-comment').append($(html));
             }
         },
         error: function () {
