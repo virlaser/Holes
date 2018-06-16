@@ -536,3 +536,8 @@ a {
     color: #705f5d;
     text-align: center;
 }
+
+.user-comment {
+    margin-top : 4px;
+    border-top : whitesmoke 1px solid;
+}

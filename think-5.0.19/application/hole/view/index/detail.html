@@ -52,10 +52,10 @@
         </div>
     </div>
 </div>
-<div class="content-list user-comment">
+<div class="content-list user-comment" id="page-1">
     {volist name="comments" id="comment"}
     <div class="section">
-        <p class="content"><strong>{if $comment.hide==1 }匿名{else}{$content.nickname}{/if} : </strong>{$comment.content}</p>
+        <p class="content"><strong>{if $comment.hide==1 }匿名{else}{$comment.nickname}{/if} : </strong>{$comment.content}</p>
         <div class="control-block">
             <div class="button" id="comment-like" onclick="doVote(this, {$comment.id}, 5)">
                 <img src="{$comment.like_flag==0?'__STATIC__/images/icon-like.png':'__STATIC__/images/icon-like-selected.png'}"/>
@@ -71,5 +71,12 @@
 </div>
 <script src="__STATIC__/js/zepto.min.js"></script>
 <script src="__STATIC__/js/index.js"></script>
+<script>
+    window.onscroll = function () {
+        if(getScrollTop() + getClientHeight() === getScrollHeight()) {
+            loadComment({$content.id});
+        }
+    }
+</script>
 </body>
 </html>

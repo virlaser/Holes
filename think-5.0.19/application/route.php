@@ -17,6 +17,7 @@ return [
     'comment' => 'hole/index/comment',
     'doComment' => 'hole/index/doComment',
     'detail' => 'hole/index/detail',
+    'commentApi' => 'hole/index/commentApi',
     'operate' => 'hole/index/operate',
     'user' => 'hole/user/index',
     'my' => 'hole/user/my',
