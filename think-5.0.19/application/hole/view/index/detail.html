@@ -22,101 +22,54 @@
     <p>帖子详情</p>
 </div>
 <div class="content-list">
-    <div class="section">
+    <div class="section" >
         <div class="user-info">
-            <img src="__STATIC__/images/default/avatar.jpg"/>
+            <img src="{if $content.avatar && $content.hide==0}{$content.avatar}{else}__STATIC__/images/default/avatar.jpg{/if}"/>
             <div class="middle">
                 <div>
-                    <p class="nickname">nickname</p>
+                    <p class="nickname">
+                        {if $content.userV==0 || $content.hide==1 }匿名{else}{$content.nickname}{/if}
+                    </p>
+                    <p class="top">置顶</p>
                 </div>
-                <p>2018.05.06</p>
+                <p>{$content.create_time}</p>
             </div>
-            <img src="__STATIC__/images/icon-more.png" class="icon-more"/>
         </div>
-        <p class="content">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam asperiores dolor doloribus eaque explicabo hic impedit, incidunt iste molestiae nulla odio provident quam quas quis quod sed unde veniam, voluptatem!</p>
+        <p class="content" id="content" onclick="getDetail(this, {$content.id})">{$content.content}</p>
         <div class="control-block">
-            <div class="button">
-                <img src="__STATIC__/images/icon-like.png"/>
-                <p>100</p>
+            <div class="button" id="like" onclick="doVote(this, {$content.id}, 1)">
+                <img src="{$content.like_flag==0?'__STATIC__/images/icon-like.png':'__STATIC__/images/icon-like-selected.png'}"/>
+                <p>{$content.like_num==0?'赞':$content.like_num}</p>
             </div>
-            <div class="button">
-                <img src="__STATIC__/images/icon-dislike.png"/>
-                <p>10</p>
+            <div class="button" id="dislike" onclick="doVote(this, {$content.id}, 2)">
+                <img src="{$content.dislike_flag==0?'__STATIC__/images/icon-dislike.png':'__STATIC__/images/icon-dislike-selected.png'}"/>
+                <p>{$content.dislike_num==0?'踩':$content.dislike_num}</p>
             </div>
-            <div class="button">
-                <img src="__STATIC__/images/icon-comment.png"/>
-                <p>1</p>
+            <div class="button" id="comment" onclick="doComment({$content.id})">
+                <img src="{$content.comment_flag==0?'__STATIC__/images/icon-comment.png':'__STATIC__/images/icon-comment-selected.png'}"/>
+                <p>{$content.comment_num==0?'评论':$content.comment_num}</p>
             </div>
         </div>
     </div>
 </div>
-<div class="content-list">
+<div class="content-list user-comment">
+    {volist name="comments" id="comment"}
     <div class="section">
-        <div class="user-info">
-            <img src="__STATIC__/images/default/avatar.jpg"/>
-            <div class="middle">
-                <div>
-                    <p class="nickname">nickname</p>
-                </div>
-                <p>2018.05.06</p>
-            </div>
-        </div>
-        <p class="content">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam asperiores dolor doloribus eaque explicabo hic impedit, incidunt iste molestiae nulla odio provident quam quas quis quod sed unde veniam, voluptatem!</p>
+        <p class="content"><strong>{if $comment.hide==1 }匿名{else}{$content.nickname}{/if} : </strong>{$comment.content}</p>
         <div class="control-block">
-            <div class="button">
-                <img src="__STATIC__/images/icon-like.png"/>
-                <p>100</p>
+            <div class="button" id="comment-like" onclick="doVote(this, {$comment.id}, 5)">
+                <img src="{$comment.like_flag==0?'__STATIC__/images/icon-like.png':'__STATIC__/images/icon-like-selected.png'}"/>
+                <p>{$comment.like_num==0?'赞':$comment.like_num}</p>
             </div>
-            <div class="button">
-                <img src="__STATIC__/images/icon-dislike.png"/>
-                <p>10</p>
+            <div class="button" id="comment-dislike" onclick="doVote(this, {$comment.id}, 6)">
+                <img src="{$comment.dislike_flag==0?'__STATIC__/images/icon-dislike.png':'__STATIC__/images/icon-dislike-selected.png'}"/>
+                <p>{$comment.dislike_num==0?'踩':$comment.dislike_num}</p>
             </div>
         </div>
     </div>
-    <div class="section">
-        <div class="user-info">
-            <img src="__STATIC__/images/default/avatar.jpg"/>
-            <div class="middle">
-                <div>
-                    <p class="nickname">nickname</p>
-                </div>
-                <p>2018.05.06</p>
-            </div>
-        </div>
-        <p class="content">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam asperiores dolor doloribus eaque explicabo hic impedit, incidunt iste molestiae nulla odio provident quam quas quis quod sed unde veniam, voluptatem!</p>
-        <div class="control-block">
-            <div class="button">
-                <img src="__STATIC__/images/icon-like.png"/>
-                <p>100</p>
-            </div>
-            <div class="button">
-                <img src="__STATIC__/images/icon-dislike.png"/>
-                <p>10</p>
-            </div>
-        </div>
-    </div>
-    <div class="section">
-        <div class="user-info">
-            <img src="__STATIC__/images/default/avatar.jpg"/>
-            <div class="middle">
-                <div>
-                    <p class="nickname">nickname</p>
-                </div>
-                <p>2018.05.06</p>
-            </div>
-        </div>
-        <p class="content">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam asperiores dolor doloribus eaque explicabo hic impedit, incidunt iste molestiae nulla odio provident quam quas quis quod sed unde veniam, voluptatem!</p>
-        <div class="control-block">
-            <div class="button">
-                <img src="__STATIC__/images/icon-like.png"/>
-                <p>100</p>
-            </div>
-            <div class="button">
-                <img src="__STATIC__/images/icon-dislike.png"/>
-                <p>10</p>
-            </div>
-        </div>
-    </div>
+    {/volist}
 </div>
+<script src="__STATIC__/js/zepto.min.js"></script>
+<script src="__STATIC__/js/index.js"></script>
 </body>
 </html>

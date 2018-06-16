@@ -180,6 +180,11 @@ class Index extends Controller {
                 'id' => $contentId
             ])
             ->setInc('comment_num');
+        $data = [
+            'status' => 'success',
+            'message' => '评论成功'
+        ];
+        return json($data);
     }
 
     public function detail(Request $request) {
@@ -381,11 +386,110 @@ class Index extends Controller {
 
         // 给评论点赞
         if($type == 5) {
+            $result = Db::name('operate')
+                ->where([
+                    'type' => 5,
+                    $isLogin['type']=='userT'?'identity':'from_user' => $isLogin['user'],
+                    'object_id' => $contentId
+                ])
+                ->find();
+            if($result) {
+                Db::name('operate')
+                    ->where([
+                        'type' => 5,
+                        $isLogin['type']=='userT'?'identity':'from_user' => $isLogin['user'],
+                        'object_id' => $contentId
+                    ])
+                    ->delete();
+                Db::name('comment')
+                    ->where([
+                        'id' => $contentId
+                    ])
+                    ->setDec('like_num');
+                $data = [
+                    'status' => 'success',
+                    'message' => '取消赞成功'
+                ];
+                return json($data);
+            } else {
+                $toUser = Db::name('comment')
+                    ->where([
+                        'id' => $contentId,
+                    ])
+                    // todo 后期改为 userV
+                    ->field('user_id')
+                    ->find();
+                Db::name('operate')
+                    ->insert([
+                        'type' => 5,
+                        $isLogin['type']=='userT'?'identity':'from_user' => $isLogin['user'],
+                        'to_user' => $toUser['user_id']?$toUser['user_id']:0,
+                        'object_id' => $contentId
+                    ]);
+                Db::name('comment')
+                    ->where([
+                        'id' => $contentId
+                    ])
+                    ->setInc('like_num');
+                $data = [
+                    'status' => 'success',
+                    'message' => '点赞成功'
+                ];
+                return json($data);
+            }
+        }
 
+        // 给评论点踩
+        if($type == 6) {
+            $result = Db::name('operate')
+                ->where([
+                    'type' => 6,
+                    $isLogin['type']=='userT'?'identity':'from_user' => $isLogin['user'],
+                    'object_id' => $contentId
+                ])
+                ->find();
+            if($result) {
+                Db::name('operate')
+                    ->where([
+                        'type' => 6,
+                        $isLogin['type']=='userT'?'identity':'from_user' => $isLogin['user'],
+                        'object_id' => $contentId
+                    ])
+                    ->delete();
+                Db::name('comment')
+                    ->where([
+                        'id' => $contentId
+                    ])
+                    ->setDec('dislike_num');
+                $data = [
+                    'status' => 'success',
+                    'message' => '取消踩成功'
+                ];
+                return json($data);
+            } else {
+                Db::name('operate')
+                    ->insert([
+                        'type' => 6,
+                        $isLogin['type']=='userT'?'identity':'from_user' => $isLogin['user'],
+                        // 点踩不通知用户
+                        'to_user' => 0,
+                        'object_id' => $contentId
+                    ]);
+                Db::name('comment')
+                    ->where([
+                        'id' => $contentId
+                    ])
+                    ->setInc('dislike_num');
+                $data = [
+                    'status' => 'success',
+                    'message' => '点踩成功'
+                ];
+                return json($data);
+            }
         }
 
         // 给帖子审阅
-        if($type == 6) {
+        if($type == 7) {
 
         }
     }
