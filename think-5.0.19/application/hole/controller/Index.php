@@ -165,7 +165,7 @@ class Index extends Controller {
             ->insert([
                 'content' => $content,
                 'content_id' => $contentId,
-                'user_id' => $isLogin['user'],
+                'userV' => $isLogin['user'],
                 'hide' => $hide
             ]);
         Db::name('operate')
@@ -233,7 +233,7 @@ class Index extends Controller {
             ->where([
                 'content_id' => $contentId
             ])
-            ->join('hole_user', 'hole_comment.user_id=hole_user.id')
+            ->join('hole_user', 'hole_comment.userV=hole_user.id')
             ->field('hole_comment.*, hole_user.nickname')
             ->order('hole_comment.create_time desc')
             ->paginate(5, true);
@@ -261,6 +261,43 @@ class Index extends Controller {
         $this->assign('content', $data[0]);
         $this->assign('comments', $data2);
         return $this->fetch();
+    }
+
+    public function commentApi(Request $request) {
+        common\setUserT($request);
+        $isLogin = common\isLogin($request);
+        $contentId = (int) $request->param('contentId');
+        $data = array();
+        $comments = Db::name('comment')
+            ->where([
+                'content_id' => $contentId
+            ])
+            ->join('hole_user', 'hole_comment.userV=hole_user.id')
+            ->field('hole_comment.*, hole_user.nickname')
+            ->order('hole_comment.create_time desc')
+            ->paginate(5, true);
+        foreach($comments as $comment) {
+            $like_flag = Db::name('operate')
+                ->where([
+                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                    'object_id' => $comment['id'],
+                    'type' => 5
+                ])
+                ->find();
+            $like_flag = $like_flag ? 1 : 0;
+            $dislike_flag = Db::name('operate')
+                ->where([
+                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                    'object_id' => $comment['id'],
+                    'type' => 6
+                ])
+                ->find();
+            $dislike_flag = $dislike_flag ? 1 : 0;
+            $comment['like_flag'] = $like_flag;
+            $comment['dislike_flag'] = $dislike_flag;
+            array_push($data, $comment);
+        }
+        return json($data);
     }
 
     // todo 换为 redis
@@ -416,14 +453,13 @@ class Index extends Controller {
                     ->where([
                         'id' => $contentId,
                     ])
-                    // todo 后期改为 userV
-                    ->field('user_id')
+                    ->field('userV')
                     ->find();
                 Db::name('operate')
                     ->insert([
                         'type' => 5,
                         $isLogin['type']=='userT'?'identity':'from_user' => $isLogin['user'],
-                        'to_user' => $toUser['user_id']?$toUser['user_id']:0,
+                        'to_user' => $toUser['userV']?$toUser['userV']:0,
                         'object_id' => $contentId
                     ]);
                 Db::name('comment')
