@@ -9,178 +9,67 @@
     <title>武理树洞</title>
 </head>
 <body>
-<div class="header">
+<div class="header" id="page-1">
     <p>我的动态</p>
 </div>
 <div class="content-list">
-    <div class="section">
-        <div class="activity">我评论过：</div>
+    {volist name="contents" id="content"}
+    <div class="section" >
+        <div class="activity">
+            {if $content['count(hole_content.id)']>1}
+            我操作过：
+            {else}
+            {if $content.type == 1}
+            我点赞过：
+            {/if}
+            {if $content.type == 2}
+            我点踩过：
+            {/if}
+            {if $content.type == 3}
+            我评论过：
+            {/if}
+            {if $content.type == 4}
+            我举报过：
+            {/if}
+            {/if}
+        </div>
         <div class="user-info">
-            <img src="__STATIC__/images/default/avatar.jpg"/>
+            <img src="{if $content.avatar && $content.hide==0}{$content.avatar}{else}__STATIC__/images/default/avatar.jpg{/if}"/>
             <div class="middle">
                 <div>
-                    <p class="nickname">nickname</p>
+                    <p class="nickname">
+                        {if $content.userV==0 || $content.hide==1 }匿名{else}{$content.nickname}{/if}
+                    </p>
                 </div>
-                <p>2018.05.06</p>
+                <p>{$content.create_time}</p>
             </div>
-            <img src="__STATIC__/images/icon-more.png" class="icon-more"/>
         </div>
-        <p class="content">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam asperiores dolor doloribus eaque explicabo hic impedit, incidunt iste molestiae nulla odio provident quam quas quis quod sed unde veniam, voluptatem!</p>
+        <p class="content" id="content" onclick="getDetail(this, {$content.id})">{$content.content}</p>
         <div class="control-block">
-            <div class="button">
-                <img src="__STATIC__/images/icon-like.png"/>
-                <p>100</p>
+            <div class="button" id="like" onclick="doVote(this, {$content.id}, 1)">
+                <img src="{$content.like_flag==0?'__STATIC__/images/icon-like.png':'__STATIC__/images/icon-like-selected.png'}"/>
+                <p>{$content.like_num==0?'赞':$content.like_num}</p>
             </div>
-            <div class="button">
-                <img src="__STATIC__/images/icon-dislike.png"/>
-                <p>10</p>
+            <div class="button" id="dislike" onclick="doVote(this, {$content.id}, 2)">
+                <img src="{$content.dislike_flag==0?'__STATIC__/images/icon-dislike.png':'__STATIC__/images/icon-dislike-selected.png'}"/>
+                <p>{$content.dislike_num==0?'踩':$content.dislike_num}</p>
             </div>
-            <div class="button">
-                <img src="__STATIC__/images/icon-comment.png"/>
-                <p>1</p>
+            <div class="button" id="comment" onclick="doComment({$content.id})">
+                <img src="{$content.comment_flag==0?'__STATIC__/images/icon-comment.png':'__STATIC__/images/icon-comment-selected.png'}"/>
+                <p>{$content.comment_num==0?'评论':$content.comment_num}</p>
             </div>
         </div>
     </div>
-    <div class="section">
-        <div class="activity">我点赞过：</div>
-        <div class="user-info">
-            <img src="__STATIC__/images/default/avatar.jpg"/>
-            <div class="middle">
-                <div>
-                    <p class="nickname">nickname</p>
-                </div>
-                <p>2018.05.06</p>
-            </div>
-            <img src="__STATIC__/images/icon-more.png" class="icon-more"/>
-        </div>
-        <p class="content">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam asperiores dolor doloribus eaque explicabo hic impedit, incidunt iste molestiae nulla odio provident quam quas quis quod sed unde veniam, voluptatem!</p>
-        <div class="control-block">
-            <div class="button">
-                <img src="__STATIC__/images/icon-like.png"/>
-                <p>100</p>
-            </div>
-            <div class="button">
-                <img src="__STATIC__/images/icon-dislike.png"/>
-                <p>10</p>
-            </div>
-            <div class="button">
-                <img src="__STATIC__/images/icon-comment.png"/>
-                <p>1</p>
-            </div>
-        </div>
-    </div>
-    <div class="section">
-        <div class="activity">我点踩过：</div>
-        <div class="user-info">
-            <img src="__STATIC__/images/default/avatar.jpg"/>
-            <div class="middle">
-                <div>
-                    <p class="nickname">nickname</p>
-                </div>
-                <p>2018.05.06</p>
-            </div>
-            <img src="__STATIC__/images/icon-more.png" class="icon-more"/>
-        </div>
-        <p class="content">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam asperiores dolor doloribus eaque explicabo hic impedit, incidunt iste molestiae nulla odio provident quam quas quis quod sed unde veniam, voluptatem!</p>
-        <div class="control-block">
-            <div class="button">
-                <img src="__STATIC__/images/icon-like.png"/>
-                <p>100</p>
-            </div>
-            <div class="button">
-                <img src="__STATIC__/images/icon-dislike.png"/>
-                <p>10</p>
-            </div>
-            <div class="button">
-                <img src="__STATIC__/images/icon-comment.png"/>
-                <p>1</p>
-            </div>
-        </div>
-    </div>
-    <div class="section">
-        <div class="activity">我举报过：</div>
-        <div class="user-info">
-            <img src="__STATIC__/images/default/avatar.jpg"/>
-            <div class="middle">
-                <div>
-                    <p class="nickname">nickname</p>
-                </div>
-                <p>2018.05.06</p>
-            </div>
-            <img src="__STATIC__/images/icon-more.png" class="icon-more"/>
-        </div>
-        <p class="content">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam asperiores dolor doloribus eaque explicabo hic impedit, incidunt iste molestiae nulla odio provident quam quas quis quod sed unde veniam, voluptatem!</p>
-        <div class="control-block">
-            <div class="button">
-                <img src="__STATIC__/images/icon-like.png"/>
-                <p>100</p>
-            </div>
-            <div class="button">
-                <img src="__STATIC__/images/icon-dislike.png"/>
-                <p>10</p>
-            </div>
-            <div class="button">
-                <img src="__STATIC__/images/icon-comment.png"/>
-                <p>1</p>
-            </div>
-        </div>
-    </div>
-    <div class="section">
-        <div class="activity">我评论过：</div>
-        <div class="user-info">
-            <img src="__STATIC__/images/default/avatar.jpg"/>
-            <div class="middle">
-                <div>
-                    <p class="nickname">nickname</p>
-                </div>
-                <p>2018.05.06</p>
-            </div>
-            <img src="__STATIC__/images/icon-more.png" class="icon-more"/>
-        </div>
-        <p class="content">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam asperiores dolor doloribus eaque explicabo hic impedit, incidunt iste molestiae nulla odio provident quam quas quis quod sed unde veniam, voluptatem!</p>
-        <div class="control-block">
-            <div class="button">
-                <img src="__STATIC__/images/icon-like.png"/>
-                <p>100</p>
-            </div>
-            <div class="button">
-                <img src="__STATIC__/images/icon-dislike.png"/>
-                <p>10</p>
-            </div>
-            <div class="button">
-                <img src="__STATIC__/images/icon-comment.png"/>
-                <p>1</p>
-            </div>
-        </div>
-    </div>
-    <div class="section">
-        <div class="activity">我评论过：</div>
-        <div class="user-info">
-            <img src="__STATIC__/images/default/avatar.jpg"/>
-            <div class="middle">
-                <div>
-                    <p class="nickname">nickname</p>
-                </div>
-                <p>2018.05.06</p>
-            </div>
-            <img src="__STATIC__/images/icon-more.png" class="icon-more"/>
-        </div>
-        <p class="content">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam asperiores dolor doloribus eaque explicabo hic impedit, incidunt iste molestiae nulla odio provident quam quas quis quod sed unde veniam, voluptatem!</p>
-        <div class="control-block">
-            <div class="button">
-                <img src="__STATIC__/images/icon-like.png"/>
-                <p>100</p>
-            </div>
-            <div class="button">
-                <img src="__STATIC__/images/icon-dislike.png"/>
-                <p>10</p>
-            </div>
-            <div class="button">
-                <img src="__STATIC__/images/icon-comment.png"/>
-                <p>1</p>
-            </div>
-        </div>
-    </div>
+    {/volist}
 </div>
+<script src="__STATIC__/js/zepto.min.js"></script>
+<script src="__STATIC__/js/index.js"></script>
+<script>
+    window.onscroll = function () {
+        if(getScrollTop() + getClientHeight() === getScrollHeight()) {
+            doLoadingActive();
+        }
+    }
+</script>
 </body>
 </html>
