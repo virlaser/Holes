@@ -411,11 +411,6 @@ class Index extends Controller {
             }
         }
 
-        // 评论
-        if($type == 3) {
-
-        }
-
         // 举报
         if($type == 4) {
 
@@ -524,10 +519,6 @@ class Index extends Controller {
             }
         }
 
-        // 给帖子审阅
-        if($type == 7) {
-
-        }
     }
 
 }

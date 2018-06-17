@@ -25,7 +25,7 @@
                 </div>
                 <p>{$content.create_time}</p>
             </div>
-            <img src="__STATIC__/images/icon-more.png" class="icon-more"/>
+            <img src="__STATIC__/images/icon-more.png" class="icon-more" onclick="doDelete(this, {$content.id})"/>
         </div>
         <p class="content" id="content" onclick="getDetail(this, {$content.id})">{$content.content}</p>
         <div class="control-block">

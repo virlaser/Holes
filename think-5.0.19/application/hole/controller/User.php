@@ -238,7 +238,7 @@ class User extends Controller {
                     'identity' => $identity
                 ]);
             common\setUserV($identity);
-            return $this->fetch('index');
+            $this->redirect('/user');
         } else {
             $errorMessage = "用户名或密码错误";
             $this->assign('errorMessage', $errorMessage);
