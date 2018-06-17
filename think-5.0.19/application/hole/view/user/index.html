@@ -21,46 +21,46 @@
     <div class="user-info-box">
         <div class="user-info">
             <div class="info-hd">
-            <img src="__STATIC__/images/default/avatar.jpg" class="user-avatar"/>
+            <img src="{$user.avatar?$user.avatar:'__STATIC__/images/default/avatar.jpg'}" class="user-avatar"/>
             <div class="user-title">
-                <p class="user-name">vlaser</p>
-                <p class="user-id">来到树洞的第12天</p>
+                <p class="user-name">{$user.nickname}</p>
+                <p class="user-id">来到树洞的第{$user.time}天</p>
             </div>
             </div>
         </div>
     </div>
     <div class="more-list">
-        <a href="#">
+        <a href="/my">
             <div class="issue-link">
                 <div class="more-btn">
                     <img src="__STATIC__/images/issue.png" class="btn-icon"/>
                     <p class="btn-text">我的帖子</p>
                     <div class="btn-open">
-                        <p class="bind-btn">12</p>
+                        <p class="bind-btn">{$message.myNum}</p>
                         <img src="__STATIC__/images/enter.png" class="btn-enter">
                     </div>
                 </div>
             </div>
         </a>
-        <a href="#">
+        <a href="/active">
             <div class="issue-link">
                 <div class="more-btn">
                     <img src="__STATIC__/images/active.png" class="btn-icon"/>
                     <p class="btn-text">我的动态</p>
                     <div class="btn-open">
-                        <p class="bind-btn">12</p>
+                        <p class="bind-btn">{$message.activeNum}</p>
                         <img src="__STATIC__/images/enter.png" class="btn-enter">
                     </div>
                 </div>
             </div>
         </a>
-        <a href="#">
+        <a href="/info">
             <div class="issue-link">
                 <div class="more-btn">
                     <img src="__STATIC__/images/about.png" class="btn-icon"/>
                     <p class="btn-text">我的消息</p>
                     <div class="btn-open">
-                        <p class="bind-btn">12</p>
+                        <p class="bind-btn">{$message.infoNum}</p>
                         <img src="__STATIC__/images/enter.png" class="btn-enter">
                     </div>
                 </div>

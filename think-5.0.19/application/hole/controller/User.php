@@ -20,6 +20,45 @@ class User extends Controller {
     public function index(Request $request) {
         $isLogin = common\isLogin($request);
         if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
+            $user = Db::name('user')
+                ->where([
+                    'id' => $isLogin['user']
+                ])
+                ->field('nickname, avatar, create_time')
+                ->find();
+            $myNum = Db::name('content')
+                ->where([
+                    'userV' => $isLogin['user'],
+                    'is_delete' => 0
+                ])
+                ->count();
+            $activeNum = Db::name('operate')
+                ->where([
+                    'type' => ['IN', [1, 2, 3, 4, 5, 6]],
+                    'from_user' => $isLogin['user']
+                ])
+                ->count();
+            $infoNum = Db::name('operate')
+                ->where([
+                    'to_user' => $isLogin['user'],
+                    'flag' => 0,
+                    'from_user' => ['NEQ', $isLogin['user']]
+                ])
+                ->count();
+
+            $date1 = date("Y-m-d");
+            $date2 = explode(' ', $user['create_time'])[0];
+            $d1 = strtotime($date1);
+            $d2 = strtotime($date2);
+            $days = round(($d1-$d2)/3600/24)+1;
+            $user['time'] = $days;
+            $message = [
+                'myNum' => $myNum,
+                'activeNum' => $activeNum,
+                'infoNum' => $infoNum
+            ];
+            $this->assign('user', $user);
+            $this->assign('message', $message);
             return $this->fetch();
         } else {
             return $this->fetch('login');
@@ -99,7 +138,7 @@ class User extends Controller {
         }
     }
 
-    public function logout(Request $request) {
+    public function logout() {
         $identity = Cookie::get('hole_userV');
         Cookie::delete('userV', 'hole_');
         Db::name('user')
