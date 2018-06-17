@@ -313,3 +313,24 @@ function loadComment(contentId) {
         }
     })
 }
+
+function doCheck(contentId, type) {
+    $.ajax({
+        type: 'POST',
+        url: '/doCheck',
+        data: {
+            'contentId': contentId,
+            'checkType': type === 1?'yes':'no'
+        },
+        dataType: 'json',
+        timeout: 300,
+        success: function (res) {
+            if(res.status === 'success') {
+                window.location.reload();
+            }
+        },
+        error: function () {
+            alert("网络错误");
+        }
+    })
+}
