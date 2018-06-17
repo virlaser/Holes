@@ -407,3 +407,24 @@ function doLoadingMy() {
         }
     })
 }
+
+function doDelete(event, contentId) {
+    let confirm = this.confirm("确定删除这条帖子？");
+    let section = $(event).parent().parent('.section');
+    if(confirm === true) {
+       $.ajax({
+          type: 'POST',
+          url: '/delete',
+          data: {
+              'contentId': contentId
+          },
+          dataType: 'json',
+          timeout: 300,
+          success: function (res) {
+              if(res.status === 'success') {
+                  section.remove();
+              }
+          }
+       })
+    }
+}
