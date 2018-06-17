@@ -166,6 +166,45 @@ class User extends Controller {
         return json($data);
     }
 
+    public function delete(Request $request) {
+        $isLogin = common\isLogin($request);
+        $contentId = $request->param('contentId');
+        if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
+            $user = Db::name('content')
+                ->where([
+                    'id' => $contentId
+                ])
+                ->field('userV')
+                ->find();
+            if($user['userV'] == $isLogin['user']) {
+                Db::name('content')
+                    ->where([
+                        'id' => $contentId,
+                        'userV' => $isLogin['user']
+                    ])
+                    ->update([
+                        'is_delete' => 1
+                    ]);
+                Db::name('operate')
+                    ->where([
+                        'type' => ['IN', [1, 2, 3, 4]],
+                        'object_id' => $contentId
+                    ])
+                    ->delete();
+                $data = [
+                    'status' => 'success',
+                    'message' => '删除成功'
+                ];
+                return json($data);
+            }
+        }
+        $data = [
+            'status' => 'fail',
+            'message' => '认证错误'
+        ];
+        return json($data);
+    }
+
     public function active() {
         return $this->fetch();
     }
