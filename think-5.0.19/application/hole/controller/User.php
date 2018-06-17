@@ -65,8 +65,105 @@ class User extends Controller {
         }
     }
 
-    public function my() {
-        return $this->fetch();
+    public function my(Request $request) {
+        $isLogin = common\isLogin($request);
+        if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
+            $contents = Db::name('content')
+                ->where([
+                    'userV' => $isLogin['user'],
+                    'is_delete' => 0
+                ])
+                ->join('hole_user', 'hole_content.userV=hole_user.id', 'LEFT')
+                ->field('hole_content.*, hole_user.nickname, hole_user.avatar')
+                ->order('hole_content.create_time desc')
+                ->paginate(6, true);
+            $data = array();
+            foreach ($contents as $e) {
+                $like_flag = Db::name('operate')
+                    ->where([
+                        $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                        'object_id' => $e['id'],
+                        'type' => 1
+                    ])
+                    ->find();
+                $like_flag = $like_flag ? 1 : 0;
+                // 判断此用户是否点踩过帖子
+                $dislike_flag = Db::name('operate')
+                    ->where([
+                        $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                        'object_id' => $e['id'],
+                        'type' => 2
+                    ])
+                    ->find();
+                $dislike_flag = $dislike_flag ? 1 : 0;
+                // 判断此用户是否评论过帖子
+                $comment_flag = Db::name('operate')
+                    ->where([
+                        $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                        'object_id' => $e['id'],
+                        'type' => 3
+                    ])
+                    ->find();
+                $comment_flag = $comment_flag ? 1 : 0;
+                // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
+                $e['like_flag'] = $like_flag;
+                $e['dislike_flag'] = $dislike_flag;
+                $e['comment_flag'] = $comment_flag;
+                array_push($data, $e);
+            }
+            $this->assign('contents', $data);
+            return $this->fetch();
+        } else {
+            return $this->fetch('login');
+        }
+    }
+
+    public function myApi(Request $request) {
+        $isLogin = common\isLogin($request);
+        $contents = Db::name('content')
+            ->where([
+                'userV' => $isLogin['user'],
+                'is_delete' => 0
+            ])
+            ->join('hole_user', 'hole_content.userV=hole_user.id', 'LEFT')
+            ->field('hole_content.*, hole_user.nickname, hole_user.avatar')
+            ->order('hole_content.create_time desc')
+            ->paginate(6, true);
+        $data = array();
+        foreach ($contents as $e) {
+            $like_flag = Db::name('operate')
+                ->where([
+                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                    'object_id' => $e['id'],
+                    'type' => 1
+                ])
+                ->find();
+            $like_flag = $like_flag ? 1 : 0;
+            // 判断此用户是否点踩过帖子
+            $dislike_flag = Db::name('operate')
+                ->where([
+                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                    'object_id' => $e['id'],
+                    'type' => 2
+                ])
+                ->find();
+            $dislike_flag = $dislike_flag ? 1 : 0;
+            // 判断此用户是否评论过帖子
+            $comment_flag = Db::name('operate')
+                ->where([
+                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                    'object_id' => $e['id'],
+                    'type' => 3
+                ])
+                ->find();
+            $comment_flag = $comment_flag ? 1 : 0;
+            // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
+            $e['like_flag'] = $like_flag;
+            $e['dislike_flag'] = $dislike_flag;
+            $e['comment_flag'] = $comment_flag;
+            array_push($data, $e);
+        }
+        return json($data);
     }
 
     public function active() {
