@@ -334,3 +334,76 @@ function doCheck(contentId, type) {
         }
     })
 }
+
+function doLoadingMy() {
+    let page = $('.header');
+    let currentPage = parseInt(page.attr('id').split('-')[1]);
+    let nextPage = currentPage + 1;
+    page.attr('id', 'page-'+nextPage);
+
+    let url = '/myApi?page='+nextPage;
+    let staticRes = '/static/images';
+    $.ajax({
+        type: 'GET',
+        url: url,
+        data: {},
+        dataType: 'json',
+        timeout: 300,
+        success: function (res) {
+            for(let i=0;i<res.length;i++) {
+                let content = res[i];
+                let avatar = "";
+                let nickname = "";
+                let like = content.like_flag === 0?(staticRes+"/icon-like.png"):(staticRes+"/icon-like-selected.png");
+                let likeNum = content.like_num === 0?"赞":content.like_num;
+                let dislike = content.dislike_flag === 0?(staticRes+"/icon-dislike.png"):(staticRes+"/icon-dislike-selected.png");
+                let dislikeNum = content.dislike_num === 0?"踩":content.dislike_num;
+                let comment = content.comment_flag === 0?(staticRes+"/icon-comment.png"):(staticRes+"/icon-comment-selected.png");
+                let commentNum = content.comment_num === 0?"评论":content.comment_num;
+                if(content.hide===0){
+                    if(content.avatar){
+                        avatar = content.avatar;
+                    } else {
+                        avatar = staticRes + '/default/avatar.jpg';
+                    }
+                    nickname = content.userV?content.nickname:'匿名';
+                } else {
+                    avatar = staticRes + '/default/avatar.jpg';
+                    nickname = '匿名';
+                }
+                let html = "<div class=\"section\" >\n" +
+                    "        <div class=\"user-info\">\n" +
+                    "            <img src=\"" + avatar + "\"/>\n" +
+                    "            <div class=\"middle\">\n" +
+                    "                <div>\n" +
+                    "                    <p class=\"nickname\">" + nickname + "</p>\n" +
+                    "                </div>\n" +
+                    "                <p>" + content.create_time + "</p>\n" +
+                    "            </div>\n" +
+                    "            <img src=\""+ staticRes +"/icon-more.png\" class=\"icon-more\"/>\n" +
+                    "        </div>\n" +
+                    "        <p class=\"content\" id=\"content\" onclick=\"getDetail(this, "+ content.id +")\">" + content.content + "</p>\n" +
+                    "        <div class=\"control-block\">\n" +
+                    "            <div class=\"button\" id=\"like\" onclick=\"doVote(this," + content.id + ", 1)\">\n" +
+                    "                <img src=\"" + like + "\"/>\n" +
+                    "                <p>" + likeNum + "</p>\n" +
+                    "            </div>\n" +
+                    "            <div class=\"button\" id=\"dislike\" onclick=\"doVote(this," + content.id +", 2)\">\n" +
+                    "                <img src=\""+ dislike + "\"/>\n" +
+                    "                <p>" + dislikeNum + "</p>\n" +
+                    "            </div>\n" +
+                    "            <div class=\"button\" id=\"comment\" onclick=\"doComment(" + content.id + ")\">\n" +
+                    "                <img src=\"" + comment + "\"/>\n" +
+                    "                <p>" + commentNum + "</p>\n" +
+                    "            </div>\n" +
+                    "        </div>\n" +
+                    "    </div>";
+
+                $('.content-list').append($(html));
+            }
+        },
+        error: function () {
+            alert("网络错误");
+        }
+    })
+}
