@@ -24,13 +24,15 @@
 </div>
 <div class="container">
     <div class="checkContent">
-        <p>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Maiores, quam, rem! Magni, nulla, quasi! Accusamus alias ducimus earum, enim eum, eveniet fugit, libero nobis nulla porro quo repellat repudiandae saepe.
-        </p>
+        {if $content.content}
+        <p>{$content.content}</p>
+        {else}
+        <p style="color:black;text-align:center">没有可以审阅的帖子啦~</p>
+        {/if}
     </div>
     <div class="checkBtn">
-        <button class="submitBtn" id="yes">可以发表</button>
-        <button class="submitBtn" id="no">不能发表</button>
+        <button class="submitBtn" id="yes" onclick="doCheck({$content.id}, 1)">可以发表</button>
+        <button class="submitBtn" id="no" onclick="doCheck({$content.id}, 2)">不能发表</button>
     </div>
 </div>
 <div class="footer">
@@ -55,5 +57,7 @@
         </div>
     </div>
 </div>
+<script src="__STATIC__/js/zepto.min.js"></script>
+<script src="__STATIC__/js/index.js"></script>
 </body>
 </html>
