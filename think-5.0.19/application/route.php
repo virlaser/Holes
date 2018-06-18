@@ -24,7 +24,9 @@ return [
     'myApi' => 'hole/user/myApi',
     'delete' => 'hole/user/delete',
     'active' => 'hole/user/active',
+    'activeApi' => 'hole/user/activeApi',
     'info' => 'hole/user/info',
+    'infoApi' => 'hole/user/infoApi',
     'check' => 'hole/check/index',
     'doCheck' => 'hole/check/doCheck',
 
