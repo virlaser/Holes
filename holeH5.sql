@@ -11,7 +11,7 @@
  Target Server Version : 50638
  File Encoding         : 65001
 
- Date: 21/05/2018 15:21:03
+ Date: 18/06/2018 16:11:01
 */
 
 SET NAMES utf8mb4;
@@ -25,8 +25,9 @@ CREATE TABLE `hole_comment` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `content` varchar(800) NOT NULL DEFAULT '' COMMENT '用户发送评论内容',
   `like_num` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '评论点赞数',
+  `dislike_num` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '评论点踩人数',
   `content_id` int(10) unsigned NOT NULL COMMENT '帖子id',
-  `user_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '发送评论用户的id',
+  `userV` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '发送评论用户的id',
   `hide` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否匿名，0：匿名，1：实名',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -40,7 +41,9 @@ DROP TABLE IF EXISTS `hole_content`;
 CREATE TABLE `hole_content` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `content` varchar(800) NOT NULL DEFAULT '' COMMENT '用户发送树洞内容',
-  `user_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '发送内容用户的id，用户可以完全匿名发送',
+  `userV` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '发送内容用户的id，用户可以完全匿名发送',
+  `userT` varchar(50) NOT NULL DEFAULT '' COMMENT '未登录用户标识',
+  `verified` int(10) NOT NULL DEFAULT '0' COMMENT '审帖数',
   `tag` varchar(50) NOT NULL DEFAULT '' COMMENT '发送内容的标签',
   `flag` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1:置顶',
   `hide` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否匿名，0：匿名，1：实名',
@@ -60,12 +63,12 @@ CREATE TABLE `hole_content` (
 DROP TABLE IF EXISTS `hole_operate`;
 CREATE TABLE `hole_operate` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `type` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '用户操作类型：1.点赞，2.点踩，3.评论，4.举报，5.给评论点赞',
-  `identity` varchar(50) NOT NULL DEFAULT '0' COMMENT '操作用户标识，没有登录的情况下点赞识别',
+  `type` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '用户操作类型：1.点赞，2.点踩，3.评论，4.举报，5.给评论点赞，6.给评论点踩，7.给帖子审阅',
+  `identity` varchar(50) NOT NULL DEFAULT '' COMMENT '操作用户标识，没有登录的情况下点赞识别',
   `from_user` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '操作用户的id',
   `to_user` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '要通知用户的id',
   `flag` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '用户是否查看操作通知，0：未查看，1：查看',
-  `object_id` int(10) unsigned NOT NULL COMMENT '用户操作对象id，type=5时为评论id，其余为内容id',
+  `object_id` int(10) unsigned NOT NULL COMMENT '用户操作对象id',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
@@ -82,11 +85,12 @@ CREATE TABLE `hole_user` (
   `avatar` varchar(300) NOT NULL DEFAULT '' COMMENT '用户头像',
   `gender` tinyint(1) NOT NULL DEFAULT '0' COMMENT '用户性别，0：未知，1：男，2：女',
   `mail` varchar(50) NOT NULL DEFAULT '' COMMENT '用户的邮箱',
-  `password` varchar(50) NOT NULL DEFAULT '' COMMENT '用户密码',
+  `password` varchar(50) NOT NULL DEFAULT '' COMMENT '用户密码，md5',
+  `activate` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0：未激活，1：激活',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`identity`),
-  UNIQUE KEY `id` (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `identity` (`identity`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS = 1;
