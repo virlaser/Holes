@@ -81,7 +81,7 @@ function setUserV($identity) {
 
 function sendMail($emailAddress, $userName, $identity) {
     $mail = new PHPMailer(true);
-    $href = "https://shudong.wutnews.net" . '/activate?identity=' . $identity;
+    $href = config('domain') . '/activate?identity=' . $identity;
     try {
         $mail->isSMTP();
         $mail->Host = config('mail.host');
@@ -127,7 +127,7 @@ function sendMail($emailAddress, $userName, $identity) {
             "    </div>\n" .
             "</body>\n" .
             "</html>";
-        $mail->AltBody = "访问以下网址激活您的树洞账号：https://shudong.wutnews.net/activate?identity=" . $identity;
+        $mail->AltBody = "访问以下网址激活您的树洞账号：" . config('domain') . "/activate?identity=" . $identity;
         $mail->send();
 
         $data = [

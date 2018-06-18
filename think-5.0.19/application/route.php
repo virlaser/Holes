@@ -33,6 +33,7 @@ return [
     'login' => 'hole/user/login',
     'doLogin' => 'hole/user/doLogin',
     'register' => 'hole/user/register',
+    'activate' => 'hole/user/activate',
     'doRegister' => 'hole/user/doRegister',
     'logout' => 'hole/user/logout'
 ];
