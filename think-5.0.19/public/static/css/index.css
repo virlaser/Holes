@@ -451,6 +451,7 @@ a {
 .username,
 .password,
 .mail,
+.captcha,
 .conform-password {
     display: flex;
     margin: 20px 20px;
@@ -472,8 +473,9 @@ a {
 .username input,
 .password input,
 .mail input,
+.captcha input,
 .conform-password input {
-    width: 250px;
+    width: 100%;
     height: 30px;
     margin-left: 20px;
     overflow: hidden;
@@ -541,4 +543,24 @@ a {
 .user-comment {
     margin-top : 4px;
     border-top : whitesmoke 1px solid;
+}
+
+.captcha input {
+    width: 60%;
+}
+
+.captchaBtn {
+    height: 30px;
+    width: 40%;
+    color: #7e726f;
+    border: #503e2c 2px solid;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.captchaBtn p {
+    padding: 4px 0;
+    text-align: center;
+    font-weight: 500;
+    overflow: hidden;
 }
