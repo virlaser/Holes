@@ -81,8 +81,8 @@ function setUserV($identity) {
 
 function sendMail($emailAddress, $userName, $identity) {
     $mail = new PHPMailer(true);
+    $href = "https://shudong.wutnews.net" . '/activate?identity=' . $identity;
     try {
-        $mail->SMTPDebug = 2;
         $mail->isSMTP();
         $mail->Host = config('mail.host');
         $mail->SMTPAuth = true;
@@ -97,12 +97,49 @@ function sendMail($emailAddress, $userName, $identity) {
 
         $mail->isHTML(true);
         $mail->Subject = '武理树洞账号激活';
-        $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
-        $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
-
+        $mail->Body = "<!DOCTYPE html>\n" .
+            "<html lang=\"en\">\n" .
+            "<head>\n" .
+            "    <meta charset=\"UTF-8\">\n" .
+            "    <title>树洞账号激活</title>\n" .
+            "</head>\n" .
+            "<style type=\"text/css\">\n" .
+            "    .container {\n" .
+            "        width : 80%;\n" .
+            "        background-color : #faf6ef;\n" .
+            "        border: 1px solid #705f5d;\n" .
+            "    }\n" .
+            "    p {\n" .
+            "        text-align : center;\n" .
+            "        color : #705f5d;\n" .
+            "        margin: 20px;\n" .
+            "    }\n" .
+            "    a {\n" .
+            "        text-decoration: none;\n" .
+            "    }\n" .
+            "</style>\n" .
+            "<body>\n" .
+            "    <div class=\"container\">\n" .
+            "        <p>请点击以下链接激活您的树洞账号：</p>\n" .
+            "        <a href=\"" . $href . "\">\n" .
+            "            <p>https://ψ(｀∇´)ψ</p>\n" .
+            "        </a>\n" .
+            "    </div>\n" .
+            "</body>\n" .
+            "</html>";
+        $mail->AltBody = "访问以下网址激活您的树洞账号：https://shudong.wutnews.net/activate?identity=" . $identity;
         $mail->send();
-        echo 'Message has been sent';
+
+        $data = [
+            'status' => 'success',
+            'message' => '邮件发送成功'
+        ];
+        return $data;
     } catch (Exception $e) {
-        echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
+        $data = [
+            'status' => 'fail',
+            'message' => '邮件发送失败'
+        ];
+        return $data;
     }
 }
