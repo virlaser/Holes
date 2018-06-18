@@ -463,7 +463,8 @@ class User extends Controller {
         $user = Db::name('user')
             ->where([
                 'mail' => $userMail,
-                'password' => md5($userPassword)
+                'password' => md5($userPassword),
+                'activate' => 1
             ])
             ->find();
         if($user) {
@@ -480,7 +481,7 @@ class User extends Controller {
             common\setUserV($identity);
             $this->redirect('/user');
         } else {
-            $errorMessage = "用户名或密码错误";
+            $errorMessage = "用户名或密码错误(请确认您是否通过点击邮箱收到的链接激活了账号）";
             $this->assign('errorMessage', $errorMessage);
             return $this->fetch('message/error');
         }
@@ -502,13 +503,20 @@ class User extends Controller {
             $this->assign('errorMessage', $errorMessage);
             return $this->fetch('message/error');
         } else {
+            $identity = md5($userMail.$userPassword);
             Db::name('user')
                 ->insert([
                     'nickname' => $userName,
                     'mail' => $userMail,
-                    'password' => md5($userPassword)
+                    'password' => md5($userPassword),
+                    'identity' => $identity
                 ]);
-            $errorMessage = "注册成功";
+            $data = common\sendMail($userMail, $userName, $identity);
+            if($data['status'] == 'success') {
+                $errorMessage = "注册成功，请登录您的邮箱激活您的账号。如果没有收到邮件，可以尝试在邮箱垃圾桶中寻找。";
+            } else {
+                $errorMessage = "注册失败，给您发送邮件时出了点问题，请稍后再试";
+            }
             $this->assign('errorMessage', $errorMessage);
             return $this->fetch('message/error');
         }
@@ -526,7 +534,24 @@ class User extends Controller {
     }
 
     public function activate(Request $request) {
-        
+        $identity = $request->param('identity');
+        $result = Db::name('user')
+            ->where([
+                'identity' => $identity,
+                'activate' => 0
+            ])
+            ->update([
+                'activate' => 1
+            ]);
+        if($result) {
+            $errorMessage = "您的账号激活成功";
+            $this->assign('errorMessage', $errorMessage);
+            return $this->fetch('message/error');
+        } else {
+            $errorMessage = "您的账号激活失败（您可能已经激活过账号，可以直接登录)";
+            $this->assign('errorMessage', $errorMessage);
+            return $this->fetch('message/error');
+        }
     }
 
 }
