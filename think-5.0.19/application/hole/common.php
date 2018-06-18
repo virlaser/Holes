@@ -11,6 +11,12 @@ namespace app\hole\common;
 use think\Cookie;
 use think\Db;
 use think\Request;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'util/PHPMailer.php';
+require 'util/Exception.php';
+require 'util/SMTP.php';
 
 function isLogin(Request $request) {
     $userT = $request->cookie('hole_userT');
@@ -73,10 +79,30 @@ function setUserV($identity) {
     Cookie::set('userV', $identity, ['prefix' => 'hole_', 'expire' => 60*60*24*30*3]);
 }
 
-function sendMail($emailAddress) {
-    $data = [
-        'message' => '邮件发送成功',
-        'status' => 'success'
-    ];
-    return $data;
+function sendMail($emailAddress, $userName, $identity) {
+    $mail = new PHPMailer(true);
+    try {
+        $mail->SMTPDebug = 2;
+        $mail->isSMTP();
+        $mail->Host = config('mail.host');
+        $mail->SMTPAuth = true;
+        $mail->Username = config('mail.userName');
+        $mail->Password = config('mail.password');
+        $mail->SMTPSecure = 'ssl';
+        $mail->Port = config('mail.port');
+        $mail->CharSet = 'UTF-8';
+
+        $mail->setFrom(config('mail.from'), '武理树洞');
+        $mail->addAddress($emailAddress, $userName);
+
+        $mail->isHTML(true);
+        $mail->Subject = '武理树洞账号激活';
+        $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
+        $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+
+        $mail->send();
+        echo 'Message has been sent';
+    } catch (Exception $e) {
+        echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
+    }
 }
