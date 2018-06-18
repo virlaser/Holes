@@ -209,7 +209,7 @@ class User extends Controller {
         $isLogin = common\isLogin($request);
         if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
             $data = array();
-            $contentId = Db::name('operate')
+            $content = Db::name('operate')
                 ->where([
                     'hole_operate.from_user' => $isLogin['user'],
                     'hole_operate.type' => ['IN', [1, 2, 3, 4]]
@@ -220,7 +220,7 @@ class User extends Controller {
                 ->group('hole_content.id')
                 ->order('operate_time desc')
                 ->paginate(6, true);
-            foreach ($contentId as $e) {
+            foreach ($content as $e) {
                 $like_flag = Db::name('operate')
                     ->where([
                         $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
@@ -310,8 +310,146 @@ class User extends Controller {
         return json($data);
     }
 
-    public function info() {
-        return $this->fetch();
+    public function info(Request $request) {
+        $isLogin = common\isLogin($request);
+        if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
+            $data = array();
+            $content = Db::name('operate')
+                ->where([
+                    'to_user' => $isLogin['user'],
+                    'type' => ['IN', [1,3]],
+                    'hole_operate.flag' => 0,
+                    'from_user' => ['NEQ', $isLogin['user']]
+                ])
+                ->join('hole_content', 'hole_operate.object_id=hole_content.id')
+                ->join('hole_user', 'hole_operate.from_user=hole_user.id', 'LEFT')
+                ->field('hole_user.nickname, hole_user.avatar, hole_content.*, hole_operate.type, hole_operate.create_time as operate_time')
+                ->order('operate_time desc')
+                ->paginate(6, true);
+            $user = Db::name('user')
+                ->where([
+                    'id' => $isLogin['user']
+                ])
+                ->field('nickname')
+                ->find();
+            foreach ($content as $e) {
+                $like_flag = Db::name('operate')
+                    ->where([
+                        $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                        'object_id' => $e['id'],
+                        'type' => 1
+                    ])
+                    ->find();
+                $like_flag = $like_flag ? 1 : 0;
+                // 判断此用户是否点踩过帖子
+                $dislike_flag = Db::name('operate')
+                    ->where([
+                        $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                        'object_id' => $e['id'],
+                        'type' => 2
+                    ])
+                    ->find();
+                $dislike_flag = $dislike_flag ? 1 : 0;
+                // 判断此用户是否评论过帖子
+                $comment_flag = Db::name('operate')
+                    ->where([
+                        $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                        'object_id' => $e['id'],
+                        'type' => 3
+                    ])
+                    ->find();
+                $comment_flag = $comment_flag ? 1 : 0;
+                Db::name('operate')
+                    ->where([
+                        'object_id' => $e['id'],
+                        'type' => $e['type']
+                    ])
+                    ->update([
+                        'flag' => 1
+                    ]);
+                // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
+                $e['like_flag'] = $like_flag;
+                $e['dislike_flag'] = $dislike_flag;
+                $e['comment_flag'] = $comment_flag;
+                array_push($data, $e);
+            }
+            $this->assign('contents', $data);
+            $this->assign('myNick', $user['nickname']);
+            return $this->fetch();
+        } else {
+            return $this->fetch('login');
+        }
+    }
+
+    public function infoApi(Request $request) {
+        $isLogin = common\isLogin($request);
+        $contentList = array();
+        $content = Db::name('operate')
+            ->where([
+                'to_user' => $isLogin['user'],
+                'type' => ['IN', [1,3]],
+                'hole_operate.flag' => 0,
+                'from_user' => ['NEQ', $isLogin['user']]
+            ])
+            ->join('hole_content', 'hole_operate.object_id=hole_content.id')
+            ->join('hole_user', 'hole_operate.from_user=hole_user.id', 'LEFT')
+            ->field('hole_user.nickname, hole_user.avatar, hole_content.*, hole_operate.type, hole_operate.create_time as operate_time')
+            ->order('operate_time desc')
+            ->paginate(6, true);
+        $user = Db::name('user')
+            ->where([
+                'id' => $isLogin['user']
+            ])
+            ->field('nickname')
+            ->find();
+        foreach ($content as $e) {
+            $like_flag = Db::name('operate')
+                ->where([
+                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                    'object_id' => $e['id'],
+                    'type' => 1
+                ])
+                ->find();
+            $like_flag = $like_flag ? 1 : 0;
+            // 判断此用户是否点踩过帖子
+            $dislike_flag = Db::name('operate')
+                ->where([
+                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                    'object_id' => $e['id'],
+                    'type' => 2
+                ])
+                ->find();
+            $dislike_flag = $dislike_flag ? 1 : 0;
+            // 判断此用户是否评论过帖子
+            $comment_flag = Db::name('operate')
+                ->where([
+                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                    'object_id' => $e['id'],
+                    'type' => 3
+                ])
+                ->find();
+            $comment_flag = $comment_flag ? 1 : 0;
+            Db::name('operate')
+                ->where([
+                    'object_id' => $e['id'],
+                    'type' => $e['type']
+                ])
+                ->update([
+                    'flag' => 1
+                ]);
+            // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
+            $e['like_flag'] = $like_flag;
+            $e['dislike_flag'] = $dislike_flag;
+            $e['comment_flag'] = $comment_flag;
+            array_push($contentList, $e);
+        }
+        $data = [
+            'status' => 'success',
+            'message' => '获取用户通知成功',
+            'contentList' => $contentList,
+            'myNick' => $user['nickname']
+        ];
+        return json($data);
     }
 
     public function login() {
@@ -319,6 +457,7 @@ class User extends Controller {
     }
 
     public function doLogin(Request $request) {
+        // todo 增加是否激活的判断
         $userMail = $request->param('userMail');
         $userPassword = $request->param('userPassword');
         $user = Db::name('user')
@@ -384,6 +523,10 @@ class User extends Controller {
                 'identity' => ' '
             ]);
         $this->redirect('/hole');
+    }
+
+    public function activate(Request $request) {
+        
     }
 
 }
