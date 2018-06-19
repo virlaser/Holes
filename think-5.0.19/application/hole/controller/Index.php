@@ -19,6 +19,14 @@ class Index extends Controller {
     public function index(Request $request) {
         common\setUserT($request);
         $isLogin = common\isLogin($request);
+        $topContents = Db::name('content')
+            ->where([
+                'flag' => 1
+            ])
+            ->join('hole_user', 'hole_content.userV=hole_user.id', 'LEFT')
+            ->field('hole_content.*, hole_user.nickname, hole_user.avatar')
+            ->order('hole_content.create_time desc')
+            ->select();
         $contents = Db::name('content')
             ->where([
                 'verified' => 5,
@@ -30,6 +38,40 @@ class Index extends Controller {
             ->order('hole_content.create_time desc')
             ->paginate(10, true);
         $data = array();
+        $data2 = array();
+        foreach ($topContents as $e) {
+            $like_flag = Db::name('operate')
+                ->where([
+                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                    'object_id' => $e['id'],
+                    'type' => 1
+                ])
+                ->find();
+            $like_flag = $like_flag ? 1 : 0;
+            // 判断此用户是否点踩过帖子
+            $dislike_flag = Db::name('operate')
+                ->where([
+                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                    'object_id' => $e['id'],
+                    'type' => 2
+                ])
+                ->find();
+            $dislike_flag = $dislike_flag ? 1 : 0;
+            // 判断此用户是否评论过帖子
+            $comment_flag = Db::name('operate')
+                ->where([
+                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                    'object_id' => $e['id'],
+                    'type' => 3
+                ])
+                ->find();
+            $comment_flag = $comment_flag ? 1 : 0;
+            // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
+            $e['like_flag'] = $like_flag;
+            $e['dislike_flag'] = $dislike_flag;
+            $e['comment_flag'] = $comment_flag;
+            array_push($data, $e);
+        }
         foreach ($contents as $e) {
             $like_flag = Db::name('operate')
                 ->where([
@@ -64,6 +106,7 @@ class Index extends Controller {
             array_push($data, $e);
         }
         $this->assign('contents', $data);
+        $this->assign('topContents', $data2);
         return $this->fetch();
     }
 
