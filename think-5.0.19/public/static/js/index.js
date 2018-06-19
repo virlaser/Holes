@@ -658,3 +658,29 @@ function doCaptcha() {
         }
     })
 }
+
+function doReport(contentId) {
+    let confirm = this.confirm("确定举报这条帖子？");
+    if(confirm) {
+        $.ajax({
+            type: 'POST',
+            url: '/operate',
+            data: {
+                'type': 4,
+                'contentId' : contentId
+            },
+            dataType: 'json',
+            timeout: 300,
+            success: function (res) {
+               if(res.status === 'success') {
+                   alert("举报成功");
+               } else {
+                   alert(res.message);
+               }
+            },
+            error: function () {
+                alert("网络错误");
+            }
+        })
+    }
+}

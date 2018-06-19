@@ -13,33 +13,33 @@
     <p>武理树洞</p>
 </div>
 <div class="content-list">
-    {volist name="topContents" id="content"}
+    {volist name="topContents" id="topcontent"}
     <div class="section" >
         <div class="user-info">
-            <img src="{if $content.avatar && $content.hide==0}{$content.avatar}{else}__STATIC__/images/default/avatar.jpg{/if}"/>
+            <img src="{if $topcontent.avatar && $topcontent.hide==0}{$topcontent.avatar}{else}__STATIC__/images/default/avatar.jpg{/if}"/>
             <div class="middle">
                 <div>
                     <p class="nickname">
-                        {if $content.userV==0 || $content.hide==1 }匿名{else}{$content.nickname}{/if}
+                        {if $topcontent.userV==0 || $topcontent.hide==1 }匿名{else}{$topcontent.nickname}{/if}
                     </p>
                     <p class="top">置顶</p>
                 </div>
-                <p>{$content.create_time}</p>
+                <p>{$topcontent.create_time}</p>
             </div>
         </div>
-        <p class="content" id="content" onclick="getDetail(this, {$content.id})">{$content.content}</p>
+        <p class="content" onclick="getDetail(this, {$topcontent.id})">{$topcontent.content}</p>
         <div class="control-block">
-            <div class="button" id="like" onclick="doVote(this, {$content.id}, 1)">
-                <img src="{$content.like_flag==0?'__STATIC__/images/icon-like.png':'__STATIC__/images/icon-like-selected.png'}"/>
-                <p>{$content.like_num==0?'赞':$content.like_num}</p>
+            <div class="button" onclick="doVote(this, {$topcontent.id}, 1)">
+                <img src="{$topcontent.like_flag==0?'__STATIC__/images/icon-like.png':'__STATIC__/images/icon-like-selected.png'}"/>
+                <p>{$topcontent.like_num==0?'赞':$topcontent.like_num}</p>
             </div>
-            <div class="button" id="dislike" onclick="doVote(this, {$content.id}, 2)">
-                <img src="{$content.dislike_flag==0?'__STATIC__/images/icon-dislike.png':'__STATIC__/images/icon-dislike-selected.png'}"/>
-                <p>{$content.dislike_num==0?'踩':$content.dislike_num}</p>
+            <div class="button" onclick="doVote(this, {$topcontent.id}, 2)">
+                <img src="{$topcontent.dislike_flag==0?'__STATIC__/images/icon-dislike.png':'__STATIC__/images/icon-dislike-selected.png'}"/>
+                <p>{$topcontent.dislike_num==0?'踩':$topcontent.dislike_num}</p>
             </div>
-            <div class="button" id="comment" onclick="doComment({$content.id})">
-                <img src="{$content.comment_flag==0?'__STATIC__/images/icon-comment.png':'__STATIC__/images/icon-comment-selected.png'}"/>
-                <p>{$content.comment_num==0?'评论':$content.comment_num}</p>
+            <div class="button" onclick="doComment({$topcontent.id})">
+                <img src="{$topcontent.comment_flag==0?'__STATIC__/images/icon-comment.png':'__STATIC__/images/icon-comment-selected.png'}"/>
+                <p>{$topcontent.comment_num==0?'评论':$topcontent.comment_num}</p>
             </div>
         </div>
     </div>
@@ -56,19 +56,19 @@
                 </div>
                 <p>{$content.create_time}</p>
             </div>
-            <img src="__STATIC__/images/icon-more.png" class="icon-more" onclick="doReport(this, {$content.id})"/>
+            <img src="__STATIC__/images/icon-more.png" class="icon-more" onclick="doReport({$content.id})"/>
         </div>
-        <p class="content" id="content" onclick="getDetail(this, {$content.id})">{$content.content}</p>
+        <p class="content" onclick="getDetail(this, {$content.id})">{$content.content}</p>
         <div class="control-block">
-            <div class="button" id="like" onclick="doVote(this, {$content.id}, 1)">
+            <div class="button" onclick="doVote(this, {$content.id}, 1)">
                 <img src="{$content.like_flag==0?'__STATIC__/images/icon-like.png':'__STATIC__/images/icon-like-selected.png'}"/>
                 <p>{$content.like_num==0?'赞':$content.like_num}</p>
             </div>
-            <div class="button" id="dislike" onclick="doVote(this, {$content.id}, 2)">
+            <div class="button" onclick="doVote(this, {$content.id}, 2)">
                 <img src="{$content.dislike_flag==0?'__STATIC__/images/icon-dislike.png':'__STATIC__/images/icon-dislike-selected.png'}"/>
                 <p>{$content.dislike_num==0?'踩':$content.dislike_num}</p>
             </div>
-            <div class="button" id="comment" onclick="doComment({$content.id})">
+            <div class="button" onclick="doComment({$content.id})">
                 <img src="{$content.comment_flag==0?'__STATIC__/images/icon-comment.png':'__STATIC__/images/icon-comment-selected.png'}"/>
                 <p>{$content.comment_num==0?'评论':$content.comment_num}</p>
             </div>
