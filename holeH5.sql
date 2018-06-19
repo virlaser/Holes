@@ -11,7 +11,7 @@
  Target Server Version : 50638
  File Encoding         : 65001
 
- Date: 18/06/2018 16:11:01
+ Date: 19/06/2018 22:20:20
 */
 
 SET NAMES utf8mb4;
@@ -87,6 +87,7 @@ CREATE TABLE `hole_user` (
   `mail` varchar(50) NOT NULL DEFAULT '' COMMENT '用户的邮箱',
   `password` varchar(50) NOT NULL DEFAULT '' COMMENT '用户密码，md5',
   `activate` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0：未激活，1：激活',
+  `captcha` varchar(50) NOT NULL DEFAULT '' COMMENT '用户找回密码验证码',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
