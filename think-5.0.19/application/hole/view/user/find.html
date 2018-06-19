@@ -28,13 +28,13 @@
         <p>武理树洞</p>
     </div>
     <div class="login">
-        <form action="/doRegister" method="post" onsubmit="return doFind()">
+        <form action="/doFind" method="post" onsubmit="return doFind()">
             <div class="mail">
                 <input type="text" name="mail" id="mail" placeholder="邮箱：">
             </div>
             <div class="captcha">
                 <input type="text" name="captcha" id="captcha" placeholder="验证码：">
-                <div class="captchaBtn"><p>发送</p></div>
+                <div class="captchaBtn" onclick="doCaptcha()"><p>发送</p></div>
             </div>
             <div class="password">
                 <input type="password" name="userPassword" id="pwd1" placeholder="密码(六位以上)：">

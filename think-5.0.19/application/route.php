@@ -35,5 +35,8 @@ return [
     'register' => 'hole/user/register',
     'activate' => 'hole/user/activate',
     'doRegister' => 'hole/user/doRegister',
-    'logout' => 'hole/user/logout'
+    'logout' => 'hole/user/logout',
+    'find' => 'hole/user/find',
+    'doFind' => 'hole/user/doFind',
+    'captcha' => 'hole/user/doCaptcha',
 ];
