@@ -143,3 +143,68 @@ function sendMail($emailAddress, $userName, $identity) {
         return $data;
     }
 }
+
+function sendCaptcha($emailAddress, $captcha) {
+    $href = config('domain') . '/find';
+    $mail = new PHPMailer(true);
+    try {
+        $mail->isSMTP();
+        $mail->Host = config('mail.host');
+        $mail->SMTPAuth = true;
+        $mail->Username = config('mail.userName');
+        $mail->Password = config('mail.password');
+        $mail->SMTPSecure = 'ssl';
+        $mail->Port = config('mail.port');
+        $mail->CharSet = 'UTF-8';
+
+        $mail->setFrom(config('mail.from'), '武理树洞');
+        $mail->addAddress($emailAddress);
+
+        $mail->isHTML(true);
+        $mail->Subject = '武理树洞密码找回';
+        $mail->Body = "<!DOCTYPE html>\n" .
+            "<html lang=\"en\">\n" .
+            "<head>\n" .
+            "    <meta charset=\"UTF-8\">\n" .
+            "    <title>树洞密码找回</title>\n" .
+            "</head>\n" .
+            "<style type=\"text/css\">\n" .
+            "    .container {\n" .
+            "        width : 80%;\n" .
+            "        background-color : #faf6ef;\n" .
+            "        border: 1px solid #705f5d;\n" .
+            "    }\n" .
+            "    p {\n" .
+            "        text-align : center;\n" .
+            "        color : #705f5d;\n" .
+            "        margin: 20px;\n" .
+            "    }\n" .
+            "    a {\n" .
+            "        text-decoration: none;\n" .
+            "    }\n" .
+            "</style>\n" .
+            "<body>\n" .
+            "    <div class=\"container\">\n" .
+            "        <p>您的验证码是：" . $captcha . " 。点击以下链接继续找回您的密码（在输入您上次填写的邮箱后直接输入验证码即可，不必重复点击验证码发送按钮）：</p>\n" .
+            "        <a href=\"" . $href . "\">\n" .
+            "            <p>https://ψ(｀∇´)ψ</p>\n" .
+            "        </a>\n" .
+            "    </div>\n" .
+            "</body>\n" .
+            "</html>";
+        $mail->AltBody = "您的验证码是：" . $captcha . "；访问以下网址继续找回您的密码（不必重复点击验证码发送按钮）：" . $href ;
+        $mail->send();
+
+        $data = [
+            'status' => 'success',
+            'message' => '邮件发送成功'
+        ];
+        return $data;
+    } catch (Exception $e) {
+        $data = [
+            'status' => 'fail',
+            'message' => '邮件发送失败'
+        ];
+        return $data;
+    }
+}
