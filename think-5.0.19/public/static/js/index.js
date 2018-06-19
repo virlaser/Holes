@@ -10,7 +10,6 @@ function doRegister() {
     }
 
     let mailReg = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
-    console.log(userMail);
     if(!mailReg.test(userMail)) {
         alert("请填写正确邮箱");
         return false;
@@ -30,6 +29,7 @@ function doRegister() {
             return false;
         }
     }
+    alert("请在此页面耐心等候，您的账号激活链接将会发送到您的邮箱");
 }
 
 function doLogin() {
@@ -591,6 +591,70 @@ function doLoadingInfo() {
         },
         error: function () {
             alert("网络错误");
+        }
+    })
+}
+
+function doFind() {
+    let mail = $('#mail').val();
+    console.log(mail);
+    let captcha = $('#captcha').val();
+    let pwd1 = $('#pwd1').val();
+    let pwd2 = $('#pwd2').val();
+
+    let mailReg = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
+    if(!mailReg.test(mail)) {
+        alert("请填写正确邮箱");
+        return false;
+    }
+
+    if(!captcha) {
+        alert("请填写验证码");
+        return false;
+    }
+    if(captcha.length !== 4) {
+        alert("请正确填写验证码");
+        return false;
+    }
+
+    if(!pwd1 || !pwd2) {
+        alert("请填写密码");
+        return false;
+    } else {
+        if(pwd1 === pwd2) {
+            if(pwd1.length < 6) {
+                alert("请填写六位以上密码");
+                return false;
+            }
+        } else {
+            alert("两次填写密码不一致");
+            return false;
+        }
+    }
+}
+
+function doCaptcha() {
+    let userMail = $('#mail').val();
+    let mailReg = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
+    if(!mailReg.test(userMail)) {
+        alert("请填写正确邮箱");
+        return false;
+    }
+    $(".captchaBtn").attr('onclick', '#');
+    alert("验证码将发送到您的邮箱，请在此页面耐心等候");
+    $.ajax({
+        type: 'POST',
+        url: '/captcha',
+        data: {
+            'userMail': userMail
+        },
+        dataType: 'json',
+        //timeout: 300,
+        success: function (res) {
+            alert(res.message);
+        },
+        error: function () {
+            alert("网络错误，请稍后再试");
         }
     })
 }
