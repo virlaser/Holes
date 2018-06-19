@@ -12,6 +12,7 @@ namespace app\hole\controller;
 use think\Controller;
 use think\Cookie;
 use think\Db;
+use think\Exception;
 use think\Request;
 use app\hole\common;
 
@@ -20,46 +21,52 @@ class User extends Controller {
     public function index(Request $request) {
         $isLogin = common\isLogin($request);
         if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
-            $user = Db::name('user')
-                ->where([
-                    'id' => $isLogin['user']
-                ])
-                ->field('nickname, avatar, create_time')
-                ->find();
-            $myNum = Db::name('content')
-                ->where([
-                    'userV' => $isLogin['user'],
-                    'is_delete' => 0
-                ])
-                ->count();
-            $activeNum = Db::name('operate')
-                ->where([
-                    'type' => ['IN', [1, 2, 3, 4]],
-                    'from_user' => $isLogin['user']
-                ])
-                ->count();
-            $infoNum = Db::name('operate')
-                ->where([
-                    'to_user' => $isLogin['user'],
-                    'flag' => 0,
-                    'from_user' => ['NEQ', $isLogin['user']]
-                ])
-                ->count();
+            try {
+                $user = Db::name('user')
+                    ->where([
+                        'id' => $isLogin['user']
+                    ])
+                    ->field('nickname, avatar, create_time')
+                    ->find();
+                $myNum = Db::name('content')
+                    ->where([
+                        'userV' => $isLogin['user'],
+                        'is_delete' => 0
+                    ])
+                    ->count();
+                $activeNum = Db::name('operate')
+                    ->where([
+                        'type' => ['IN', [1, 2, 3, 4]],
+                        'from_user' => $isLogin['user']
+                    ])
+                    ->count();
+                $infoNum = Db::name('operate')
+                    ->where([
+                        'to_user' => $isLogin['user'],
+                        'flag' => 0,
+                        'from_user' => ['NEQ', $isLogin['user']]
+                    ])
+                    ->count();
 
-            $date1 = date("Y-m-d");
-            $date2 = explode(' ', $user['create_time'])[0];
-            $d1 = strtotime($date1);
-            $d2 = strtotime($date2);
-            $days = round(($d1-$d2)/3600/24)+1;
-            $user['time'] = $days;
-            $message = [
-                'myNum' => $myNum,
-                'activeNum' => $activeNum,
-                'infoNum' => $infoNum
-            ];
-            $this->assign('user', $user);
-            $this->assign('message', $message);
-            return $this->fetch();
+                $date1 = date("Y-m-d");
+                $date2 = explode(' ', $user['create_time'])[0];
+                $d1 = strtotime($date1);
+                $d2 = strtotime($date2);
+                $days = round(($d1 - $d2) / 3600 / 24) + 1;
+                $user['time'] = $days;
+                $message = [
+                    'myNum' => $myNum,
+                    'activeNum' => $activeNum,
+                    'infoNum' => $infoNum
+                ];
+                $this->assign('user', $user);
+                $this->assign('message', $message);
+                return $this->fetch();
+            } catch (Exception $e) {
+                $errorMessage = '系统错误，请稍后再试';
+                $this->assign('errorMessage', $errorMessage);
+                return $this->fetch('message/error');
+            }
         } else {
             return $this->fetch('login');
         }
@@ -68,6 +75,65 @@ class User extends Controller {
     public function my(Request $request) {
         $isLogin = common\isLogin($request);
         if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
+            try {
+                $contents = Db::name('content')
+                    ->where([
+                        'userV' => $isLogin['user'],
+                        'is_delete' => 0
+                    ])
+                    ->join('hole_user', 'hole_content.userV=hole_user.id', 'LEFT')
+                    ->field('hole_content.*, hole_user.nickname, hole_user.avatar')
+                    ->order('hole_content.create_time desc')
+                    ->paginate(6, true);
+                $data = array();
+                foreach ($contents as $e) {
+                    $like_flag = Db::name('operate')
+                        ->where([
+                            $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
+                            'object_id' => $e['id'],
+                            'type' => 1
+                        ])
+                        ->find();
+                    $like_flag = $like_flag ? 1 : 0;
+                    // 判断此用户是否点踩过帖子
+                    $dislike_flag = Db::name('operate')
+                        ->where([
+                            $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
+                            'object_id' => $e['id'],
+                            'type' => 2
+                        ])
+                        ->find();
+                    $dislike_flag = $dislike_flag ? 1 : 0;
+                    // 判断此用户是否评论过帖子
+                    $comment_flag = Db::name('operate')
+                        ->where([
+                            $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
+                            'object_id' => $e['id'],
+                            'type' => 3
+                        ])
+                        ->find();
+                    $comment_flag = $comment_flag ? 1 : 0;
+                    // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
+                    $e['like_flag'] = $like_flag;
+                    $e['dislike_flag'] = $dislike_flag;
+                    $e['comment_flag'] = $comment_flag;
+                    array_push($data, $e);
+                }
+                $this->assign('contents', $data);
+                return $this->fetch();
+            } catch (Exception $e) {
+                $errorMessage = '系统错误，请稍后再试';
+                $this->assign('errorMessage', $errorMessage);
+                return $this->fetch('message/error');
+            }
+        } else {
+            return $this->fetch('login');
+        }
+    }
+
+    public function myApi(Request $request) {
+        $isLogin = common\isLogin($request);
+        try {
             $contents = Db::name('content')
                 ->where([
                     'userV' => $isLogin['user'],
@@ -81,7 +147,7 @@ class User extends Controller {
             foreach ($contents as $e) {
                 $like_flag = Db::name('operate')
                     ->where([
-                        $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
                         'object_id' => $e['id'],
                         'type' => 1
                     ])
@@ -90,7 +156,7 @@ class User extends Controller {
                 // 判断此用户是否点踩过帖子
                 $dislike_flag = Db::name('operate')
                     ->where([
-                        $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
                         'object_id' => $e['id'],
                         'type' => 2
                     ])
@@ -99,7 +165,7 @@ class User extends Controller {
                 // 判断此用户是否评论过帖子
                 $comment_flag = Db::name('operate')
                     ->where([
-                        $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
                         'object_id' => $e['id'],
                         'type' => 3
                     ])
@@ -111,91 +177,50 @@ class User extends Controller {
                 $e['comment_flag'] = $comment_flag;
                 array_push($data, $e);
             }
-            $this->assign('contents', $data);
-            return $this->fetch();
-        } else {
-            return $this->fetch('login');
+            return json($data);
+        } catch (Exception $e) {
+            $errorMessage = '系统错误，请稍后再试';
+            $this->assign('errorMessage', $errorMessage);
+            return $this->fetch('message/error');
         }
-    }
-
-    public function myApi(Request $request) {
-        $isLogin = common\isLogin($request);
-        $contents = Db::name('content')
-            ->where([
-                'userV' => $isLogin['user'],
-                'is_delete' => 0
-            ])
-            ->join('hole_user', 'hole_content.userV=hole_user.id', 'LEFT')
-            ->field('hole_content.*, hole_user.nickname, hole_user.avatar')
-            ->order('hole_content.create_time desc')
-            ->paginate(6, true);
-        $data = array();
-        foreach ($contents as $e) {
-            $like_flag = Db::name('operate')
-                ->where([
-                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
-                    'object_id' => $e['id'],
-                    'type' => 1
-                ])
-                ->find();
-            $like_flag = $like_flag ? 1 : 0;
-            // 判断此用户是否点踩过帖子
-            $dislike_flag = Db::name('operate')
-                ->where([
-                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
-                    'object_id' => $e['id'],
-                    'type' => 2
-                ])
-                ->find();
-            $dislike_flag = $dislike_flag ? 1 : 0;
-            // 判断此用户是否评论过帖子
-            $comment_flag = Db::name('operate')
-                ->where([
-                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
-                    'object_id' => $e['id'],
-                    'type' => 3
-                ])
-                ->find();
-            $comment_flag = $comment_flag ? 1 : 0;
-            // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
-            $e['like_flag'] = $like_flag;
-            $e['dislike_flag'] = $dislike_flag;
-            $e['comment_flag'] = $comment_flag;
-            array_push($data, $e);
-        }
-        return json($data);
     }
 
     public function delete(Request $request) {
         $isLogin = common\isLogin($request);
         $contentId = $request->param('contentId');
         if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
-            $user = Db::name('content')
-                ->where([
-                    'id' => $contentId
-                ])
-                ->field('userV')
-                ->find();
-            if($user['userV'] == $isLogin['user']) {
-                Db::name('content')
+            try {
+                $user = Db::name('content')
                     ->where([
-                        'id' => $contentId,
-                        'userV' => $isLogin['user']
+                        'id' => $contentId
                     ])
-                    ->update([
-                        'is_delete' => 1
-                    ]);
-                Db::name('operate')
-                    ->where([
-                        'type' => ['IN', [1, 2, 3, 4]],
-                        'object_id' => $contentId
-                    ])
-                    ->delete();
-                $data = [
-                    'status' => 'success',
-                    'message' => '删除成功'
-                ];
-                return json($data);
+                    ->field('userV')
+                    ->find();
+                if ($user['userV'] == $isLogin['user']) {
+                    Db::name('content')
+                        ->where([
+                            'id' => $contentId,
+                            'userV' => $isLogin['user']
+                        ])
+                        ->update([
+                            'is_delete' => 1
+                        ]);
+                    Db::name('operate')
+                        ->where([
+                            'type' => ['IN', [1, 2, 3, 4]],
+                            'object_id' => $contentId
+                        ])
+                        ->delete();
+                    $data = [
+                        'status' => 'success',
+                        'message' => '删除成功'
+                    ];
+                    return json($data);
+                }
+            } catch (Exception $e) {
+                $errorMessage = '系统错误，请稍后再试';
+                $this->assign('errorMessage', $errorMessage);
+                return $this->fetch('message/error');
             }
         }
         $data = [
@@ -208,8 +233,69 @@ class User extends Controller {
     public function active(Request $request) {
         $isLogin = common\isLogin($request);
         if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
-            $data = array();
-            $content = Db::name('operate')
+            try {
+                $data = array();
+                $content = Db::name('operate')
+                    ->where([
+                        'hole_operate.from_user' => $isLogin['user'],
+                        'hole_operate.type' => ['IN', [1, 2, 3, 4]]
+                    ])
+                    ->join('hole_content', 'hole_operate.object_id=hole_content.id')
+                    ->join('hole_user', 'hole_content.userV=hole_user.id', 'LEFT')
+                    ->field('hole_user.nickname, hole_user.avatar, hole_content.*, hole_operate.type, hole_operate.create_time as operate_time, count(hole_content.id)')
+                    ->group('hole_content.id')
+                    ->order('operate_time desc')
+                    ->paginate(6, true);
+                foreach ($content as $e) {
+                    $like_flag = Db::name('operate')
+                        ->where([
+                            $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
+                            'object_id' => $e['id'],
+                            'type' => 1
+                        ])
+                        ->find();
+                    $like_flag = $like_flag ? 1 : 0;
+                    // 判断此用户是否点踩过帖子
+                    $dislike_flag = Db::name('operate')
+                        ->where([
+                            $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
+                            'object_id' => $e['id'],
+                            'type' => 2
+                        ])
+                        ->find();
+                    $dislike_flag = $dislike_flag ? 1 : 0;
+                    // 判断此用户是否评论过帖子
+                    $comment_flag = Db::name('operate')
+                        ->where([
+                            $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
+                            'object_id' => $e['id'],
+                            'type' => 3
+                        ])
+                        ->find();
+                    $comment_flag = $comment_flag ? 1 : 0;
+                    // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
+                    $e['like_flag'] = $like_flag;
+                    $e['dislike_flag'] = $dislike_flag;
+                    $e['comment_flag'] = $comment_flag;
+                    array_push($data, $e);
+                }
+                $this->assign('contents', $data);
+                return $this->fetch();
+            } catch (Exception $e) {
+                $errorMessage = '系统错误，请稍后再试';
+                $this->assign('errorMessage', $errorMessage);
+                return $this->fetch('message/error');
+            }
+        } else {
+            return $this->fetch('login');
+        }
+    }
+
+    public function activeApi(Request $request) {
+        $isLogin = common\isLogin($request);
+        $data = array();
+        try {
+            $contentId = Db::name('operate')
                 ->where([
                     'hole_operate.from_user' => $isLogin['user'],
                     'hole_operate.type' => ['IN', [1, 2, 3, 4]]
@@ -220,10 +306,10 @@ class User extends Controller {
                 ->group('hole_content.id')
                 ->order('operate_time desc')
                 ->paginate(6, true);
-            foreach ($content as $e) {
+            foreach ($contentId as $e) {
                 $like_flag = Db::name('operate')
                     ->where([
-                        $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
                         'object_id' => $e['id'],
                         'type' => 1
                     ])
@@ -232,7 +318,7 @@ class User extends Controller {
                 // 判断此用户是否点踩过帖子
                 $dislike_flag = Db::name('operate')
                     ->where([
-                        $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
                         'object_id' => $e['id'],
                         'type' => 2
                     ])
@@ -241,7 +327,7 @@ class User extends Controller {
                 // 判断此用户是否评论过帖子
                 $comment_flag = Db::name('operate')
                     ->where([
-                        $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
                         'object_id' => $e['id'],
                         'type' => 3
                     ])
@@ -253,71 +339,99 @@ class User extends Controller {
                 $e['comment_flag'] = $comment_flag;
                 array_push($data, $e);
             }
-            $this->assign('contents', $data);
-            return $this->fetch();
-        } else {
-            return $this->fetch('login');
+            return json($data);
+        } catch (Exception $e) {
+            $errorMessage = '系统错误，请稍后再试';
+            $this->assign('errorMessage', $errorMessage);
+            return $this->fetch('message/error');
         }
-    }
-
-    public function activeApi(Request $request) {
-        $isLogin = common\isLogin($request);
-        $data = array();
-        $contentId = Db::name('operate')
-            ->where([
-                'hole_operate.from_user' => $isLogin['user'],
-                'hole_operate.type' => ['IN', [1, 2, 3, 4]]
-            ])
-            ->join('hole_content', 'hole_operate.object_id=hole_content.id')
-            ->join('hole_user', 'hole_content.userV=hole_user.id', 'LEFT')
-            ->field('hole_user.nickname, hole_user.avatar, hole_content.*, hole_operate.type, hole_operate.create_time as operate_time, count(hole_content.id)')
-            ->group('hole_content.id')
-            ->order('operate_time desc')
-            ->paginate(6, true);
-        foreach ($contentId as $e) {
-            $like_flag = Db::name('operate')
-                ->where([
-                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
-                    'object_id' => $e['id'],
-                    'type' => 1
-                ])
-                ->find();
-            $like_flag = $like_flag ? 1 : 0;
-            // 判断此用户是否点踩过帖子
-            $dislike_flag = Db::name('operate')
-                ->where([
-                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
-                    'object_id' => $e['id'],
-                    'type' => 2
-                ])
-                ->find();
-            $dislike_flag = $dislike_flag ? 1 : 0;
-            // 判断此用户是否评论过帖子
-            $comment_flag = Db::name('operate')
-                ->where([
-                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
-                    'object_id' => $e['id'],
-                    'type' => 3
-                ])
-                ->find();
-            $comment_flag = $comment_flag ? 1 : 0;
-            // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
-            $e['like_flag'] = $like_flag;
-            $e['dislike_flag'] = $dislike_flag;
-            $e['comment_flag'] = $comment_flag;
-            array_push($data, $e);
-        }
-        return json($data);
     }
 
     public function info(Request $request) {
         $isLogin = common\isLogin($request);
         if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
-            $data = array();
+            try {
+                $data = array();
+                $content = Db::name('operate')
+                    ->where([
+                        'to_user' => $isLogin['user'],
+                        'type' => ['IN', [1, 3]],
+                        'hole_operate.flag' => 0,
+                        'from_user' => ['NEQ', $isLogin['user']]
+                    ])
+                    ->join('hole_content', 'hole_operate.object_id=hole_content.id')
+                    ->join('hole_user', 'hole_operate.from_user=hole_user.id', 'LEFT')
+                    ->field('hole_user.nickname, hole_user.avatar, hole_content.*, hole_operate.type, hole_operate.create_time as operate_time')
+                    ->order('operate_time desc')
+                    ->paginate(6, true);
+                $user = Db::name('user')
+                    ->where([
+                        'id' => $isLogin['user']
+                    ])
+                    ->field('nickname')
+                    ->find();
+                foreach ($content as $e) {
+                    $like_flag = Db::name('operate')
+                        ->where([
+                            $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
+                            'object_id' => $e['id'],
+                            'type' => 1
+                        ])
+                        ->find();
+                    $like_flag = $like_flag ? 1 : 0;
+                    // 判断此用户是否点踩过帖子
+                    $dislike_flag = Db::name('operate')
+                        ->where([
+                            $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
+                            'object_id' => $e['id'],
+                            'type' => 2
+                        ])
+                        ->find();
+                    $dislike_flag = $dislike_flag ? 1 : 0;
+                    // 判断此用户是否评论过帖子
+                    $comment_flag = Db::name('operate')
+                        ->where([
+                            $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
+                            'object_id' => $e['id'],
+                            'type' => 3
+                        ])
+                        ->find();
+                    $comment_flag = $comment_flag ? 1 : 0;
+                    Db::name('operate')
+                        ->where([
+                            'object_id' => $e['id'],
+                            'type' => $e['type']
+                        ])
+                        ->update([
+                            'flag' => 1
+                        ]);
+                    // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
+                    $e['like_flag'] = $like_flag;
+                    $e['dislike_flag'] = $dislike_flag;
+                    $e['comment_flag'] = $comment_flag;
+                    array_push($data, $e);
+                }
+                $this->assign('contents', $data);
+                $this->assign('myNick', $user['nickname']);
+                return $this->fetch();
+            } catch (Exception $e) {
+                $errorMessage = '系统错误，请稍后再试';
+                $this->assign('errorMessage', $errorMessage);
+                return $this->fetch('message/error');
+            }
+        } else {
+            return $this->fetch('login');
+        }
+    }
+
+    public function infoApi(Request $request) {
+        $isLogin = common\isLogin($request);
+        $contentList = array();
+        try {
             $content = Db::name('operate')
                 ->where([
                     'to_user' => $isLogin['user'],
-                    'type' => ['IN', [1,3]],
+                    'type' => ['IN', [1, 3]],
                     'hole_operate.flag' => 0,
                     'from_user' => ['NEQ', $isLogin['user']]
                 ])
@@ -335,7 +449,7 @@ class User extends Controller {
             foreach ($content as $e) {
                 $like_flag = Db::name('operate')
                     ->where([
-                        $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
                         'object_id' => $e['id'],
                         'type' => 1
                     ])
@@ -344,7 +458,7 @@ class User extends Controller {
                 // 判断此用户是否点踩过帖子
                 $dislike_flag = Db::name('operate')
                     ->where([
-                        $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
                         'object_id' => $e['id'],
                         'type' => 2
                     ])
@@ -353,7 +467,7 @@ class User extends Controller {
                 // 判断此用户是否评论过帖子
                 $comment_flag = Db::name('operate')
                     ->where([
-                        $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
                         'object_id' => $e['id'],
                         'type' => 3
                     ])
@@ -371,85 +485,20 @@ class User extends Controller {
                 $e['like_flag'] = $like_flag;
                 $e['dislike_flag'] = $dislike_flag;
                 $e['comment_flag'] = $comment_flag;
-                array_push($data, $e);
+                array_push($contentList, $e);
             }
-            $this->assign('contents', $data);
-            $this->assign('myNick', $user['nickname']);
-            return $this->fetch();
-        } else {
-            return $this->fetch('login');
+            $data = [
+                'status' => 'success',
+                'message' => '获取用户通知成功',
+                'contentList' => $contentList,
+                'myNick' => $user['nickname']
+            ];
+            return json($data);
+        } catch (Exception $e) {
+            $errorMessage = '系统错误，请稍后再试';
+            $this->assign('errorMessage', $errorMessage);
+            return $this->fetch('message/error');
         }
-    }
-
-    public function infoApi(Request $request) {
-        $isLogin = common\isLogin($request);
-        $contentList = array();
-        $content = Db::name('operate')
-            ->where([
-                'to_user' => $isLogin['user'],
-                'type' => ['IN', [1,3]],
-                'hole_operate.flag' => 0,
-                'from_user' => ['NEQ', $isLogin['user']]
-            ])
-            ->join('hole_content', 'hole_operate.object_id=hole_content.id')
-            ->join('hole_user', 'hole_operate.from_user=hole_user.id', 'LEFT')
-            ->field('hole_user.nickname, hole_user.avatar, hole_content.*, hole_operate.type, hole_operate.create_time as operate_time')
-            ->order('operate_time desc')
-            ->paginate(6, true);
-        $user = Db::name('user')
-            ->where([
-                'id' => $isLogin['user']
-            ])
-            ->field('nickname')
-            ->find();
-        foreach ($content as $e) {
-            $like_flag = Db::name('operate')
-                ->where([
-                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
-                    'object_id' => $e['id'],
-                    'type' => 1
-                ])
-                ->find();
-            $like_flag = $like_flag ? 1 : 0;
-            // 判断此用户是否点踩过帖子
-            $dislike_flag = Db::name('operate')
-                ->where([
-                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
-                    'object_id' => $e['id'],
-                    'type' => 2
-                ])
-                ->find();
-            $dislike_flag = $dislike_flag ? 1 : 0;
-            // 判断此用户是否评论过帖子
-            $comment_flag = Db::name('operate')
-                ->where([
-                    $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
-                    'object_id' => $e['id'],
-                    'type' => 3
-                ])
-                ->find();
-            $comment_flag = $comment_flag ? 1 : 0;
-            Db::name('operate')
-                ->where([
-                    'object_id' => $e['id'],
-                    'type' => $e['type']
-                ])
-                ->update([
-                    'flag' => 1
-                ]);
-            // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
-            $e['like_flag'] = $like_flag;
-            $e['dislike_flag'] = $dislike_flag;
-            $e['comment_flag'] = $comment_flag;
-            array_push($contentList, $e);
-        }
-        $data = [
-            'status' => 'success',
-            'message' => '获取用户通知成功',
-            'contentList' => $contentList,
-            'myNick' => $user['nickname']
-        ];
-        return json($data);
     }
 
     public function login() {
@@ -457,31 +506,36 @@ class User extends Controller {
     }
 
     public function doLogin(Request $request) {
-        // todo 增加是否激活的判断
         $userMail = $request->param('userMail');
         $userPassword = $request->param('userPassword');
-        $user = Db::name('user')
-            ->where([
-                'mail' => $userMail,
-                'password' => md5($userPassword),
-                'activate' => 1
-            ])
-            ->find();
-        if($user) {
-            // todo cookie 安全性
-            $identity = md5($user['mail'] . $user['password']);
-            Db::name('user')
+        try {
+            $user = Db::name('user')
                 ->where([
                     'mail' => $userMail,
-                    'password' => md5($userPassword)
+                    'password' => md5($userPassword),
+                    'activate' => 1
                 ])
-                ->update([
-                    'identity' => $identity
-                ]);
-            common\setUserV($identity);
-            $this->redirect('/user');
-        } else {
-            $errorMessage = "用户名或密码错误(请确认您是否通过点击邮箱收到的链接激活了账号）";
+                ->find();
+            if ($user) {
+                // todo cookie 安全性
+                $identity = md5($user['mail'] . $user['password']);
+                Db::name('user')
+                    ->where([
+                        'mail' => $userMail,
+                        'password' => md5($userPassword)
+                    ])
+                    ->update([
+                        'identity' => $identity
+                    ]);
+                common\setUserV($identity);
+                $this->redirect('/user');
+            } else {
+                $errorMessage = "用户名或密码错误(请确认您是否通过点击邮箱收到的链接激活了账号）";
+                $this->assign('errorMessage', $errorMessage);
+                return $this->fetch('message/error');
+            }
+        } catch (Exception $e) {
+            $errorMessage = '系统错误，请稍后再试';
             $this->assign('errorMessage', $errorMessage);
             return $this->fetch('message/error');
         }
@@ -495,28 +549,35 @@ class User extends Controller {
         $userName = $request->param('userName');
         $userMail = $request->param('userMail');
         $userPassword = $request->param('userPassword');
-        $isRegisted = Db::name('user')
-            ->where('mail', '=', $userMail)
-            ->find();
-        if($isRegisted) {
-            $errorMessage = "此邮箱已经被注册";
-            $this->assign('errorMessage', $errorMessage);
-            return $this->fetch('message/error');
-        } else {
-            $identity = md5($userMail.$userPassword);
-            Db::name('user')
-                ->insert([
-                    'nickname' => $userName,
-                    'mail' => $userMail,
-                    'password' => md5($userPassword),
-                    'identity' => $identity
-                ]);
-            $data = common\sendMail($userMail, $userName, $identity);
-            if($data['status'] == 'success') {
-                $errorMessage = "注册成功，请登录您的邮箱激活您的账号。如果没有收到邮件，可以尝试在邮箱垃圾桶中寻找。";
+        try {
+            $isRegisted = Db::name('user')
+                ->where('mail', '=', $userMail)
+                ->find();
+            if ($isRegisted) {
+                $errorMessage = "此邮箱已经被注册";
+                $this->assign('errorMessage', $errorMessage);
+                return $this->fetch('message/error');
             } else {
-                $errorMessage = "注册失败，给您发送邮件时出了点问题，请稍后再试";
+                $identity = md5($userMail . $userPassword);
+                Db::name('user')
+                    ->insert([
+                        'nickname' => $userName,
+                        'mail' => $userMail,
+                        'password' => md5($userPassword),
+                        'identity' => $identity
+                    ]);
+                // todo 异步邮件发送
+                $data = common\sendMail($userMail, $userName, $identity);
+                if ($data['status'] == 'success') {
+                    $errorMessage = "注册成功，请登录您的邮箱激活您的账号。如果没有收到邮件，可以尝试在邮箱垃圾桶中寻找。";
+                } else {
+                    $errorMessage = "注册失败，给您发送邮件时出了点问题，请稍后再试";
+                }
+                $this->assign('errorMessage', $errorMessage);
+                return $this->fetch('message/error');
             }
+        } catch (Exception $e) {
+            $errorMessage = '系统错误，请稍后再试';
             $this->assign('errorMessage', $errorMessage);
             return $this->fetch('message/error');
         }
@@ -525,30 +586,42 @@ class User extends Controller {
     public function logout() {
         $identity = Cookie::get('hole_userV');
         Cookie::delete('userV', 'hole_');
-        Db::name('user')
-            ->where('identity', '=', $identity)
-            ->update([
-                'identity' => ' '
-            ]);
-        $this->redirect('/hole');
+        try {
+            Db::name('user')
+                ->where('identity', '=', $identity)
+                ->update([
+                    'identity' => ' '
+                ]);
+            $this->redirect('/hole');
+        } catch (Exception $e) {
+            $errorMessage = '系统错误，请稍后再试';
+            $this->assign('errorMessage', $errorMessage);
+            return $this->fetch('message/error');
+        }
     }
 
     public function activate(Request $request) {
         $identity = $request->param('identity');
-        $result = Db::name('user')
-            ->where([
-                'identity' => $identity,
-                'activate' => 0
-            ])
-            ->update([
-                'activate' => 1
-            ]);
-        if($result) {
-            $errorMessage = "您的账号激活成功";
-            $this->assign('errorMessage', $errorMessage);
-            return $this->fetch('message/error');
-        } else {
-            $errorMessage = "您的账号激活失败（您可能已经激活过账号，可以直接登录)";
+        try {
+            $result = Db::name('user')
+                ->where([
+                    'identity' => $identity,
+                    'activate' => 0
+                ])
+                ->update([
+                    'activate' => 1
+                ]);
+            if ($result) {
+                $errorMessage = "您的账号激活成功";
+                $this->assign('errorMessage', $errorMessage);
+                return $this->fetch('message/error');
+            } else {
+                $errorMessage = "您的账号激活失败（您可能已经激活过账号，可以直接登录)";
+                $this->assign('errorMessage', $errorMessage);
+                return $this->fetch('message/error');
+            }
+        } catch (Exception $e) {
+            $errorMessage = '系统错误，请稍后再试';
             $this->assign('errorMessage', $errorMessage);
             return $this->fetch('message/error');
         }
@@ -562,62 +635,74 @@ class User extends Controller {
         $mail = $request->param('mail');
         $captcha = $request->param('captcha');
         $password = $request->param('userPassword');
-        $result = Db::name('user')
-            ->where([
-                'mail' => $mail
-            ])
-            ->field('captcha')
-            ->find();
-        if($result['captcha'] = $captcha) {
-            Db::name('user')
+        try {
+            $result = Db::name('user')
                 ->where([
                     'mail' => $mail
                 ])
-                ->update([
-                    'identity' => '',
-                    'password' => md5($password),
-                    'captcha' => ''
-                ]);
-            $errorMessage = "密码重置成功";
-        } else {
-            $errorMessage = "验证码或邮箱错误";
+                ->field('captcha')
+                ->find();
+            if ($result['captcha'] = $captcha) {
+                Db::name('user')
+                    ->where([
+                        'mail' => $mail
+                    ])
+                    ->update([
+                        'identity' => '',
+                        'password' => md5($password),
+                        'captcha' => ''
+                    ]);
+                $errorMessage = "密码重置成功";
+            } else {
+                $errorMessage = "验证码或邮箱错误";
+            }
+            $this->assign('errorMessage', $errorMessage);
+            return $this->fetch('message/error');
+        } catch (Exception $e) {
+            $errorMessage = '系统错误，请稍后再试';
+            $this->assign('errorMessage', $errorMessage);
+            return $this->fetch('message/error');
         }
-        $this->assign('errorMessage', $errorMessage);
-        return $this->fetch('message/error');
     }
 
     public function doCaptcha(Request $request) {
-        $userMail = $request->param('userMail');
-        $charts = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz0123456789";
-        $max = strlen($charts);
-        $captcha = "";
-        for($i = 0; $i < 4; $i++) {
-            $captcha .= $charts[mt_rand(0, $max-1)];
-        }
-        $result = Db::name('user')
-            ->where([
-                'mail' => $userMail
-            ])
-            ->update([
-                'captcha' => $captcha
-            ]);
-        $data = [
-            'status' => 'fail'
-        ];
-        if($result) {
-            $data = common\sendCaptcha($userMail, $captcha);
-            if ($data['status'] == 'success') {
-                $errorMessage = "验证码发送成功，请登录您的邮箱查看验证码。如果没有收到邮件，可以尝试在邮箱垃圾桶中寻找。";
-            } else {
-                $errorMessage = "验证码发送失败，给您发送邮件时出了点问题，请稍后再试";
+        try {
+            $userMail = $request->param('userMail');
+            $charts = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz0123456789";
+            $max = strlen($charts);
+            $captcha = "";
+            for ($i = 0; $i < 4; $i++) {
+                $captcha .= $charts[mt_rand(0, $max - 1)];
             }
-        } else {
-            $errorMessage = "该邮箱未注册";
+            $result = Db::name('user')
+                ->where([
+                    'mail' => $userMail
+                ])
+                ->update([
+                    'captcha' => $captcha
+                ]);
+            $data = [
+                'status' => 'fail'
+            ];
+            if ($result) {
+                $data = common\sendCaptcha($userMail, $captcha);
+                if ($data['status'] == 'success') {
+                    $errorMessage = "验证码发送成功，请登录您的邮箱查看验证码。如果没有收到邮件，可以尝试在邮箱垃圾桶中寻找。";
+                } else {
+                    $errorMessage = "验证码发送失败，给您发送邮件时出了点问题，请稍后再试";
+                }
+            } else {
+                $errorMessage = "该邮箱未注册";
+            }
+            $data2 = [
+                'status' => $data['status'] == 'success' ? 'success' : 'fail',
+                'message' => $errorMessage
+            ];
+            return json($data2);
+        } catch (Exception $e) {
+            $errorMessage = '系统错误，请稍后再试';
+            $this->assign('errorMessage', $errorMessage);
+            return $this->fetch('message/error');
         }
-        $data2 = [
-            'status' => $data['status']=='success'?'success':'fail',
-            'message' => $errorMessage
-        ];
-        return json($data2);
     }
 }
