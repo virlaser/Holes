@@ -22,24 +22,30 @@ class User extends Controller {
         $isLogin = common\isLogin($request);
         if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
             try {
+                // 得到用户信息
                 $user = Db::name('user')
                     ->where([
                         'id' => $isLogin['user']
                     ])
                     ->field('nickname, avatar, create_time')
                     ->find();
+                // 得到用户发帖数
                 $myNum = Db::name('content')
                     ->where([
                         'userV' => $isLogin['user'],
                         'is_delete' => 0
                     ])
                     ->count();
+                // 得到用户动态数
+                // 仅包含 点赞 点踩 评论 举报
                 $activeNum = Db::name('operate')
                     ->where([
                         'type' => ['IN', [1, 2, 3, 4]],
                         'from_user' => $isLogin['user']
                     ])
                     ->count();
+                // 得到用户通知数
+                // 仅包含 点赞 点踩 评论 举报 的通知
                 $infoNum = Db::name('operate')
                     ->where([
                         'to_user' => $isLogin['user'],
@@ -47,7 +53,7 @@ class User extends Controller {
                         'from_user' => ['NEQ', $isLogin['user']]
                     ])
                     ->count();
-
+                // 计算用户从注册到今天的天数
                 $date1 = date("Y-m-d");
                 $date2 = explode(' ', $user['create_time'])[0];
                 $d1 = strtotime($date1);
@@ -74,6 +80,8 @@ class User extends Controller {
 
     public function my(Request $request) {
         $isLogin = common\isLogin($request);
+        // 得到用户发的帖子
+        // 如果用户没有登录直接重定向到登录页面
         if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
             try {
                 $contents = Db::name('content')
@@ -95,7 +103,6 @@ class User extends Controller {
                         ])
                         ->find();
                     $like_flag = $like_flag ? 1 : 0;
-                    // 判断此用户是否点踩过帖子
                     $dislike_flag = Db::name('operate')
                         ->where([
                             $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
@@ -104,7 +111,6 @@ class User extends Controller {
                         ])
                         ->find();
                     $dislike_flag = $dislike_flag ? 1 : 0;
-                    // 判断此用户是否评论过帖子
                     $comment_flag = Db::name('operate')
                         ->where([
                             $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
@@ -113,7 +119,6 @@ class User extends Controller {
                         ])
                         ->find();
                     $comment_flag = $comment_flag ? 1 : 0;
-                    // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
                     $e['like_flag'] = $like_flag;
                     $e['dislike_flag'] = $dislike_flag;
                     $e['comment_flag'] = $comment_flag;
@@ -131,6 +136,7 @@ class User extends Controller {
         }
     }
 
+    // 前端动态加载用户发过的帖子 api
     public function myApi(Request $request) {
         $isLogin = common\isLogin($request);
         try {
@@ -153,7 +159,6 @@ class User extends Controller {
                     ])
                     ->find();
                 $like_flag = $like_flag ? 1 : 0;
-                // 判断此用户是否点踩过帖子
                 $dislike_flag = Db::name('operate')
                     ->where([
                         $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
@@ -162,7 +167,6 @@ class User extends Controller {
                     ])
                     ->find();
                 $dislike_flag = $dislike_flag ? 1 : 0;
-                // 判断此用户是否评论过帖子
                 $comment_flag = Db::name('operate')
                     ->where([
                         $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
@@ -171,7 +175,6 @@ class User extends Controller {
                     ])
                     ->find();
                 $comment_flag = $comment_flag ? 1 : 0;
-                // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
                 $e['like_flag'] = $like_flag;
                 $e['dislike_flag'] = $dislike_flag;
                 $e['comment_flag'] = $comment_flag;
@@ -203,6 +206,8 @@ class User extends Controller {
                             'userV' => $isLogin['user']
                         ])
                         ->update([
+                            // 用户删除帖子时只是把帖子的 is_delete 置为 1，然后删除所有用户对此帖子的操作记录
+                            // 用户对此帖子的评论不做改变
                             'is_delete' => 1
                         ]);
                     Db::name('operate')
@@ -235,6 +240,10 @@ class User extends Controller {
         if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
             try {
                 $data = array();
+                // 用户的动态
+                // 得到用户的动态类型 点赞 点踩 评论 举报
+                // 得到用户操作的帖子内容
+                // 得到用户对帖子的操作状态
                 $content = Db::name('operate')
                     ->where([
                         'hole_operate.from_user' => $isLogin['user'],
@@ -255,7 +264,6 @@ class User extends Controller {
                         ])
                         ->find();
                     $like_flag = $like_flag ? 1 : 0;
-                    // 判断此用户是否点踩过帖子
                     $dislike_flag = Db::name('operate')
                         ->where([
                             $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
@@ -264,7 +272,6 @@ class User extends Controller {
                         ])
                         ->find();
                     $dislike_flag = $dislike_flag ? 1 : 0;
-                    // 判断此用户是否评论过帖子
                     $comment_flag = Db::name('operate')
                         ->where([
                             $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
@@ -273,7 +280,6 @@ class User extends Controller {
                         ])
                         ->find();
                     $comment_flag = $comment_flag ? 1 : 0;
-                    // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
                     $e['like_flag'] = $like_flag;
                     $e['dislike_flag'] = $dislike_flag;
                     $e['comment_flag'] = $comment_flag;
@@ -291,6 +297,7 @@ class User extends Controller {
         }
     }
 
+    // 前端动态加载用户动态的 api
     public function activeApi(Request $request) {
         $isLogin = common\isLogin($request);
         $data = array();
@@ -315,7 +322,6 @@ class User extends Controller {
                     ])
                     ->find();
                 $like_flag = $like_flag ? 1 : 0;
-                // 判断此用户是否点踩过帖子
                 $dislike_flag = Db::name('operate')
                     ->where([
                         $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
@@ -324,7 +330,6 @@ class User extends Controller {
                     ])
                     ->find();
                 $dislike_flag = $dislike_flag ? 1 : 0;
-                // 判断此用户是否评论过帖子
                 $comment_flag = Db::name('operate')
                     ->where([
                         $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
@@ -333,7 +338,6 @@ class User extends Controller {
                     ])
                     ->find();
                 $comment_flag = $comment_flag ? 1 : 0;
-                // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
                 $e['like_flag'] = $like_flag;
                 $e['dislike_flag'] = $dislike_flag;
                 $e['comment_flag'] = $comment_flag;
@@ -347,14 +351,19 @@ class User extends Controller {
         }
     }
 
+    // 得到给用户的通知
     public function info(Request $request) {
         $isLogin = common\isLogin($request);
         if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
             try {
                 $data = array();
+                // 得到通知来源用户昵称
+                // 得到用户的哪一条帖子被操作
+                // 得到用户对自己帖子的操作状态
                 $content = Db::name('operate')
                     ->where([
                         'to_user' => $isLogin['user'],
+                        // 只有用户的帖子被点赞或者评论时用户才会有通知
                         'type' => ['IN', [1, 3]],
                         'hole_operate.flag' => 0,
                         'from_user' => ['NEQ', $isLogin['user']]
@@ -379,7 +388,6 @@ class User extends Controller {
                         ])
                         ->find();
                     $like_flag = $like_flag ? 1 : 0;
-                    // 判断此用户是否点踩过帖子
                     $dislike_flag = Db::name('operate')
                         ->where([
                             $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
@@ -388,7 +396,6 @@ class User extends Controller {
                         ])
                         ->find();
                     $dislike_flag = $dislike_flag ? 1 : 0;
-                    // 判断此用户是否评论过帖子
                     $comment_flag = Db::name('operate')
                         ->where([
                             $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
@@ -397,6 +404,7 @@ class User extends Controller {
                         ])
                         ->find();
                     $comment_flag = $comment_flag ? 1 : 0;
+                    // 将用户看过的动态标记为已经查看，以后将不会再次加载此动态
                     Db::name('operate')
                         ->where([
                             'object_id' => $e['id'],
@@ -405,7 +413,6 @@ class User extends Controller {
                         ->update([
                             'flag' => 1
                         ]);
-                    // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
                     $e['like_flag'] = $like_flag;
                     $e['dislike_flag'] = $dislike_flag;
                     $e['comment_flag'] = $comment_flag;
@@ -424,6 +431,7 @@ class User extends Controller {
         }
     }
 
+    // 前端动态获取用户通知的 api
     public function infoApi(Request $request) {
         $isLogin = common\isLogin($request);
         $contentList = array();
@@ -455,7 +463,6 @@ class User extends Controller {
                     ])
                     ->find();
                 $like_flag = $like_flag ? 1 : 0;
-                // 判断此用户是否点踩过帖子
                 $dislike_flag = Db::name('operate')
                     ->where([
                         $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
@@ -464,7 +471,6 @@ class User extends Controller {
                     ])
                     ->find();
                 $dislike_flag = $dislike_flag ? 1 : 0;
-                // 判断此用户是否评论过帖子
                 $comment_flag = Db::name('operate')
                     ->where([
                         $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
@@ -481,7 +487,6 @@ class User extends Controller {
                     ->update([
                         'flag' => 1
                     ]);
-                // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
                 $e['like_flag'] = $like_flag;
                 $e['dislike_flag'] = $dislike_flag;
                 $e['comment_flag'] = $comment_flag;
@@ -512,12 +517,16 @@ class User extends Controller {
             $user = Db::name('user')
                 ->where([
                     'mail' => $userMail,
+                    // 存储用户的 md5 密码
                     'password' => md5($userPassword),
+                    // 只有邮箱激活后的用户才能登陆
                     'activate' => 1
                 ])
                 ->find();
             if ($user) {
                 // todo cookie 安全性
+                // 登陆用户的本地 cookie 标识就是用户的邮箱加密码的 md5
+                // 可以考虑给用户标识设置过期时间
                 $identity = md5($user['mail'] . $user['password']);
                 Db::name('user')
                     ->where([
@@ -585,6 +594,7 @@ class User extends Controller {
 
     public function logout() {
         $identity = Cookie::get('hole_userV');
+        // 用户登出，删除用户本地 cookie 标识
         Cookie::delete('userV', 'hole_');
         try {
             Db::name('user')
@@ -636,6 +646,7 @@ class User extends Controller {
         $captcha = $request->param('captcha');
         $password = $request->param('userPassword');
         try {
+            // 判断用户填写的邮箱是否注册过
             $result = Db::name('user')
                 ->where([
                     'mail' => $mail
@@ -643,6 +654,7 @@ class User extends Controller {
                 ->field('captcha')
                 ->find();
             if ($result['captcha'] = $captcha) {
+                // 用户验证码对比成功后清除原有验证码
                 Db::name('user')
                     ->where([
                         'mail' => $mail
@@ -668,6 +680,7 @@ class User extends Controller {
     public function doCaptcha(Request $request) {
         try {
             $userMail = $request->param('userMail');
+            // 生成随机 4 位验证码到邮箱
             $charts = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz0123456789";
             $max = strlen($charts);
             $captcha = "";

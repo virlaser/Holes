@@ -23,6 +23,7 @@ class Check extends Controller {
         $isLogin = common\isLogin($request);
         $userT = $isLogin['type']=='userT'?$isLogin['user']:0;
         try {
+            // 得到用户审查过得帖子 id 列表
             $checked = Db::name('operate')
                 ->where([
                     'type' => 7,
@@ -34,6 +35,7 @@ class Check extends Controller {
             foreach ($checked as $item) {
                 array_push($checkArray, $item['object_id']);
             }
+            // 得到用户未审查过的一条帖子
             $content = Db::name('content')
                 ->where([
                     'userV' => 0,
@@ -63,6 +65,7 @@ class Check extends Controller {
                     'type' => 7,
                     $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
                     'to_user' => 0,
+                    // 审查帖子不通知用户
                     'flag' => 0,
                     'object_id' => $contentId
                 ]);

@@ -18,51 +18,65 @@ require 'util/PHPMailer.php';
 require 'util/Exception.php';
 require 'util/SMTP.php';
 
+// 判断用户是否登录
+// 登录用户，通过用户本地标识确定用户 id
+// 未登录用户，通过用户本地标识确定用户 identity
 function isLogin(Request $request) {
     $userT = $request->cookie('hole_userT');
     $userV = $request->cookie('hole_userV');
-    if($userV) {
-        $user = Db::name('user')
-            ->where('identity', '=', $userV)
-            ->field('id')
-            ->find();
-        if($user) {
-           $data = [
-               'message' => '用户已登录',
-               'type' => 'userV',
-               'user' => $user['id'],
-               'status' => 'success'
-           ];
-           return $data;
+    try {
+        if ($userV) {
+            $user = Db::name('user')
+                ->where('identity', '=', $userV)
+                ->field('id')
+                ->find();
+            if ($user) {
+                $data = [
+                    'message' => '用户已登录',
+                    'type' => 'userV',
+                    'user' => $user['id'],
+                    'status' => 'success'
+                ];
+                return $data;
+            } else {
+                $data = [
+                    'message' => '登录认证信息错误',
+                    'type' => 'userV',
+                    'user' => '',
+                    'status' => 'fail'
+                ];
+                return $data;
+            }
+        } elseif ($userT) {
+            $data = [
+                'message' => '用户未登录',
+                'type' => 'userT',
+                'user' => $userT,
+                'status' => 'success'
+            ];
+            return $data;
         } else {
             $data = [
-                'message' => '登录认证信息错误',
-                'type' => 'userV',
-                'user' => null,
+                'message' => '无用户信息',
+                'type' => 'userT',
+                'user' => '',
                 'status' => 'fail'
             ];
             return $data;
         }
-    } elseif ($userT) {
+    } catch (\think\Exception $e) {
         $data = [
-            'message' => '用户未登录',
+            'message' => '系统错误',
             'type' => 'userT',
-            'user' => $userT,
-            'status' => 'success'
-        ];
-        return $data;
-    } else {
-        $data = [
-            'message' => '无用户信息',
-            'type' => 'userT',
-            'user' => null,
+            'user' => '',
             'status' => 'fail'
         ];
         return $data;
     }
 }
 
-// hash time
+// 未登录用户的标识是用户此次访问时间的 MD5
+// 将此标识以 userT 的 cookie 存储在用户浏览器
 function setUserT(Request $request) {
     $userT = $request->cookie('hole_userT');
     if(!$userT) {
@@ -74,13 +88,16 @@ function setUserT(Request $request) {
     }
 }
 
-// hash username and password
+// 登录用户的标识是用户的邮箱和密码的 MD5
+// 将此标识以 userV 的 cookie 存储在用户浏览器
 function setUserV($identity) {
     Cookie::set('userV', $identity, ['prefix' => 'hole_', 'expire' => 60*60*24*30*3]);
 }
 
+// 发送注册邮箱激活邮件
 function sendMail($emailAddress, $userName, $identity) {
     $mail = new PHPMailer(true);
+    // 通过对比用户的邮箱加上密码的 MD5 来确认激活的账号
     $href = config('domain') . '/activate?identity=' . $identity;
     try {
         $mail->isSMTP();
@@ -144,6 +161,7 @@ function sendMail($emailAddress, $userName, $identity) {
     }
 }
 
+// 发送找回密码验证码
 function sendCaptcha($emailAddress, $captcha) {
     $href = config('domain') . '/find';
     $mail = new PHPMailer(true);

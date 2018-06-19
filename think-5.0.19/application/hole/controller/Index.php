@@ -18,34 +18,48 @@ use think\Request;
 class Index extends Controller {
 
     public function index(Request $request) {
+        // 如果用户未登录就给用户种植未登录用户的标识 cookie
         common\setUserT($request);
+        // 如果用户未登录就得到未登录的标识，用来记录用户操作
+        // 如果用户登录了就得到用户的 id
         $isLogin = common\isLogin($request);
         try {
+            // 得到置顶的帖子
             $topContents = Db::name('content')
                 ->where([
+                    // 判断帖子是不是置顶的帖子
                     'flag' => 1
                 ])
                 ->join('hole_user', 'hole_content.userV=hole_user.id', 'LEFT')
                 ->field('hole_content.*, hole_user.nickname, hole_user.avatar')
                 ->order('hole_content.create_time desc')
                 ->select();
+            // 得到普通的帖子
             $contents = Db::name('content')
                 ->where([
-                    'verified' => 5,
+                    // 未登录用户发的帖子需要三个人审核通过才能发表
+                    // 登录用户的帖子创建时 verified 就等于 3
+                    'verified' => 3,
+                    // 判断此帖子是不是被用户删除
                     'is_delete' => 0,
                     'flag' => 0
                 ])
                 ->join('hole_user', 'hole_content.userV=hole_user.id', 'LEFT')
                 ->field('hole_content.*, hole_user.nickname, hole_user.avatar')
                 ->order('hole_content.create_time desc')
+                // 分页，简单模式，上拉自动加载
                 ->paginate(10, true);
             $data = array();
             $data2 = array();
             foreach ($topContents as $e) {
+                // 判断用户是否点赞过帖子，防止重复点赞
                 $like_flag = Db::name('operate')
                     ->where([
+                        // 如果用户未登录就用 identity 来记录未登录用户的标识 cookie
+                        // 如果用户登录了就用 from_user 来记录登录用户的 id
                         $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
                         'object_id' => $e['id'],
+                        // 点赞操作
                         'type' => 1
                     ])
                     ->find();
@@ -55,6 +69,7 @@ class Index extends Controller {
                     ->where([
                         $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
                         'object_id' => $e['id'],
+                        // 点踩操作
                         'type' => 2
                     ])
                     ->find();
@@ -64,6 +79,7 @@ class Index extends Controller {
                     ->where([
                         $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
                         'object_id' => $e['id'],
+                        // 评论操作
                         'type' => 3
                     ])
                     ->find();
@@ -83,7 +99,6 @@ class Index extends Controller {
                     ])
                     ->find();
                 $like_flag = $like_flag ? 1 : 0;
-                // 判断此用户是否点踩过帖子
                 $dislike_flag = Db::name('operate')
                     ->where([
                         $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
@@ -92,7 +107,6 @@ class Index extends Controller {
                     ])
                     ->find();
                 $dislike_flag = $dislike_flag ? 1 : 0;
-                // 判断此用户是否评论过帖子
                 $comment_flag = Db::name('operate')
                     ->where([
                         $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
@@ -101,7 +115,6 @@ class Index extends Controller {
                     ])
                     ->find();
                 $comment_flag = $comment_flag ? 1 : 0;
-                // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
                 $e['like_flag'] = $like_flag;
                 $e['dislike_flag'] = $dislike_flag;
                 $e['comment_flag'] = $comment_flag;
@@ -117,6 +130,7 @@ class Index extends Controller {
         }
     }
 
+    // 用来前端动态请求主页帖子
     public function contentApi(Request $request) {
         common\setUserT($request);
         $isLogin = common\isLogin($request);
@@ -141,7 +155,6 @@ class Index extends Controller {
                     ])
                     ->find();
                 $like_flag = $like_flag ? 1 : 0;
-                // 判断此用户是否点踩过帖子
                 $dislike_flag = Db::name('operate')
                     ->where([
                         $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
@@ -150,7 +163,6 @@ class Index extends Controller {
                     ])
                     ->find();
                 $dislike_flag = $dislike_flag ? 1 : 0;
-                // 判断此用户是否评论过帖子
                 $comment_flag = Db::name('operate')
                     ->where([
                         $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
@@ -159,7 +171,6 @@ class Index extends Controller {
                     ])
                     ->find();
                 $comment_flag = $comment_flag ? 1 : 0;
-                // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
                 $e['like_flag'] = $like_flag;
                 $e['dislike_flag'] = $dislike_flag;
                 $e['comment_flag'] = $comment_flag;
@@ -181,14 +192,14 @@ class Index extends Controller {
         common\setUserT($request);
         $isLogin = common\isLogin($request);
         $content = $request->param('content');
-        // if choose, $hide = 'on'
+        // 如果用户发帖时选择了匿名，此处 hide == on
         $hide = $request->param('hide');
         $hide = $hide == 'on' ? 1 : 0;
         Db::name('content')
             ->insert([
                 'content' => $content,
                 $isLogin['type']=='userV'?'userV':'userT' => $isLogin['user']?$isLogin['user']:0,
-                'verified' => $isLogin['type']=='userV'?5:0,
+                'verified' => $isLogin['type']=='userV'?3:0,
                 'hide' => $hide,
             ]);
         $this->redirect('/hole');
@@ -331,6 +342,7 @@ class Index extends Controller {
         }
     }
 
+    // 前端动态加载评论的接口
     public function commentApi(Request $request) {
         common\setUserT($request);
         $isLogin = common\isLogin($request);
@@ -505,6 +517,7 @@ class Index extends Controller {
                         ->insert([
                             'type' => 4,
                             $isLogin['type'] === 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
+                            // 举报不通知用户
                             'to_user' => 0,
                             'flag' => 0,
                             'object_id' => $contentId
