@@ -554,4 +554,70 @@ class User extends Controller {
         }
     }
 
+    public function find() {
+        return $this->fetch();
+    }
+
+    public function doFind(Request $request) {
+        $mail = $request->param('mail');
+        $captcha = $request->param('captcha');
+        $password = $request->param('userPassword');
+        $result = Db::name('user')
+            ->where([
+                'mail' => $mail
+            ])
+            ->field('captcha')
+            ->find();
+        if($result['captcha'] = $captcha) {
+            Db::name('user')
+                ->where([
+                    'mail' => $mail
+                ])
+                ->update([
+                    'identity' => '',
+                    'password' => md5($password),
+                    'captcha' => ''
+                ]);
+            $errorMessage = "密码重置成功";
+        } else {
+            $errorMessage = "验证码或邮箱错误";
+        }
+        $this->assign('errorMessage', $errorMessage);
+        return $this->fetch('message/error');
+    }
+
+    public function doCaptcha(Request $request) {
+        $userMail = $request->param('userMail');
+        $charts = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz0123456789";
+        $max = strlen($charts);
+        $captcha = "";
+        for($i = 0; $i < 4; $i++) {
+            $captcha .= $charts[mt_rand(0, $max-1)];
+        }
+        $result = Db::name('user')
+            ->where([
+                'mail' => $userMail
+            ])
+            ->update([
+                'captcha' => $captcha
+            ]);
+        $data = [
+            'status' => 'fail'
+        ];
+        if($result) {
+            $data = common\sendCaptcha($userMail, $captcha);
+            if ($data['status'] == 'success') {
+                $errorMessage = "验证码发送成功，请登录您的邮箱查看验证码。如果没有收到邮件，可以尝试在邮箱垃圾桶中寻找。";
+            } else {
+                $errorMessage = "验证码发送失败，给您发送邮件时出了点问题，请稍后再试";
+            }
+        } else {
+            $errorMessage = "该邮箱未注册";
+        }
+        $data2 = [
+            'status' => $data['status']=='success'?'success':'fail',
+            'message' => $errorMessage
+        ];
+        return json($data2);
+    }
 }
