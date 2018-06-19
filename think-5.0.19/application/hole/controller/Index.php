@@ -70,7 +70,7 @@ class Index extends Controller {
             $e['like_flag'] = $like_flag;
             $e['dislike_flag'] = $dislike_flag;
             $e['comment_flag'] = $comment_flag;
-            array_push($data, $e);
+            array_push($data2, $e);
         }
         foreach ($contents as $e) {
             $like_flag = Db::name('operate')
@@ -456,7 +456,39 @@ class Index extends Controller {
 
         // 举报
         if($type == 4) {
-
+            $result = Db::name('operate')
+                ->where([
+                    $isLogin['type']==='userV'?'from_user':'identity' => $isLogin['user'],
+                    'type' => 4,
+                    'object_id' => $contentId
+                ])
+                ->find();
+            if($result) {
+                $data = [
+                    'status' => 'fail',
+                    'message' => '您已经举报过这条帖子'
+                ];
+                return json($data);
+            } else {
+                Db::name('operate')
+                    ->insert([
+                        'type' => 4,
+                        $isLogin['type']==='userV'?'from_user':'identity' => $isLogin['user'],
+                        'to_user' => 0,
+                        'flag' => 0,
+                        'object_id' => $contentId
+                    ]);
+                Db::name('content')
+                    ->where([
+                        'id' => $contentId
+                    ])
+                    ->setInc('report_num');
+                $data = [
+                    'status' => 'success',
+                    'message' => '举报成功'
+                ];
+                return json($data);
+            }
         }
 
         // 给评论点赞
