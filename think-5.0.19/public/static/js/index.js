@@ -117,7 +117,6 @@ function doVote(event, contentId, type) {
 }
 
 function doComment(contentId) {
-    console.log('click doComment');
     window.location.href = '/comment?contentId=' + contentId;
 }
 
@@ -215,6 +214,7 @@ function doLoading() {
                 let dislikeNum = content.dislike_num === 0?"踩":content.dislike_num;
                 let comment = content.comment_flag === 0?(staticRes+"/icon-comment.png"):(staticRes+"/icon-comment-selected.png");
                 let commentNum = content.comment_num === 0?"评论":content.comment_num;
+                let tag = content.tag?('<i>#'+content.tag+'#&nbsp&nbsp</i>'):'';
                 if(content.hide===0){
                     if(content.avatar){
                         avatar = content.avatar;
@@ -236,7 +236,7 @@ function doLoading() {
                     "                <p>" + content.create_time + "</p>\n" +
                     "            </div>\n" +
                     "        </div>\n" +
-                    "        <p class=\"content\" id=\"content\" onclick=\"getDetail(this, "+ content.id +")\">" + content.content + "</p>\n" +
+                    "        <p class=\"content\" id=\"content\" onclick=\"getDetail(this, "+ content.id +")\">" + tag + content.content + "</p>\n" +
                     "        <div class=\"control-block\">\n" +
                     "            <div class=\"button\" id=\"like\" onclick=\"doVote(this," + content.id + ", 1)\">\n" +
                     "                <img src=\"" + like + "\"/>\n" +
@@ -683,4 +683,9 @@ function doReport(contentId) {
             }
         })
     }
+}
+
+function doTag(tag) {
+    let href = '/tag?tag=' + tag;
+    window.location.href = href;
 }
