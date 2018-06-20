@@ -18,6 +18,10 @@ return [
     'create' => 'hole/index/create',
     // 用户发帖逻辑
     'doCreate' => 'hole/index/doCreate',
+    // 加载特定的标签内容
+    'tag' => 'hole/index/tag',
+    // 前端动态请求标签内容接口
+    'tagApi' => 'hole/index/tagApi',
     // 用户评论页面
     'comment' => 'hole/index/comment',
     // 用户评论逻辑
@@ -66,4 +70,8 @@ return [
     'doFind' => 'hole/user/doFind',
     // 给用户发送验证码，用来用户找回密码
     'captcha' => 'hole/user/doCaptcha',
+    // 修改用户信息页面
+    'upload' => 'hole/user/upload',
+    // 用户上传信息处理逻辑
+    'doUpload' => 'hole/user/doUpload',
 ];

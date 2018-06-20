@@ -41,7 +41,7 @@
                 <p>{$topcontent.create_time}</p>
             </div>
         </div>
-        <p class="content" onclick="getDetail(this, {$topcontent.id})">{if $topcontent.tag}<i>#{$topcontent.tag}#&nbsp&nbsp</i>{/if}{{$topcontent.content}</p>
+        <p class="content" onclick="getDetail(this, {$topcontent.id})">{if $topcontent.tag}<i>#{$topcontent.tag}#&nbsp&nbsp</i>{/if}{$topcontent.content}</p>
         <div class="control-block">
             <div class="button" onclick="doVote(this, {$topcontent.id}, 1)">
                 <img src="{$topcontent.like_flag==0?'__STATIC__/images/icon-like.png':'__STATIC__/images/icon-like-selected.png'}"/>

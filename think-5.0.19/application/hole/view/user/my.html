@@ -27,7 +27,7 @@
             </div>
             <img src="__STATIC__/images/icon-more.png" class="icon-more" onclick="doDelete(this, {$content.id})"/>
         </div>
-        <p class="content" id="content" onclick="getDetail(this, {$content.id})">{$content.content}</p>
+        <p class="content" id="content" onclick="getDetail(this, {$content.id})">{if $content.tag}<i>#{$content.tag}#&nbsp&nbsp</i>{/if}{$content.content}</p>
         <div class="control-block">
             <div class="button" id="like" onclick="doVote(this, {$content.id}, 1)">
                 <img src="{$content.like_flag==0?'__STATIC__/images/icon-like.png':'__STATIC__/images/icon-like-selected.png'}"/>

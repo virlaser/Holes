@@ -47,11 +47,6 @@
     </div>
     {/volist}
 </div>
-<div id="post-btn">
-    <a href="/create">
-        <img src="__STATIC__/images/icon-feather.png"/>
-    </a>
-</div>
 <div class="footer">
     <div class="box">
         <div class="button">
@@ -79,7 +74,7 @@
 <script>
     window.onscroll = function () {
         if(getScrollTop() + getClientHeight() === getScrollHeight()) {
-            doLoading();
+            loadTag('{$tag}');
         }
     }
 </script>

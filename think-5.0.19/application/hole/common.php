@@ -41,7 +41,8 @@ function isLogin(Request $request) {
             } else {
                 $data = [
                     'message' => '登录认证信息错误',
-                    'type' => 'userV',
+                    // 如果用户本地登录标识被篡改导致查询不到用户信息，把用户当做未登录用户
+                    'type' => 'userT',
                     'user' => '',
                     'status' => 'fail'
                 ];
