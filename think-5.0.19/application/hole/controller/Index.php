@@ -24,6 +24,15 @@ class Index extends Controller {
         // 如果用户登录了就得到用户的 id
         $isLogin = common\isLogin($request);
         try {
+            // 得到标签
+            $tags = Db::name('content')
+                ->where([
+                    'tag' => ['NEQ', '']
+                ])
+                ->field('count(tag) as tagNum, tag')
+                ->group('tag')
+                ->order('tagNum desc')
+                ->paginate(6, true);
             // 得到置顶的帖子
             $topContents = Db::name('content')
                 ->where([
@@ -122,6 +131,7 @@ class Index extends Controller {
             }
             $this->assign('contents', $data);
             $this->assign('topContents', $data2);
+            $this->assign('tags', $tags);
             return $this->fetch();
         } catch (Exception $e) {
             $errorMessage = '系统错误，请稍后再试';
@@ -137,7 +147,7 @@ class Index extends Controller {
         try {
             $contents = Db::name('content')
                 ->where([
-                    'verified' => 5,
+                    'verified' => 3,
                     'is_delete' => 0,
                     'flag' => 0
                 ])
@@ -184,6 +194,57 @@ class Index extends Controller {
         }
     }
 
+    public function tag(Request $request) {
+        common\setUserT($request);
+        $isLogin = common\isLogin($request);
+        $tag = $request->param('tag');
+        $contents = Db::name('content')
+            ->where([
+                'verified' => 3,
+                'is_delete' => 0,
+                'flag' => 0,
+                'tag' => $tag
+            ])
+            ->join('hole_user', 'hole_content.userV=hole_user.id', 'LEFT')
+            ->field('hole_content.*, hole_user.nickname, hole_user.avatar')
+            ->order('hole_content.create_time desc')
+            ->paginate(10, true);
+        $data = array();
+        foreach ($contents as $e) {
+            $like_flag = Db::name('operate')
+                ->where([
+                    $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
+                    'object_id' => $e['id'],
+                    'type' => 1
+                ])
+                ->find();
+            $like_flag = $like_flag ? 1 : 0;
+            $dislike_flag = Db::name('operate')
+                ->where([
+                    $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
+                    'object_id' => $e['id'],
+                    'type' => 2
+                ])
+                ->find();
+            $dislike_flag = $dislike_flag ? 1 : 0;
+            $comment_flag = Db::name('operate')
+                ->where([
+                    $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
+                    'object_id' => $e['id'],
+                    'type' => 3
+                ])
+                ->find();
+            $comment_flag = $comment_flag ? 1 : 0;
+            $e['like_flag'] = $like_flag;
+            $e['dislike_flag'] = $dislike_flag;
+            $e['comment_flag'] = $comment_flag;
+            array_push($data, $e);
+        }
+        $this->assign('contents', $data);
+        $this->assign('tag', $tag);
+        return $this->fetch();
+    }
+
     public function create() {
         return $this->fetch('create');
     }
@@ -195,12 +256,14 @@ class Index extends Controller {
         // 如果用户发帖时选择了匿名，此处 hide == on
         $hide = $request->param('hide');
         $hide = $hide == 'on' ? 1 : 0;
+        $tag = $request->param('tag');
         Db::name('content')
             ->insert([
                 'content' => $content,
                 $isLogin['type']=='userV'?'userV':'userT' => $isLogin['user']?$isLogin['user']:0,
                 'verified' => $isLogin['type']=='userV'?3:0,
                 'hide' => $hide,
+                'tag' => $tag
             ]);
         $this->redirect('/hole');
     }
