@@ -19,8 +19,12 @@
 </div>
 <form class="create" method="post" action="/doCreate" onsubmit="return doCreate()">
     <textarea class="comment" maxlength="800" id="content" name="content" placeholder="想说啥就写在这，800字内哦~未登录用户的帖子将在审核后发出"></textarea>
+    <div class="create-tag">
+        <p>标签</p>
+        <input type="text" name="tag" id="tag" placeholder="#可选，10字以内#" maxlength="10">
+    </div>
     <div id="is-anoymous">
-        <p>是否匿名</p>
+        <p>匿名</p>
         <input type="checkbox" name="hide" class="al-toggle-button" id="hide">
     </div>
     <input type="submit" class="submitBtn" value="发送">

@@ -8,56 +8,11 @@
     <link rel="stylesheet" href="__STATIC__/css/index.css">
     <title>武理树洞</title>
 </head>
-<style>
-    .content-list {
-        margin-top: 0;
-    }
-</style>
 <body>
 <div class="header" id="page-1">
-    <p>武理树洞</p>
+    <p>#{$tag}#</p>
 </div>
-{if $tags}
-<div class="tag-list">
-    <div class="tag-box">
-        {volist name='tags' id='tag'}
-            <a class="tag" onclick="doTag('{$tag.tag}')">#{$tag.tag}#</a>
-        {/volist}
-    </div>
-</div>
-{/if}
 <div class="content-list">
-    {volist name="topContents" id="topcontent"}
-    <div class="section" >
-        <div class="user-info">
-            <img src="{if $topcontent.avatar && $topcontent.hide==0}{$topcontent.avatar}{else}__STATIC__/images/default/avatar.jpg{/if}"/>
-            <div class="middle">
-                <div>
-                    <p class="nickname">
-                        {if $topcontent.userV==0 || $topcontent.hide==1 }匿名{else}{$topcontent.nickname}{/if}
-                    </p>
-                    <p class="top">置顶</p>
-                </div>
-                <p>{$topcontent.create_time}</p>
-            </div>
-        </div>
-        <p class="content" onclick="getDetail(this, {$topcontent.id})">{if $topcontent.tag}<i>#{$topcontent.tag}#&nbsp&nbsp</i>{/if}{{$topcontent.content}</p>
-        <div class="control-block">
-            <div class="button" onclick="doVote(this, {$topcontent.id}, 1)">
-                <img src="{$topcontent.like_flag==0?'__STATIC__/images/icon-like.png':'__STATIC__/images/icon-like-selected.png'}"/>
-                <p>{$topcontent.like_num==0?'赞':$topcontent.like_num}</p>
-            </div>
-            <div class="button" onclick="doVote(this, {$topcontent.id}, 2)">
-                <img src="{$topcontent.dislike_flag==0?'__STATIC__/images/icon-dislike.png':'__STATIC__/images/icon-dislike-selected.png'}"/>
-                <p>{$topcontent.dislike_num==0?'踩':$topcontent.dislike_num}</p>
-            </div>
-            <div class="button" onclick="doComment({$topcontent.id})">
-                <img src="{$topcontent.comment_flag==0?'__STATIC__/images/icon-comment.png':'__STATIC__/images/icon-comment-selected.png'}"/>
-                <p>{$topcontent.comment_num==0?'评论':$topcontent.comment_num}</p>
-            </div>
-        </div>
-    </div>
-    {/volist}
     {volist name="contents" id="content"}
     <div class="section" >
         <div class="user-info">
@@ -73,7 +28,7 @@
             <img src="__STATIC__/images/icon-more.png" class="icon-more" onclick="doReport({$content.id})"/>
         </div>
         <div>
-        <p class="content" onclick="getDetail(this, {$content.id})">{if $content.tag}<i>#{$content.tag}#&nbsp&nbsp</i>{/if}{$content.content}</p>
+            <p class="content" onclick="getDetail(this, {$content.id})">{if $content.tag}<i>#{$content.tag}#&nbsp&nbsp</i>{/if}{$content.content}</p>
         </div>
         <div class="control-block">
             <div class="button" onclick="doVote(this, {$content.id}, 1)">
@@ -101,8 +56,8 @@
     <div class="box">
         <div class="button">
             <a href="/hole">
-                <img src="__STATIC__/images/index_s.png"/>
-                <p style="color: #705f5d">首页</p>
+                <img src="__STATIC__/images/index.png"/>
+                <p style="color: #bcc6c6">首页</p>
             </a>
         </div>
         <div class="button">
