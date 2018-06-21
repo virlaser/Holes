@@ -17,6 +17,7 @@ use think\Request;
 
 class Index extends Controller {
 
+    // 树洞主页
     public function index(Request $request) {
         // 如果用户未登录就给用户种植未登录用户的标识 cookie
         common\setUserT($request);
@@ -58,78 +59,8 @@ class Index extends Controller {
                 ->order('hole_content.create_time desc')
                 // 分页，简单模式，上拉自动加载
                 ->paginate(10, true);
-            $data = array();
-            $data2 = array();
-            // todo 查询优化
-            foreach ($topContents as $e) {
-                // 判断用户是否点赞过帖子，防止重复点赞
-                $like_flag = Db::name('operate')
-                    ->where([
-                        // 如果用户未登录就用 identity 来记录未登录用户的标识 cookie
-                        // 如果用户登录了就用 from_user 来记录登录用户的 id
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        // 点赞操作
-                        'type' => 1
-                    ])
-                    ->find();
-                $like_flag = $like_flag ? 1 : 0;
-                // 判断此用户是否点踩过帖子
-                $dislike_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        // 点踩操作
-                        'type' => 2
-                    ])
-                    ->find();
-                $dislike_flag = $dislike_flag ? 1 : 0;
-                // 判断此用户是否评论过帖子
-                $comment_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        // 评论操作
-                        'type' => 3
-                    ])
-                    ->find();
-                $comment_flag = $comment_flag ? 1 : 0;
-                // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
-                $e['like_flag'] = $like_flag;
-                $e['dislike_flag'] = $dislike_flag;
-                $e['comment_flag'] = $comment_flag;
-                array_push($data2, $e);
-            }
-            foreach ($contents as $e) {
-                $like_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        'type' => 1
-                    ])
-                    ->find();
-                $like_flag = $like_flag ? 1 : 0;
-                $dislike_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        'type' => 2
-                    ])
-                    ->find();
-                $dislike_flag = $dislike_flag ? 1 : 0;
-                $comment_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        'type' => 3
-                    ])
-                    ->find();
-                $comment_flag = $comment_flag ? 1 : 0;
-                $e['like_flag'] = $like_flag;
-                $e['dislike_flag'] = $dislike_flag;
-                $e['comment_flag'] = $comment_flag;
-                array_push($data, $e);
-            }
+            $data = common\getContentFlag($isLogin, $contents);
+            $data2 = common\getContentFlag($isLogin, $topContents);
             $this->assign('contents', $data);
             $this->assign('topContents', $data2);
             $this->assign('tags', $tags);
@@ -157,37 +88,7 @@ class Index extends Controller {
                 ->field('hole_content.*, hole_user.nickname, hole_user.avatar')
                 ->order('hole_content.create_time desc')
                 ->paginate(10, true);
-            $data = array();
-            foreach ($contents as $e) {
-                $like_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        'type' => 1
-                    ])
-                    ->find();
-                $like_flag = $like_flag ? 1 : 0;
-                $dislike_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        'type' => 2
-                    ])
-                    ->find();
-                $dislike_flag = $dislike_flag ? 1 : 0;
-                $comment_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        'type' => 3
-                    ])
-                    ->find();
-                $comment_flag = $comment_flag ? 1 : 0;
-                $e['like_flag'] = $like_flag;
-                $e['dislike_flag'] = $dislike_flag;
-                $e['comment_flag'] = $comment_flag;
-                array_push($data, $e);
-            }
+            $data = common\getContentFlag($isLogin, $contents);
             return json($data);
         } catch (Exception $e) {
             $errorMessage = '系统错误，请稍后再试';
@@ -212,37 +113,7 @@ class Index extends Controller {
                 ->field('hole_content.*, hole_user.nickname, hole_user.avatar')
                 ->order('hole_content.create_time desc')
                 ->paginate(10, true);
-            $data = array();
-            foreach ($contents as $e) {
-                $like_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        'type' => 1
-                    ])
-                    ->find();
-                $like_flag = $like_flag ? 1 : 0;
-                $dislike_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        'type' => 2
-                    ])
-                    ->find();
-                $dislike_flag = $dislike_flag ? 1 : 0;
-                $comment_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        'type' => 3
-                    ])
-                    ->find();
-                $comment_flag = $comment_flag ? 1 : 0;
-                $e['like_flag'] = $like_flag;
-                $e['dislike_flag'] = $dislike_flag;
-                $e['comment_flag'] = $comment_flag;
-                array_push($data, $e);
-            }
+            $data = common\getContentFlag($isLogin, $contents);
             $this->assign('contents', $data);
             $this->assign('tag', $tag);
             return $this->fetch();
@@ -269,37 +140,7 @@ class Index extends Controller {
                 ->field('hole_content.*, hole_user.nickname, hole_user.avatar')
                 ->order('hole_content.create_time desc')
                 ->paginate(10, true);
-            $data = array();
-            foreach ($contents as $e) {
-                $like_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        'type' => 1
-                    ])
-                    ->find();
-                $like_flag = $like_flag ? 1 : 0;
-                $dislike_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        'type' => 2
-                    ])
-                    ->find();
-                $dislike_flag = $dislike_flag ? 1 : 0;
-                $comment_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        'type' => 3
-                    ])
-                    ->find();
-                $comment_flag = $comment_flag ? 1 : 0;
-                $e['like_flag'] = $like_flag;
-                $e['dislike_flag'] = $dislike_flag;
-                $e['comment_flag'] = $comment_flag;
-                array_push($data, $e);
-            }
+            $data = common\getContentFlag($isLogin, $contents);
             return json($data);
         } catch (Exception $e) {
             $errorMessage = '系统错误，请稍后再试';
@@ -390,8 +231,6 @@ class Index extends Controller {
         common\setUserT($request);
         $isLogin = common\isLogin($request);
         $contentId = (int) $request->param('contentId');
-        $data = array();
-        $data2 = array();
         try {
             $content = Db::name('content')
                 ->where([
@@ -399,36 +238,9 @@ class Index extends Controller {
                 ])
                 ->join('hole_user', 'hole_content.userV=hole_user.id', 'LEFT')
                 ->field('hole_content.*, hole_user.nickname, hole_user.avatar')
-                ->find();
-            $like_flag = Db::name('operate')
-                ->where([
-                    $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                    'object_id' => $content['id'],
-                    'type' => 1
-                ])
-                ->find();
-            $like_flag = $like_flag ? 1 : 0;
-            $dislike_flag = Db::name('operate')
-                ->where([
-                    $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                    'object_id' => $content['id'],
-                    'type' => 2
-                ])
-                ->find();
-            $dislike_flag = $dislike_flag ? 1 : 0;
-            $comment_flag = Db::name('operate')
-                ->where([
-                    $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                    'object_id' => $content['id'],
-                    'type' => 3
-                ])
-                ->find();
-            $comment_flag = $comment_flag ? 1 : 0;
-            $content['like_flag'] = $like_flag;
-            $content['dislike_flag'] = $dislike_flag;
-            $content['comment_flag'] = $comment_flag;
-            array_push($data, $content);
-
+                // 此处使用 select 否则公共函数中的 foreach 循环会出问题
+                ->select();
+            $data = common\getContentFlag($isLogin, $content);
             $comments = Db::name('comment')
                 ->where([
                     'content_id' => $contentId
@@ -437,27 +249,8 @@ class Index extends Controller {
                 ->field('hole_comment.*, hole_user.nickname')
                 ->order('hole_comment.create_time desc')
                 ->paginate(5, true);
-            foreach ($comments as $comment) {
-                $like_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $comment['id'],
-                        'type' => 5
-                    ])
-                    ->find();
-                $like_flag = $like_flag ? 1 : 0;
-                $dislike_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $comment['id'],
-                        'type' => 6
-                    ])
-                    ->find();
-                $dislike_flag = $dislike_flag ? 1 : 0;
-                $comment['like_flag'] = $like_flag;
-                $comment['dislike_flag'] = $dislike_flag;
-                array_push($data2, $comment);
-            }
+            $data2 = common\getCommentFlag($isLogin, $comments);
+            // 详情页面只有一条帖子信息，因此取 $data[0]
             $this->assign('content', $data[0]);
             $this->assign('comments', $data2);
             return $this->fetch();
@@ -473,7 +266,6 @@ class Index extends Controller {
         common\setUserT($request);
         $isLogin = common\isLogin($request);
         $contentId = (int) $request->param('contentId');
-        $data = array();
         try {
             $comments = Db::name('comment')
                 ->where([
@@ -483,27 +275,7 @@ class Index extends Controller {
                 ->field('hole_comment.*, hole_user.nickname')
                 ->order('hole_comment.create_time desc')
                 ->paginate(5, true);
-            foreach ($comments as $comment) {
-                $like_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $comment['id'],
-                        'type' => 5
-                    ])
-                    ->find();
-                $like_flag = $like_flag ? 1 : 0;
-                $dislike_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $comment['id'],
-                        'type' => 6
-                    ])
-                    ->find();
-                $dislike_flag = $dislike_flag ? 1 : 0;
-                $comment['like_flag'] = $like_flag;
-                $comment['dislike_flag'] = $dislike_flag;
-                array_push($data, $comment);
-            }
+            $data = common\getCommentFlag($isLogin, $comments);
             return json($data);
         } catch (Exception $e) {
             $errorMessage = '系统错误，请稍后再试';
@@ -521,6 +293,7 @@ class Index extends Controller {
         try {
             // 点赞/取消赞
             if ($type == 1) {
+                // 查看用户是否点赞过
                 $result = Db::name('operate')
                     ->where([
                         'type' => 1,
@@ -528,6 +301,7 @@ class Index extends Controller {
                         'object_id' => $contentId
                     ])
                     ->find();
+                // 如果以前点赞过，删除以前的点赞操作，将帖子点赞数减一
                 if ($result) {
                     Db::name('operate')
                         ->where([
@@ -547,6 +321,7 @@ class Index extends Controller {
                     ];
                     return json($data);
                 } else {
+                    // 如果以前没有点赞过，查出被点赞帖子所属用户，给她通知，记录点赞操作，将帖子点赞数加一
                     $toUser = Db::name('content')
                         ->where([
                             'id' => $contentId,

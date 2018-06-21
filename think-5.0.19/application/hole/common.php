@@ -227,3 +227,67 @@ function sendCaptcha($emailAddress, $captcha) {
         return $data;
     }
 }
+
+// 得到当前用户对每一条帖子的 点赞 点踩 评论 状态
+// 不进行异常捕捉，异常将会在被调用处被捕捉
+function getContentFlag($isLogin, $contents) {
+    $data = array();
+    foreach ($contents as $e) {
+        $flags = Db::name('operate')
+            ->where([
+                $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                'object_id' => $e['id'],
+                // 查看用户是否 点赞，点踩，评论过帖子
+                'type' => ['IN', [1, 2, 3]]
+            ])
+            ->field('type')
+            ->select();
+        $like_flag = 0;
+        $dislike_flag = 0;
+        $comment_flag = 0;
+        if($flags)
+            foreach ($flags as $flag) {
+                if ($flag['type'] == 1)
+                    $like_flag = 1;
+                if ($flag['type'] == 2)
+                    $dislike_flag = 1;
+                if ($flag['type'] == 3)
+                    $comment_flag = 1;
+            }
+        // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
+        $e['like_flag'] = $like_flag;
+        $e['dislike_flag'] = $dislike_flag;
+        $e['comment_flag'] = $comment_flag;
+        array_push($data, $e);
+    }
+    return $data;
+}
+
+// 得到用户对每一条评论的 点赞 点踩 状态
+function getCommentFlag($isLogin, $comments) {
+    $data = array();
+    foreach ($comments as $e) {
+        $flags = Db::name('operate')
+            ->where([
+                $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                'object_id' => $e['id'],
+                // 查看用户是 点踩 点赞 过评论
+                'type' => ['IN', [5, 6]]
+            ])
+            ->field('type')
+            ->select();
+        $like_flag = 0;
+        $dislike_flag = 0;
+        if($flags)
+            foreach ($flags as $flag) {
+                if ($flag['type'] == 5)
+                    $like_flag = 1;
+                if ($flag['type'] == 6)
+                    $dislike_flag = 1;
+            }
+        $e['like_flag'] = $like_flag;
+        $e['dislike_flag'] = $dislike_flag;
+        array_push($data, $e);
+    }
+    return $data;
+}
