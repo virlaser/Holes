@@ -815,12 +815,22 @@ function doImage() {
                 dataType: 'json',
                 timeout: 500,
                 success: function (res) {
-                    console.log('success' + res);
+                    if(res.status === 'success') {
+                        alert("头像上传成功");
+                    }
                 },
                 error: function () {
-                    console.log('fail');
+                    alert("头像上传失败，请稍后再试");
                 }
             })
         })
+    }
+}
+
+function doChange() {
+    let userName = $('#name').val();
+    if(!userName) {
+        alert("请填写用户名");
+        return false;
     }
 }
