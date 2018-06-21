@@ -611,3 +611,50 @@ a {
     background-color: #FFFFFF;
     border-radius: 5px;
 }
+
+.wrapper {
+    margin-top: 40px;
+    padding-top: 20px;
+    background-color: #faf6ee;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.wrapper img,
+.wrapper #canvasImg {
+    height: 90px;
+    width: 90px;
+    border-radius: 50%;
+    margin: 40px auto 80px;
+}
+
+.wrapper .inputImg,
+.wrapper .mail,
+.wrapper .username{
+    display: flex;
+    flex-direction: row;
+    width: 80%;
+    margin: 0 auto;
+    justify-content: space-between;
+}
+
+.wrapper #inputImg,
+.wrapper .username input,
+.wrapper #mail {
+    width: 60%;
+    margin-right: 10px;
+}
+
+.wrapper #inputImg {
+    margin: auto 10px auto 0;
+    border-bottom : #7e726f 1px solid;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    outline: none;
+}
+
+.wrapper .submitBtn {
+    margin: 80px auto;
+}
