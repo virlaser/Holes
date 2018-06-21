@@ -65,7 +65,6 @@ class Index extends Controller {
             $this->assign('topContents', $data2);
             $this->assign('tags', $tags);
             return $this->fetch();
-            // todo 异常返回格式修改
         } catch (Exception $e) {
             $errorMessage = '系统错误，请稍后再试';
             $this->assign('errorMessage', $errorMessage);
@@ -91,12 +90,15 @@ class Index extends Controller {
             $data = common\getContentFlag($isLogin, $contents);
             return json($data);
         } catch (Exception $e) {
-            $errorMessage = '系统错误，请稍后再试';
-            $this->assign('errorMessage', $errorMessage);
-            return $this->fetch('message/error');
+            $data = [
+                'status' => 'fail',
+                'message' => '系统错误，请稍后再试'
+            ];
+            return json($data);
         }
     }
 
+    // 标签详细页面
     public function tag(Request $request) {
         common\setUserT($request);
         $isLogin = common\isLogin($request);
@@ -124,6 +126,7 @@ class Index extends Controller {
         }
     }
 
+    // 动态加载标签详细页面帖子接口
     public function tagApi(Request $request) {
         common\setUserT($request);
         $isLogin = common\isLogin($request);
@@ -143,16 +146,20 @@ class Index extends Controller {
             $data = common\getContentFlag($isLogin, $contents);
             return json($data);
         } catch (Exception $e) {
-            $errorMessage = '系统错误，请稍后再试';
-            $this->assign('errorMessage', $errorMessage);
-            return $this->fetch('message/error');
+            $data = [
+                'status' => 'fail',
+                'message' => '系统错误，请稍后再试'
+            ];
+            return json($data);
         }
     }
 
+    // 发帖页面
     public function create() {
         return $this->fetch('create');
     }
 
+    // 发帖逻辑
     public function doCreate(Request $request) {
         common\setUserT($request);
         $isLogin = common\isLogin($request);
@@ -165,6 +172,8 @@ class Index extends Controller {
             ->insert([
                 'content' => $content,
                 $isLogin['type']=='userV'?'userV':'userT' => $isLogin['user']?$isLogin['user']:0,
+                // 登录用户发帖可以直接显示
+                // 未登录用户发帖后要被至少三个人同意发表帖子，帖子才能可见
                 'verified' => $isLogin['type']=='userV'?3:0,
                 'hide' => $hide,
                 'tag' => $tag
@@ -172,9 +181,11 @@ class Index extends Controller {
         $this->redirect('/hole');
     }
 
+    // 评论页面
     public function comment(Request $request) {
-        common\setUserT($this->request);
+        common\setUserT($request);
         $isLogin = common\isLogin($request);
+        // 评论必须登录，否则重定向到登录页面
         if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
             $contentId = $request->param('contentId');
             $this->assign('contentId', $contentId);
@@ -184,6 +195,7 @@ class Index extends Controller {
         }
     }
 
+    // 评论逻辑
     public function doComment(Request $request) {
         common\setUserT($request);
         $isLogin = common\isLogin($request);
@@ -221,12 +233,15 @@ class Index extends Controller {
             ];
             return json($data);
         } catch (Exception $e) {
-            $errorMessage = '系统错误，请稍后再试';
-            $this->assign('errorMessage', $errorMessage);
-            return $this->fetch('message/error');
+            $data = [
+                'status' => 'fail',
+                'message' => '系统错误，请稍后再试'
+            ];
+            return json($data);
         }
     }
 
+    // 帖子详细信息页面
     public function detail(Request $request) {
         common\setUserT($request);
         $isLogin = common\isLogin($request);
@@ -278,9 +293,11 @@ class Index extends Controller {
             $data = common\getCommentFlag($isLogin, $comments);
             return json($data);
         } catch (Exception $e) {
-            $errorMessage = '系统错误，请稍后再试';
-            $this->assign('errorMessage', $errorMessage);
-            return $this->fetch('message/error');
+            $data = [
+                'status' => 'fail',
+                'message' => '系统错误，请稍后再试'
+            ];
+            return json($data);
         }
     }
 
@@ -539,9 +556,11 @@ class Index extends Controller {
                 }
             }
         } catch (Exception $e) {
-            $errorMessage = '系统错误，请稍后再试';
-            $this->assign('errorMessage', $errorMessage);
-            return $this->fetch('message/error');
+            $data = [
+                'status' => 'fail',
+                'message' => '系统错误，请稍后再试'
+            ];
+            return json($data);
         }
     }
 
