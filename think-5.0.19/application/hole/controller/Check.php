@@ -18,6 +18,7 @@ use app\hole\common;
 
 class Check extends Controller {
 
+    // 审帖页面
     public function index(Request $request) {
         common\setUserT($request);
         $isLogin = common\isLogin($request);
@@ -53,13 +54,13 @@ class Check extends Controller {
         }
     }
 
+    // 用户审帖状态接口
     public function doCheck(Request $request) {
         common\setUserT($request);
         $isLogin = common\isLogin($request);
         $contentId = $request->param('contentId');
         $checkType = $request->param('checkType');
         try {
-            // todo xss
             Db::name('operate')
                 ->insert([
                     'type' => 7,
@@ -89,9 +90,11 @@ class Check extends Controller {
             ];
             return json($data);
         } catch (Exception $e) {
-            $errorMessage = '系统错误，请稍后再试';
-            $this->assign('errorMessage', $errorMessage);
-            return $this->fetch('message/error');
+            $data = [
+                'status' => 'fail',
+                'message' => '系统错误，请稍后再试'
+            ];
+            return json($data);
         }
     }
 
