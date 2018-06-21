@@ -18,10 +18,12 @@ use app\hole\common;
 
 class User extends Controller {
 
+    // 用户主页
     public function index(Request $request) {
         $isLogin = common\isLogin($request);
-        if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
-            try {
+        try {
+            // 要求一定登录，否则返回登录页面
+            if ($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
                 // 得到用户信息
                 $user = Db::name('user')
                     ->where([
@@ -68,22 +70,23 @@ class User extends Controller {
                 $this->assign('user', $user);
                 $this->assign('message', $message);
                 return $this->fetch();
-            } catch (Exception $e) {
-                $errorMessage = '系统错误，请稍后再试';
-                $this->assign('errorMessage', $errorMessage);
-                return $this->fetch('message/error');
+
+            } else {
+                return $this->fetch('login');
             }
-        } else {
-            return $this->fetch('login');
+        } catch (Exception $e) {
+            $errorMessage = '系统错误，请稍后再试';
+            $this->assign('errorMessage', $errorMessage);
+            return $this->fetch('message/error');
         }
     }
 
     public function my(Request $request) {
         $isLogin = common\isLogin($request);
-        // 得到用户发的帖子
-        // 如果用户没有登录直接重定向到登录页面
-        if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
-            try {
+        try {
+            // 得到用户发的帖子
+            // 如果用户没有登录直接重定向到登录页面
+            if ($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
                 $contents = Db::name('content')
                     ->where([
                         'userV' => $isLogin['user'],
@@ -93,46 +96,16 @@ class User extends Controller {
                     ->field('hole_content.*, hole_user.nickname, hole_user.avatar')
                     ->order('hole_content.create_time desc')
                     ->paginate(6, true);
-                $data = array();
-                foreach ($contents as $e) {
-                    $like_flag = Db::name('operate')
-                        ->where([
-                            $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                            'object_id' => $e['id'],
-                            'type' => 1
-                        ])
-                        ->find();
-                    $like_flag = $like_flag ? 1 : 0;
-                    $dislike_flag = Db::name('operate')
-                        ->where([
-                            $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                            'object_id' => $e['id'],
-                            'type' => 2
-                        ])
-                        ->find();
-                    $dislike_flag = $dislike_flag ? 1 : 0;
-                    $comment_flag = Db::name('operate')
-                        ->where([
-                            $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                            'object_id' => $e['id'],
-                            'type' => 3
-                        ])
-                        ->find();
-                    $comment_flag = $comment_flag ? 1 : 0;
-                    $e['like_flag'] = $like_flag;
-                    $e['dislike_flag'] = $dislike_flag;
-                    $e['comment_flag'] = $comment_flag;
-                    array_push($data, $e);
-                }
+                $data = common\getContentFlag($isLogin, $contents);
                 $this->assign('contents', $data);
                 return $this->fetch();
-            } catch (Exception $e) {
-                $errorMessage = '系统错误，请稍后再试';
-                $this->assign('errorMessage', $errorMessage);
-                return $this->fetch('message/error');
+            } else {
+                return $this->fetch('login');
             }
-        } else {
-            return $this->fetch('login');
+        } catch (Exception $e) {
+            $errorMessage = '系统错误，请稍后再试';
+            $this->assign('errorMessage', $errorMessage);
+            return $this->fetch('message/error');
         }
     }
 
@@ -149,50 +122,22 @@ class User extends Controller {
                 ->field('hole_content.*, hole_user.nickname, hole_user.avatar')
                 ->order('hole_content.create_time desc')
                 ->paginate(6, true);
-            $data = array();
-            foreach ($contents as $e) {
-                $like_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        'type' => 1
-                    ])
-                    ->find();
-                $like_flag = $like_flag ? 1 : 0;
-                $dislike_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        'type' => 2
-                    ])
-                    ->find();
-                $dislike_flag = $dislike_flag ? 1 : 0;
-                $comment_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        'type' => 3
-                    ])
-                    ->find();
-                $comment_flag = $comment_flag ? 1 : 0;
-                $e['like_flag'] = $like_flag;
-                $e['dislike_flag'] = $dislike_flag;
-                $e['comment_flag'] = $comment_flag;
-                array_push($data, $e);
-            }
+            $data = common\getContentFlag($isLogin, $contents);
             return json($data);
         } catch (Exception $e) {
-            $errorMessage = '系统错误，请稍后再试';
-            $this->assign('errorMessage', $errorMessage);
-            return $this->fetch('message/error');
+            $data = [
+                'status' => 'fail',
+                'message' => '系统错误，请稍后再试'
+            ];
+            return json($data);
         }
     }
 
     public function delete(Request $request) {
         $isLogin = common\isLogin($request);
         $contentId = $request->param('contentId');
-        if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
-            try {
+        try {
+            if ($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
                 $user = Db::name('content')
                     ->where([
                         'id' => $contentId
@@ -222,29 +167,25 @@ class User extends Controller {
                     ];
                     return json($data);
                 }
-            } catch (Exception $e) {
-                $errorMessage = '系统错误，请稍后再试';
-                $this->assign('errorMessage', $errorMessage);
-                return $this->fetch('message/error');
             }
+        } catch (Exception $e) {
+            $data = [
+                'status' => 'fail',
+                'message' => '认证错误'
+            ];
+            return json($data);
         }
-        $data = [
-            'status' => 'fail',
-            'message' => '认证错误'
-        ];
-        return json($data);
     }
 
     public function active(Request $request) {
         $isLogin = common\isLogin($request);
-        if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
-            try {
-                $data = array();
+        try {
+            if ($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
                 // 用户的动态
                 // 得到用户的动态类型 点赞 点踩 评论 举报
                 // 得到用户操作的帖子内容
                 // 得到用户对帖子的操作状态
-                $content = Db::name('operate')
+                $contents = Db::name('operate')
                     ->where([
                         'hole_operate.from_user' => $isLogin['user'],
                         'hole_operate.type' => ['IN', [1, 2, 3, 4]]
@@ -255,54 +196,26 @@ class User extends Controller {
                     ->group('hole_content.id')
                     ->order('operate_time desc')
                     ->paginate(6, true);
-                foreach ($content as $e) {
-                    $like_flag = Db::name('operate')
-                        ->where([
-                            $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                            'object_id' => $e['id'],
-                            'type' => 1
-                        ])
-                        ->find();
-                    $like_flag = $like_flag ? 1 : 0;
-                    $dislike_flag = Db::name('operate')
-                        ->where([
-                            $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                            'object_id' => $e['id'],
-                            'type' => 2
-                        ])
-                        ->find();
-                    $dislike_flag = $dislike_flag ? 1 : 0;
-                    $comment_flag = Db::name('operate')
-                        ->where([
-                            $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                            'object_id' => $e['id'],
-                            'type' => 3
-                        ])
-                        ->find();
-                    $comment_flag = $comment_flag ? 1 : 0;
-                    $e['like_flag'] = $like_flag;
-                    $e['dislike_flag'] = $dislike_flag;
-                    $e['comment_flag'] = $comment_flag;
-                    array_push($data, $e);
-                }
+                $data = common\getContentFlag($isLogin, $contents);
                 $this->assign('contents', $data);
                 return $this->fetch();
-            } catch (Exception $e) {
-                $errorMessage = '系统错误，请稍后再试';
-                $this->assign('errorMessage', $errorMessage);
-                return $this->fetch('message/error');
+            } else {
+                return $this->fetch('login');
             }
-        } else {
-            return $this->fetch('login');
+        } catch (Exception $e) {
+            $data = [
+                'status' => 'fail',
+                'message' => '系统错误，请稍后再试'
+            ];
+            return json($data);
         }
     }
 
     // 前端动态加载用户动态的 api
     public function activeApi(Request $request) {
         $isLogin = common\isLogin($request);
-        $data = array();
         try {
-            $contentId = Db::name('operate')
+            $contents = Db::name('operate')
                 ->where([
                     'hole_operate.from_user' => $isLogin['user'],
                     'hole_operate.type' => ['IN', [1, 2, 3, 4]]
@@ -313,54 +226,27 @@ class User extends Controller {
                 ->group('hole_content.id')
                 ->order('operate_time desc')
                 ->paginate(6, true);
-            foreach ($contentId as $e) {
-                $like_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        'type' => 1
-                    ])
-                    ->find();
-                $like_flag = $like_flag ? 1 : 0;
-                $dislike_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        'type' => 2
-                    ])
-                    ->find();
-                $dislike_flag = $dislike_flag ? 1 : 0;
-                $comment_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        'type' => 3
-                    ])
-                    ->find();
-                $comment_flag = $comment_flag ? 1 : 0;
-                $e['like_flag'] = $like_flag;
-                $e['dislike_flag'] = $dislike_flag;
-                $e['comment_flag'] = $comment_flag;
-                array_push($data, $e);
-            }
+            $data = common\getContentFlag($isLogin, $contents);
             return json($data);
         } catch (Exception $e) {
-            $errorMessage = '系统错误，请稍后再试';
-            $this->assign('errorMessage', $errorMessage);
-            return $this->fetch('message/error');
+            $data = [
+                'status' => 'fail',
+                'message' => '系统错误，请稍后再试'
+            ];
+            return json($data);
         }
     }
 
     // 得到给用户的通知
     public function info(Request $request) {
         $isLogin = common\isLogin($request);
-        if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
-            try {
-                $data = array();
+        try {
+            if ($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
+
                 // 得到通知来源用户昵称
                 // 得到用户的哪一条帖子被操作
                 // 得到用户对自己帖子的操作状态
-                $content = Db::name('operate')
+                $contents = Db::name('operate')
                     ->where([
                         'to_user' => $isLogin['user'],
                         // 只有用户的帖子被点赞或者评论时用户才会有通知
@@ -379,64 +265,26 @@ class User extends Controller {
                     ])
                     ->field('nickname')
                     ->find();
-                foreach ($content as $e) {
-                    $like_flag = Db::name('operate')
-                        ->where([
-                            $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                            'object_id' => $e['id'],
-                            'type' => 1
-                        ])
-                        ->find();
-                    $like_flag = $like_flag ? 1 : 0;
-                    $dislike_flag = Db::name('operate')
-                        ->where([
-                            $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                            'object_id' => $e['id'],
-                            'type' => 2
-                        ])
-                        ->find();
-                    $dislike_flag = $dislike_flag ? 1 : 0;
-                    $comment_flag = Db::name('operate')
-                        ->where([
-                            $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                            'object_id' => $e['id'],
-                            'type' => 3
-                        ])
-                        ->find();
-                    $comment_flag = $comment_flag ? 1 : 0;
-                    // 将用户看过的动态标记为已经查看，以后将不会再次加载此动态
-                    Db::name('operate')
-                        ->where([
-                            'object_id' => $e['id'],
-                            'type' => $e['type']
-                        ])
-                        ->update([
-                            'flag' => 1
-                        ]);
-                    $e['like_flag'] = $like_flag;
-                    $e['dislike_flag'] = $dislike_flag;
-                    $e['comment_flag'] = $comment_flag;
-                    array_push($data, $e);
-                }
+                $data = common\getInfoFlag($isLogin, $contents);
                 $this->assign('contents', $data);
                 $this->assign('myNick', $user['nickname']);
                 return $this->fetch();
-            } catch (Exception $e) {
-                $errorMessage = '系统错误，请稍后再试';
-                $this->assign('errorMessage', $errorMessage);
-                return $this->fetch('message/error');
+            } else {
+                return $this->fetch('login');
             }
-        } else {
-            return $this->fetch('login');
+        } catch (Exception $e) {
+            $errorMessage = '系统错误，请稍后再试';
+            $this->assign('errorMessage', $errorMessage);
+            return $this->fetch('message/error');
         }
+
     }
 
     // 前端动态获取用户通知的 api
     public function infoApi(Request $request) {
         $isLogin = common\isLogin($request);
-        $contentList = array();
         try {
-            $content = Db::name('operate')
+            $contents = Db::name('operate')
                 ->where([
                     'to_user' => $isLogin['user'],
                     'type' => ['IN', [1, 3]],
@@ -454,44 +302,7 @@ class User extends Controller {
                 ])
                 ->field('nickname')
                 ->find();
-            foreach ($content as $e) {
-                $like_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        'type' => 1
-                    ])
-                    ->find();
-                $like_flag = $like_flag ? 1 : 0;
-                $dislike_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        'type' => 2
-                    ])
-                    ->find();
-                $dislike_flag = $dislike_flag ? 1 : 0;
-                $comment_flag = Db::name('operate')
-                    ->where([
-                        $isLogin['type'] == 'userV' ? 'from_user' : 'identity' => $isLogin['user'],
-                        'object_id' => $e['id'],
-                        'type' => 3
-                    ])
-                    ->find();
-                $comment_flag = $comment_flag ? 1 : 0;
-                Db::name('operate')
-                    ->where([
-                        'object_id' => $e['id'],
-                        'type' => $e['type']
-                    ])
-                    ->update([
-                        'flag' => 1
-                    ]);
-                $e['like_flag'] = $like_flag;
-                $e['dislike_flag'] = $dislike_flag;
-                $e['comment_flag'] = $comment_flag;
-                array_push($contentList, $e);
-            }
+            $contentList = common\getInfoFlag($isLogin, $contents);
             $data = [
                 'status' => 'success',
                 'message' => '获取用户通知成功',
@@ -500,16 +311,20 @@ class User extends Controller {
             ];
             return json($data);
         } catch (Exception $e) {
-            $errorMessage = '系统错误，请稍后再试';
-            $this->assign('errorMessage', $errorMessage);
-            return $this->fetch('message/error');
+            $data = [
+                'status' => 'fail',
+                'message' => '系统错误，请稍后再试'
+            ];
+            return json($data);
         }
     }
 
+    // 返回登录页面
     public function login() {
         return $this->fetch();
     }
 
+    // 登录逻辑
     public function doLogin(Request $request) {
         $userMail = $request->param('userMail');
         $userPassword = $request->param('userPassword');
@@ -536,6 +351,7 @@ class User extends Controller {
                     ->update([
                         'identity' => $identity
                     ]);
+                // 给登录用户种植标识 cookie
                 common\setUserV($identity);
                 $this->redirect('/user');
             } else {
@@ -550,10 +366,12 @@ class User extends Controller {
         }
     }
 
+    // 注册页面
     public function register() {
         return $this->fetch();
     }
 
+    // 注册逻辑
     public function doRegister(Request $request) {
         $userName = $request->param('userName');
         $userMail = $request->param('userMail');
@@ -592,11 +410,13 @@ class User extends Controller {
         }
     }
 
+    // 退出登录逻辑
     public function logout() {
         $identity = Cookie::get('hole_userV');
         // 用户登出，删除用户本地 cookie 标识
         Cookie::delete('userV', 'hole_');
         try {
+            // 删除用户数据库中登录标识
             Db::name('user')
                 ->where('identity', '=', $identity)
                 ->update([
@@ -610,6 +430,7 @@ class User extends Controller {
         }
     }
 
+    // 用户激活账号
     public function activate(Request $request) {
         $identity = $request->param('identity');
         try {
@@ -637,10 +458,12 @@ class User extends Controller {
         }
     }
 
+    // 找回密码页面
     public function find() {
         return $this->fetch();
     }
 
+    // 找回密码逻辑
     public function doFind(Request $request) {
         $mail = $request->param('mail');
         $captcha = $request->param('captcha');
@@ -677,6 +500,7 @@ class User extends Controller {
         }
     }
 
+    // 生成验证码并使用邮箱发送验证码
     public function doCaptcha(Request $request) {
         try {
             $userMail = $request->param('userMail');
@@ -713,32 +537,45 @@ class User extends Controller {
             ];
             return json($data2);
         } catch (Exception $e) {
+            $data = [
+                'status' => 'fail',
+                'message' => '系统错误，请稍后再试'
+            ];
+            return json($data);
+        }
+    }
+
+    // 修改个人信息页面
+    public function upload() {
+        $isLogin = common\isLogin($this->request);
+        try {
+            if ($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
+                $user = Db::name('user')
+                    ->where([
+                        'id' => $isLogin['user']
+                    ])
+                    ->find();
+                $this->assign('user', $user);
+                return $this->fetch();
+            } else {
+                $this->redirect('/login');
+            }
+        } catch (Exception $e) {
             $errorMessage = '系统错误，请稍后再试';
             $this->assign('errorMessage', $errorMessage);
             return $this->fetch('message/error');
         }
     }
 
-    public function upload() {
-        $isLogin = common\isLogin($this->request);
-        if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
-            $user = Db::name('user')
-                ->where([
-                    'id' => $isLogin['user']
-                ])
-                ->find();
-            $this->assign('user', $user);
-            return $this->fetch();
-        } else {
-            $this->redirect('/login');
-        }
-    }
-
+    // 上传用户头像逻辑
     public function doUpload(Request $request) {
         try {
             $isLogin = common\isLogin($request);
+            // 直接用 ajax 发送的二进制图片信息
             $img = $request->getInput();
+            // 截取用户标识作为图片名称，保证安全性
             $identity = $request->cookie('hole_userV');
+            $identity = substr($identity, 0, strlen($identity)-6);
             $fileName = time() . $identity;
             if (!$img) {
                 $data = [
@@ -747,6 +584,8 @@ class User extends Controller {
                 ];
                 return json($data);
             } else {
+                // 保存在 public/static/upload 目录下，从 canvas 截取的图像为 png 格式
+                // 上传的数据为二进制格式，直接写入文件即可
                 $file = fopen('./static/upload/' . $fileName . '.png', 'w');
                 fwrite($file, $img);
                 fclose($file);
@@ -772,18 +611,25 @@ class User extends Controller {
         }
     }
 
+    // 用户信息修改页面其他表单数据粗粒逻辑
     public function doChange(Request $request) {
         $isLogin = common\isLogin($request);
         $userName = $request->param('userName');
-        if($userName) {
-            Db::name('user')
-                ->where([
-                    'id' => $isLogin['user']
-                ])
-                ->update([
-                    'nickname' => $userName
-                ]);
+        try {
+            if ($userName) {
+                Db::name('user')
+                    ->where([
+                        'id' => $isLogin['user']
+                    ])
+                    ->update([
+                        'nickname' => $userName
+                    ]);
+            }
+            $this->redirect('/user');
+        } catch(Exception $e) {
+            $errorMessage = "修改信息时出现了点问题，请稍后再试";
+            $this->assign('errorMessage', $errorMessage);
+            $this->fetch();
         }
-        $this->redirect('/user');
     }
 }

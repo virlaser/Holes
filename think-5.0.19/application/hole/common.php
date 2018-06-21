@@ -291,3 +291,46 @@ function getCommentFlag($isLogin, $comments) {
     }
     return $data;
 }
+
+// 得到用户对用户通知来源帖子的操作
+function getInfoFlag($isLogin, $contents) {
+    $data = array();
+    foreach ($contents as $e) {
+        $flags = Db::name('operate')
+            ->where([
+                $isLogin['type']=='userV'?'from_user':'identity' => $isLogin['user'],
+                'object_id' => $e['id'],
+                // 查看用户是否 点赞，点踩，评论过帖子
+                'type' => ['IN', [1, 2, 3]]
+            ])
+            ->field('type')
+            ->select();
+        // 将对用户的通知标记为已读
+        Db::name('operate')
+            ->where([
+                'object_id' => $e['id'],
+                'type' => $e['type']
+            ])
+            ->update([
+                'flag' => 1
+            ]);
+        $like_flag = 0;
+        $dislike_flag = 0;
+        $comment_flag = 0;
+        if($flags)
+            foreach ($flags as $flag) {
+                if ($flag['type'] == 1)
+                    $like_flag = 1;
+                if ($flag['type'] == 2)
+                    $dislike_flag = 1;
+                if ($flag['type'] == 3)
+                    $comment_flag = 1;
+            }
+        // 数据查询返回的数据集不能动态添加数据，因此重新构造数据集
+        $e['like_flag'] = $like_flag;
+        $e['dislike_flag'] = $dislike_flag;
+        $e['comment_flag'] = $comment_flag;
+        array_push($data, $e);
+    }
+    return $data;
+}
