@@ -18,7 +18,7 @@
     <p>我的</p>
 </div>
 <div class="container">
-    <div class="user-info-box">
+    <div class="user-info-box" onclick="getChange()">
         <div class="user-info">
             <div class="info-hd">
             <img src="{$user.avatar?$user.avatar:'__STATIC__/images/default/avatar.jpg'}" class="user-avatar"/>
@@ -96,4 +96,6 @@
     </div>
 </div>
 </body>
+<script src="__STATIC__/js/zepto.min.js"></script>
+<script src="__STATIC__/js/index.js"></script>
 </html>
