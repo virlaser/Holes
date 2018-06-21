@@ -1,20 +1,18 @@
+// 用户注册页面字段验证
 function doRegister() {
     let userName = $('#name').val();
     let userMail = $('#mail').val();
     let pwd1 = $('#pwd1').val();
     let pwd2 = $('#pwd2').val();
-
     if(!userName) {
         alert("请填写用户名");
         return false;
     }
-
     let mailReg = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
     if(!mailReg.test(userMail)) {
         alert("请填写正确邮箱");
         return false;
     }
-
     if(!pwd1 || !pwd2) {
         alert("请填写密码");
         return false;
@@ -32,37 +30,35 @@ function doRegister() {
     alert("请在此页面耐心等候，您的账号激活链接将会发送到您的邮箱");
 }
 
+// 用户登录页面表单验证
 function doLogin() {
     let userMail = $('#mail').val();
     let pwd = $('#password').val();
-
     let mailReg = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
-    console.log(userMail);
     if(!mailReg.test(userMail)) {
         alert("请填写正确邮箱");
         return false;
     }
-
     if(!pwd || pwd.length < 6) {
         alert("请正确填写密码");
         return false;
     }
 }
 
+// 用户发帖页面表单验证
 function doCreate() {
     let content = $('#content').val();
-
     if(!content) {
         alert("请输入内容");
         return false;
     }
 }
 
+// 用户点赞，点踩ajax
 function doVote(event, contentId, type) {
     let img = $(event).find('img');
     let p = $(event).find('p');
     let staticRes = "/static/images/";
-
     $.ajax({
         type: 'POST',
         url: '/operate',
@@ -72,40 +68,45 @@ function doVote(event, contentId, type) {
         },
         dataType: 'json',
         timeout: 300,
-        success: function () {
-            if(type === 1 || type === 5) {
-                let src = img.attr('src').slice(-6, -4);
-                if(src === 'ed') {
-                    img.attr('src', staticRes+'icon-like.png');
-                    if(parseInt(p.html()) === 1) {
-                        p.html('赞');
+        success: function (res) {
+            if(res.status === 'success') {
+                // 页面显示状态更改
+                // 给帖子点赞 给评论点赞
+                if (type === 1 || type === 5) {
+                    let src = img.attr('src').slice(-6, -4);
+                    if (src === 'ed') {
+                        img.attr('src', staticRes + 'icon-like.png');
+                        if (parseInt(p.html()) === 1) {
+                            p.html('赞');
+                        } else {
+                            p.html(parseInt(p.html()) - 1);
+                        }
                     } else {
-                        p.html(parseInt(p.html())-1);
-                    }
-                } else {
-                    img.attr('src', staticRes+'icon-like-selected.png');
-                    if(p.html() === '赞') {
-                        p.html('1');
-                    } else {
-                        p.html(parseInt(p.html())+1);
+                        img.attr('src', staticRes + 'icon-like-selected.png');
+                        if (p.html() === '赞') {
+                            p.html('1');
+                        } else {
+                            p.html(parseInt(p.html()) + 1);
+                        }
                     }
                 }
-            }
-            if(type === 2 || type === 6) {
-                let src = img.attr('src').slice(-6, -4);
-                if(src === 'ed') {
-                    img.attr('src', staticRes+'icon-dislike.png');
-                    if(parseInt(p.html()) === 1) {
-                        p.html('踩');
+                // 给帖子点踩 给评论点踩
+                if (type === 2 || type === 6) {
+                    let src = img.attr('src').slice(-6, -4);
+                    if (src === 'ed') {
+                        img.attr('src', staticRes + 'icon-dislike.png');
+                        if (parseInt(p.html()) === 1) {
+                            p.html('踩');
+                        } else {
+                            p.html(parseInt(p.html()) - 1);
+                        }
                     } else {
-                        p.html(parseInt(p.html())-1);
-                    }
-                } else {
-                    img.attr('src', staticRes+'icon-dislike-selected.png');
-                    if(p.html() === '踩') {
-                        p.html('1');
-                    } else {
-                        p.html(parseInt(p.html())+1);
+                        img.attr('src', staticRes + 'icon-dislike-selected.png');
+                        if (p.html() === '踩') {
+                            p.html('1');
+                        } else {
+                            p.html(parseInt(p.html()) + 1);
+                        }
                     }
                 }
             }
@@ -116,10 +117,12 @@ function doVote(event, contentId, type) {
     })
 }
 
+// 用户评论页面跳转
 function doComment(contentId) {
     window.location.href = '/comment?contentId=' + contentId;
 }
 
+// 用户评论数据发送
 function sendComment(contentId) {
     let content = $('#content').val();
     let hide = $('#hide').is(":checked");
@@ -139,6 +142,7 @@ function sendComment(contentId) {
             timeout: 300,
             success: function (res) {
                 if(res.status === 'success') {
+                    // 禁用发送按钮
                     $('.submitBtn').attr('type', 'button');
                     // todo 刷新页面
                     alert("评论成功，请返回刷新");
@@ -155,8 +159,8 @@ function sendComment(contentId) {
     }
 }
 
+// 帖子详细信息页面跳转
 function getDetail(event, contentId) {
-    console.log('click getDetail');
     window.location.href = '/detail?contentId=' + contentId;
 }
 
@@ -189,12 +193,12 @@ function getScrollHeight() {
     return Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
 }
 
+// 主页帖子上拉加载
 function doLoading() {
     let page = $('.header');
     let currentPage = parseInt(page.attr('id').split('-')[1]);
     let nextPage = currentPage + 1;
     page.attr('id', 'page-'+nextPage);
-
     let url = '/contentApi?page='+nextPage;
     let staticRes = '/static/images';
     $.ajax({
@@ -262,12 +266,12 @@ function doLoading() {
     })
 }
 
+// 标签详细页面加载
 function loadTag(tag) {
     let page = $('.header');
     let currentPage = parseInt(page.attr('id').split('-')[1]);
     let nextPage = currentPage + 1;
     page.attr('id', 'page-'+nextPage);
-
     let url = '/tagApi?page='+nextPage;
     let staticRes = '/static/images';
     $.ajax({
@@ -337,12 +341,12 @@ function loadTag(tag) {
     })
 }
 
+// 帖子详情页面评论加载
 function loadComment(contentId) {
     let page = $('.user-comment');
     let currentPage = parseInt(page.attr('id').split('-')[1]);
     let nextPage = currentPage + 1;
     page.attr('id', 'page-'+nextPage);
-
     let url = '/commentApi?page='+nextPage;
     let staticRes = '/static/images';
     $.ajax({
@@ -389,6 +393,7 @@ function loadComment(contentId) {
     })
 }
 
+// 用户审帖数据发送
 function doCheck(contentId, type) {
     $.ajax({
         type: 'POST',
@@ -410,12 +415,12 @@ function doCheck(contentId, type) {
     })
 }
 
+// 我的帖子加载
 function doLoadingMy() {
     let page = $('.header');
     let currentPage = parseInt(page.attr('id').split('-')[1]);
     let nextPage = currentPage + 1;
     page.attr('id', 'page-'+nextPage);
-
     let url = '/myApi?page='+nextPage;
     let staticRes = '/static/images';
     $.ajax({
@@ -484,6 +489,7 @@ function doLoadingMy() {
     })
 }
 
+// 删除帖子
 function doDelete(event, contentId) {
     let confirm = this.confirm("确定删除这条帖子？");
     let section = $(event).parent().parent('.section');
@@ -505,12 +511,12 @@ function doDelete(event, contentId) {
     }
 }
 
+// 加载我的动态
 function doLoadingActive() {
     let page = $('.header');
     let currentPage = parseInt(page.attr('id').split('-')[1]);
     let nextPage = currentPage + 1;
     page.attr('id', 'page-'+nextPage);
-
     let url = '/activeApi?page='+nextPage;
     let staticRes = '/static/images';
     $.ajax({
@@ -596,6 +602,7 @@ function doLoadingActive() {
     })
 }
 
+// 加载我的通知
 function doLoadingInfo() {
     let url = '/infoApi';
     let staticRes = '/static/images';
@@ -673,19 +680,17 @@ function doLoadingInfo() {
     })
 }
 
+// 找回密码表单验证
 function doFind() {
     let mail = $('#mail').val();
-    console.log(mail);
     let captcha = $('#captcha').val();
     let pwd1 = $('#pwd1').val();
     let pwd2 = $('#pwd2').val();
-
     let mailReg = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
     if(!mailReg.test(mail)) {
         alert("请填写正确邮箱");
         return false;
     }
-
     if(!captcha) {
         alert("请填写验证码");
         return false;
@@ -694,7 +699,6 @@ function doFind() {
         alert("请正确填写验证码");
         return false;
     }
-
     if(!pwd1 || !pwd2) {
         alert("请填写密码");
         return false;
@@ -711,6 +715,7 @@ function doFind() {
     }
 }
 
+// 发送验证码
 function doCaptcha() {
     let userMail = $('#mail').val();
     let mailReg = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
@@ -727,6 +732,7 @@ function doCaptcha() {
             'userMail': userMail
         },
         dataType: 'json',
+        // 发送验证码时间较长，不做超时处理
         //timeout: 300,
         success: function (res) {
             alert(res.message);
@@ -737,6 +743,7 @@ function doCaptcha() {
     })
 }
 
+// 举报帖子
 function doReport(contentId) {
     let confirm = this.confirm("确定举报这条帖子？");
     if(confirm) {
@@ -763,16 +770,19 @@ function doReport(contentId) {
     }
 }
 
+// 标签详情页面跳转
 function doTag(tag) {
     let href = '/tag?tag=' + tag;
     window.location.href = href;
 }
 
+// 修改信息页面跳转
 function getChange() {
     let href = '/upload';
     window.location.href = href;
 }
 
+// 个人信息修改页面上传头像
 function doImage() {
     let inputImg = document.getElementById('inputImg');
     let reader = new FileReader();
@@ -827,6 +837,7 @@ function doImage() {
     }
 }
 
+// 修改信息页面表单验证
 function doChange() {
     let userName = $('#name').val();
     if(!userName) {
