@@ -14,19 +14,19 @@
 </div>
 <div class="wrapper">
     <canvas id="canvasImg" hidden></canvas>
-    <img src="__STATIC__/images/default/avatar.jpg" alt="用户头像">
+    <img src="{$user.avatar?$user.avatar:'__STATIC__/images/default/avatar.jpg'}" alt="用户头像">
     <div class="inputImg">
         <p>头像：</p>
         <input type="file" id="inputImg" accept="image/*" placeholder="图片">
     </div>
-    <form action="/doChange" method="POST">
+    <form action="/doChange" method="POST" onsubmit="return doChange()">
         <div class="mail">
             <p>邮箱：</p>
-            <p id="mail">784617756@qq.com</p>
+            <p id="mail">{$user.mail}</p>
         </div>
         <div class="username">
             <p>用户名：</p>
-            <input type="text" name="userName" id="name" placeholder="virlaser">
+            <input type="text" name="userName" id="name" placeholder="{$user.nickname}">
         </div>
         <input type="submit" class="submitBtn" value="确认修改">
     </form>

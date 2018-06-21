@@ -60,6 +60,7 @@ class Index extends Controller {
                 ->paginate(10, true);
             $data = array();
             $data2 = array();
+            // todo 查询优化
             foreach ($topContents as $e) {
                 // 判断用户是否点赞过帖子，防止重复点赞
                 $like_flag = Db::name('operate')
@@ -133,6 +134,7 @@ class Index extends Controller {
             $this->assign('topContents', $data2);
             $this->assign('tags', $tags);
             return $this->fetch();
+            // todo 异常返回格式修改
         } catch (Exception $e) {
             $errorMessage = '系统错误，请稍后再试';
             $this->assign('errorMessage', $errorMessage);

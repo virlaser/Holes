@@ -74,4 +74,6 @@ return [
     'upload' => 'hole/user/upload',
     // 用户上传信息处理逻辑
     'doUpload' => 'hole/user/doUpload',
+    // 用户提交修改信息处理逻辑
+    'doChange' => 'hole/user/doChange',
 ];
