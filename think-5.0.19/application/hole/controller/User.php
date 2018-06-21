@@ -722,6 +722,12 @@ class User extends Controller {
     public function upload() {
         $isLogin = common\isLogin($this->request);
         if($isLogin['type'] == 'userV' and $isLogin['status'] == 'success') {
+            $user = Db::name('user')
+                ->where([
+                    'id' => $isLogin['user']
+                ])
+                ->find();
+            $this->assign('user', $user);
             return $this->fetch();
         } else {
             $this->redirect('/login');
@@ -729,28 +735,55 @@ class User extends Controller {
     }
 
     public function doUpload(Request $request) {
-        $img = $request->getInput();
-        $identity = $request->cookie('hole_userV');
-        $fileName = time().$identity;
-        if(!$img) {
+        try {
+            $isLogin = common\isLogin($request);
+            $img = $request->getInput();
+            $identity = $request->cookie('hole_userV');
+            $fileName = time() . $identity;
+            if (!$img) {
+                $data = [
+                    'status' => 'fail',
+                    'message' => '图片上传错误'
+                ];
+                return json($data);
+            } else {
+                $file = fopen('./static/upload/' . $fileName . '.png', 'w');
+                fwrite($file, $img);
+                fclose($file);
+                Db::name('user')
+                    ->where([
+                        'id' => $isLogin['user']
+                    ])
+                    ->update([
+                        'avatar' => '/static/upload/' . $fileName . '.png'
+                    ]);
+                $data = [
+                    'status' => 'success',
+                    'message' => '图片上传成功'
+                ];
+                return json($data);
+            }
+        } catch(Exception $e) {
             $data = [
                 'status' => 'fail',
-                'message' => '图片上传错误'
-            ];
-            return json($data);
-        } else {
-            $file = fopen('./static/upload/'.$fileName.'.png', 'w');
-            fwrite($file, $img);
-            fclose($file);
-            $data = [
-                'status' => 'success',
-                'message' => '图片上传成功'
+                'message' => '上传图片出了点问题，请稍后再试'
             ];
             return json($data);
         }
     }
 
     public function doChange(Request $request) {
+        $isLogin = common\isLogin($request);
+        $userName = $request->param('userName');
+        if($userName) {
+            Db::name('user')
+                ->where([
+                    'id' => $isLogin['user']
+                ])
+                ->update([
+                    'nickname' => $userName
+                ]);
+        }
         $this->redirect('/user');
     }
 }
