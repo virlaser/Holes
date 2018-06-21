@@ -767,3 +767,60 @@ function doTag(tag) {
     let href = '/tag?tag=' + tag;
     window.location.href = href;
 }
+
+function getChange() {
+    let href = '/upload';
+    window.location.href = href;
+}
+
+function doImage() {
+    let inputImg = document.getElementById('inputImg');
+    let reader = new FileReader();
+    let img = new Image();
+    let canvas = document.getElementById('canvasImg');
+    let context = canvas.getContext('2d');
+    reader.onload = function (e) {
+        img.src = e.target.result;
+    };
+    inputImg.addEventListener('change', function (e) {
+        let file = e.target.files[0];
+        reader.readAsDataURL(file);
+    });
+    img.onload = function () {
+        let w = this.width;
+        let h = this.height;
+        let width = w;
+        let height = h;
+        let size = 300;
+        if(w>=h && w>size) {
+            width = size;
+            height = size/w*h;
+        } else if(w<h && h>size) {
+            height = size;
+            width = size/h*w;
+        }
+        canvas.width = width;
+        canvas.height = height;
+        context.clearRect(0, 0, width, height);
+        context.drawImage(img, 0, 0, width, height);
+        canvas.toBlob(function (blob) {
+            $(".wrapper img").remove();
+            $(".wrapper canvas").prop('hidden', false);
+            $.ajax({
+                type: 'POST',
+                url: '/doUpload',
+                data: blob,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                timeout: 500,
+                success: function (res) {
+                    console.log('success' + res);
+                },
+                error: function () {
+                    console.log('fail');
+                }
+            })
+        })
+    }
+}
