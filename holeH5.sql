@@ -11,7 +11,7 @@
  Target Server Version : 50638
  File Encoding         : 65001
 
- Date: 19/06/2018 22:20:20
+ Date: 22/06/2018 20:31:42
 */
 
 SET NAMES utf8mb4;
@@ -90,8 +90,7 @@ CREATE TABLE `hole_user` (
   `captcha` varchar(50) NOT NULL DEFAULT '' COMMENT '用户找回密码验证码',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `identity` (`identity`)
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS = 1;

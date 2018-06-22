@@ -386,6 +386,8 @@ class User extends Controller {
                 return $this->fetch('message/error');
             } else {
                 $identity = md5($userMail . $userPassword);
+                // todo 异步邮件发送
+                $data = common\sendMail($userMail, $userName, $identity);
                 Db::name('user')
                     ->insert([
                         'nickname' => $userName,
@@ -393,8 +395,6 @@ class User extends Controller {
                         'password' => md5($userPassword),
                         'identity' => $identity
                     ]);
-                // todo 异步邮件发送
-                $data = common\sendMail($userMail, $userName, $identity);
                 if ($data['status'] == 'success') {
                     $errorMessage = "注册成功，请登录您的邮箱激活您的账号。如果没有收到邮件，可以尝试在邮箱垃圾桶中寻找。";
                 } else {
