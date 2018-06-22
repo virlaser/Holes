@@ -168,6 +168,9 @@ class Index extends Controller {
         $hide = $request->param('hide');
         $hide = $hide == 'on' ? 1 : 0;
         $tag = $request->param('tag');
+        if($tag) {
+            $tag = str_replace(array("_","=","+"," ","&","?",">","<","#","(",")","@","$","*","/","-"),"",$tag);
+        }
         Db::name('content')
             ->insert([
                 'content' => $content,

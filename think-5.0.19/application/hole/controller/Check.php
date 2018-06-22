@@ -41,7 +41,7 @@ class Check extends Controller {
                 ->where([
                     'userV' => 0,
                     'userT' => ['NEQ', $userT],
-                    'verified' => ['<', 4],
+                    'verified' => ['<', 3],
                     'id' => ['NOT IN', $checkArray]
                 ])
                 ->find();
