@@ -67,7 +67,7 @@ function doVote(event, contentId, type) {
             'type': type
         },
         dataType: 'json',
-        timeout: 300,
+        timeout: 3000,
         success: function (res) {
             if(res.status === 'success') {
                 // 页面显示状态更改
@@ -139,7 +139,7 @@ function sendComment(contentId) {
                 'hide': hide?1:0
             },
             dataType: 'json',
-            timeout: 300,
+            timeout: 3000,
             success: function (res) {
                 if(res.status === 'success') {
                     // 禁用发送按钮
@@ -206,7 +206,7 @@ function doLoading() {
         url: url,
         data: {},
         dataType: 'json',
-        timeout: 300,
+        timeout: 3000,
         success: function (res) {
             for(let i=0;i<res.length;i++) {
                 let content = res[i];
@@ -281,7 +281,7 @@ function loadTag(tag) {
             'tag' : tag
         },
         dataType: 'json',
-        timeout: 300,
+        timeout: 3000,
         success: function (res) {
             for(let i=0;i<res.length;i++) {
                 let content = res[i];
@@ -356,7 +356,7 @@ function loadComment(contentId) {
             'contentId': contentId
         },
         dataType: 'json',
-        timeout: 300,
+        timeout: 3000,
         success: function (res) {
             for(let i=0;i<res.length;i++) {
                 let content = res[i];
@@ -403,7 +403,7 @@ function doCheck(contentId, type) {
             'checkType': type === 1?'yes':'no'
         },
         dataType: 'json',
-        timeout: 300,
+        timeout: 3000,
         success: function (res) {
             if(res.status === 'success') {
                 window.location.reload();
@@ -428,7 +428,7 @@ function doLoadingMy() {
         url: url,
         data: {},
         dataType: 'json',
-        timeout: 300,
+        timeout: 3000,
         success: function (res) {
             for(let i=0;i<res.length;i++) {
                 let content = res[i];
@@ -501,7 +501,7 @@ function doDelete(event, contentId) {
               'contentId': contentId
           },
           dataType: 'json',
-          timeout: 300,
+          timeout: 3000,
           success: function (res) {
               if(res.status === 'success') {
                   section.remove();
@@ -524,7 +524,7 @@ function doLoadingActive() {
         url: url,
         data: {},
         dataType: 'json',
-        timeout: 300,
+        timeout: 3000,
         success: function (res) {
             for(let i=0;i<res.length;i++) {
                 let content = res[i];
@@ -611,7 +611,7 @@ function doLoadingInfo() {
         url: url,
         data: {},
         dataType: 'json',
-        timeout: 300,
+        timeout: 3000,
         success: function (res) {
             let contents = res.contentList;
             let myNick = res.myNick;
@@ -755,7 +755,7 @@ function doReport(contentId) {
                 'contentId' : contentId
             },
             dataType: 'json',
-            timeout: 300,
+            timeout: 3000,
             success: function (res) {
                if(res.status === 'success') {
                    alert("举报成功");
@@ -823,7 +823,7 @@ function doImage() {
                 processData: false,
                 contentType: false,
                 dataType: 'json',
-                timeout: 500,
+                timeout: 3000,
                 success: function (res) {
                     if(res.status === 'success') {
                         alert("头像上传成功");
