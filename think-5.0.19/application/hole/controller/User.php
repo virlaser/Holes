@@ -390,7 +390,7 @@ class User extends Controller {
                 $data = common\sendMail($userMail, $userName, $identity);
                 Db::name('user')
                     ->insert([
-                        'nickname' => $userName,
+                        'nickname' => htmlspecialchars($userName),
                         'mail' => $userMail,
                         'password' => md5($userPassword),
                         'identity' => $identity
@@ -611,7 +611,7 @@ class User extends Controller {
         }
     }
 
-    // 用户信息修改页面其他表单数据粗粒逻辑
+    // 用户信息修改页面其他表单数据处理逻辑
     public function doChange(Request $request) {
         $isLogin = common\isLogin($request);
         $userName = $request->param('userName');
@@ -629,7 +629,7 @@ class User extends Controller {
         } catch(Exception $e) {
             $errorMessage = "修改信息时出现了点问题，请稍后再试";
             $this->assign('errorMessage', $errorMessage);
-            $this->fetch();
+            $this->fetch('message/error');
         }
     }
 }

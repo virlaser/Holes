@@ -28,7 +28,8 @@ class Index extends Controller {
             // 得到标签
             $tags = Db::name('content')
                 ->where([
-                    'tag' => ['NEQ', '']
+                    'tag' => ['NEQ', ''],
+                    'verified' => ['>', 2]
                 ])
                 ->field('count(tag) as tagNum, tag')
                 ->group('tag')
@@ -169,11 +170,11 @@ class Index extends Controller {
         $hide = $hide == 'on' ? 1 : 0;
         $tag = $request->param('tag');
         if($tag) {
-            $tag = str_replace(array("_","=","+"," ","&","?",">","<","#","(",")","@","$","*","/","-"),"",$tag);
+            $tag = str_replace(array("_","=","+"," ","&","?",">","<","#","(",")","@","$","*","/","-","\""),"",$tag);
         }
         Db::name('content')
             ->insert([
-                'content' => $content,
+                'content' => htmlspecialchars($content),
                 $isLogin['type']=='userV'?'userV':'userT' => $isLogin['user']?$isLogin['user']:0,
                 // 登录用户发帖可以直接显示
                 // 未登录用户发帖后要被至少三个人同意发表帖子，帖子才能可见
@@ -213,7 +214,7 @@ class Index extends Controller {
                 ->find();
             Db::name('comment')
                 ->insert([
-                    'content' => $content,
+                    'content' => htmlspecialchars($content),
                     'content_id' => $contentId,
                     'userV' => $isLogin['user'],
                     'hide' => $hide
