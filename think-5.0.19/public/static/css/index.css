@@ -8,6 +8,10 @@ a {
     text-decoration: none;
 }
 
+form .submitBtn {
+    -webkit-appearance: none;
+}
+
 /*--------------- index ---------------*/
 
 .header {
