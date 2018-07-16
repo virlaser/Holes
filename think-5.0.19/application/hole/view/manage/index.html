@@ -8,92 +8,68 @@
     <link rel="stylesheet" href="__STATIC__/css/index.css">
     <title>武理树洞</title>
 </head>
+<style>
+    .content-list {
+        margin-top: 0;
+    }
+    .tag-list .tag-box .active {
+        background-color: #503e2c;
+        color: white;
+    }
+    .pagination {
+        margin: 0 50px;
+    }
+</style>
 <body>
 <div class="header">
     <p>树洞管理</p>
 </div>
 <div class="tag-list">
     <div class="tag-box">
-        <a href="" class="tag">按点赞升序排列</a>
-        <a href="" class="tag">按点踩升序排列</a>
-        <a href="" class="tag">按评论升序排列</a>
-        <a href="" class="tag">按举报升序排列</a>
-        <a href="" class="tag">按置顶排列</a>
-        <a href="" class="tag">按需要审阅的帖子排列</a>
+        <a href="/sortLike" class="tag {$flag=='like'?'active':''}">按点赞升序排列</a>
+        <a href="/sortDislike" class="tag {$flag=='dislike'?'active':''}">按点踩升序排列</a>
+        <a href="/sortComment" class="tag {$flag=='comment'?'active':''}">按评论升序排列</a>
+        <a href="/sortReport" class="tag {$flag=='report'?'active':''}">按举报升序排列</a>
+        <a href="/sortTop" class="tag {$flag=='top'?'active':''}">按置顶排列</a>
+        <a href="/sortTag" class="tag">按标签排列</a>
+        <a href="/sortCheck" class="tag {$flag=='check'?'active':''}">按需要审阅的帖子排列</a>
+        <a href="/sortUserId" class="tag {$flag=='userId'?'active':''}">按登录用户ID排列</a>
     </div>
 </div>
 <div class="content-list">
     <table class="section content-table" border="1" style="width: 100%;">
         <tr>
             <th>帖子ID</th>
-            <th>发帖用户</th>
-            <th>帖子内容</th>
-            <th>帖子点赞数</th>
-            <th>帖子点踩数</th>
-            <th>帖子点评论数</th>
-            <th>帖子点举报数</th>
+            <th>用户ID</th>
+            <th>内容</th>
+            <th>标签</th>
+            <th>赞数</th>
+            <th>踩数</th>
+            <th>评论数</th>
+            <th>举报数</th>
             <th>删除帖子</th>
+            <th>封禁用户</th>
             <th>置顶帖子</th>
         </tr>
+        {volist name='contents' id='content'}
         <tr>
-            <td>1</td>
-            <td>vlaser</td>
-            <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda autem consequuntur doloribus earum et excepturi necessitatibus repellat, reprehenderit? Ab accusamus aspernatur at dolorem explicabo harum iusto necessitatibus nihil sit voluptatum?</td>
-            <td>4</td>
-            <td>5</td>
-            <td>10</td>
-            <td>100</td>
-            <td><a href="">删除</a></td>
-            <td><a href="">置顶</a></td>
+            <td>{$content.id}</td>
+            <td>{$content.userV?$content.userV:$content.userT}</td>
+            <td>{$content.content}</td>
+            <td>{$content.tag}</td>
+            <td>{$content.like_num}</td>
+            <td>{$content.dislike_num}</td>
+            <td>{$content.comment_num}</td>
+            <td>{$content.report_num}</td>
+            <td style="color: #6d5f5d" onclick="doDelete({$content.id})">删除</td>
+            <td style="color: red" onclick="doBan({$content.userV})">封禁</td>
+            <td style="color: #eb6f2c;" onclick="doTop({$content.id})">{$flag=='top'?'取消置顶':'置顶'}</td>
         </tr>
-        <tr>
-            <td>1</td>
-            <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur deserunt facere harum inventore quae, quia quidem ullam. Alias debitis deserunt dicta earum, esse et, nisi obcaecati porro repudiandae, rerum unde?</td>
-            <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda autem consequuntur doloribus earum et excepturi necessitatibus repellat, reprehenderit? Ab accusamus aspernatur at dolorem explicabo harum iusto necessitatibus nihil sit voluptatum?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci aliquam animi at consequuntur culpa dolore doloremque ducimus eius eligendi illo impedit itaque, nesciunt omnis optio praesentium qui quod recusandae sunt.</td>
-            <td>4</td>
-            <td>5</td>
-            <td>10</td>
-            <td>100</td>
-            <td><a href="">删除</a></td>
-            <td><a href="">置顶</a></td>
-        </tr>
-        <tr>
-            <td>1</td>
-            <td>vlaser</td>
-            <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda autem consequuntur doloribus earum et excepturi necessitatibus repellat, reprehenderit? Ab accusamus aspernatur at dolorem explicabo harum iusto necessitatibus nihil sit voluptatum?</td>
-            <td>4</td>
-            <td>5</td>
-            <td>10</td>
-            <td>100</td>
-            <td><a href="">删除</a></td>
-            <td><a href="">置顶</a></td>
-        </tr>
-        <tr>
-            <td>1</td>
-            <td>vlaser</td>
-            <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda autem consequuntur doloribus earum et excepturi necessitatibus repellat, reprehenderit? Ab accusamus aspernatur at dolorem explicabo harum iusto necessitatibus nihil sit voluptatum?</td>
-            <td>4</td>
-            <td>5</td>
-            <td>10</td>
-            <td>100</td>
-            <td><a href="">删除</a></td>
-            <td><a href="">置顶</a></td>
-        </tr>
-        <tr>
-            <td>1</td>
-            <td>vlaser</td>
-            <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda autem consequuntur doloribus earum et excepturi necessitatibus repellat, reprehenderit? Ab accusamus aspernatur at dolorem explicabo harum iusto necessitatibus nihil sit voluptatum?</td>
-            <td>4</td>
-            <td>5</td>
-            <td>10</td>
-            <td>100</td>
-            <td><a href="">删除</a></td>
-            <td><a href="">置顶</a></td>
-        </tr>
+        {/volist}
     </table>
 </div>
 <div class="paginate">
-list-example
+{$contents->render()}
 </div>
 <script src="__STATIC__/js/zepto.min.js"></script>
 <script src="__STATIC__/js/admin.js"></script>
