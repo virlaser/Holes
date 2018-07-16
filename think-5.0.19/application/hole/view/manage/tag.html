@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="__STATIC__/css/index.css">
+    <title>武理树洞</title>
+</head>
+<style>
+    .content-list {
+        margin-top: 0;
+    }
+    .tag-list .tag-box .active {
+        background-color: #503e2c;
+        color: white;
+    }
+    .pagination {
+        margin: 0 50px;
+    }
+</style>
+<body>
+<div class="header">
+    <p>树洞管理</p>
+</div>
+<div class="tag-list">
+    <div class="tag-box">
+        <a href="/sortLike" class="tag {$flag=='like'?'active':''}">按点赞升序排列</a>
+        <a href="/sortDislike" class="tag {$flag=='dislike'?'active':''}">按点踩升序排列</a>
+        <a href="/sortComment" class="tag {$flag=='comment'?'active':''}">按评论升序排列</a>
+        <a href="/sortReport" class="tag {$flag=='report'?'active':''}">按举报升序排列</a>
+        <a href="/sortTop" class="tag {$flag=='top'?'active':''}">按置顶排列</a>
+        <a href="/sortTag" class="tag {$flag=='tag'?'active':''}">按标签排列</a>
+        <a href="/sortCheck" class="tag {$flag=='check'?'active':''}">按需要审阅的帖子排列</a>
+        <a href="/sortUserId" class="tag {$flag=='userId'?'active':''}">按用户ID排列</a>
+    </div>
+</div>
+<div class="content-list">
+    <table class="section content-table" border="1" style="width: 100%;">
+        <tr>
+            <th>标签</th>
+            <th>标签使用数</th>
+            <th>删除标签</th>
+        </tr>
+        {volist name='tags' id='tag'}
+        <tr>
+            <td>{$tag.tag}</td>
+            <td>{$tag.count}</td>
+            <td style="color: #6d5f5d">删除</td>
+        </tr>
+        {/volist}
+    </table>
+</div>
+<div class="paginate">
+    {$tags->render()}
+</div>
+<script src="__STATIC__/js/zepto.min.js"></script>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
