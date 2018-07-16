@@ -332,14 +332,18 @@ class User extends Controller {
             $user = Db::name('user')
                 ->where([
                     'mail' => $userMail,
-                    // 存储用户的 md5 密码
                     'password' => md5($userPassword),
                     // 只有邮箱激活后的用户才能登陆
-                    'activate' => 1
+                    'activate' => 1,
                 ])
+                ->field('mail, password, ban')
                 ->find();
             if ($user) {
-                // todo cookie 安全性
+                if($user['ban'] == 1) {
+                    $errorMessage = "您的账号已经被封禁，请联系管理员";
+                    $this->assign('errorMessage', $errorMessage);
+                    return $this->fetch('message/error');
+                }
                 // 登陆用户的本地 cookie 标识就是用户的邮箱加密码的 md5
                 // 可以考虑给用户标识设置过期时间
                 $identity = md5($user['mail'] . $user['password']);
@@ -629,7 +633,7 @@ class User extends Controller {
         } catch(Exception $e) {
             $errorMessage = "修改信息时出现了点问题，请稍后再试";
             $this->assign('errorMessage', $errorMessage);
-            $this->fetch('message/error');
+            return $this->fetch('message/error');
         }
     }
 }
