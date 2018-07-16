@@ -236,7 +236,7 @@ return [
 
     //分页配置
     'paginate'               => [
-        'type'      => 'bootstrap',
+        'type'      => 'app\hole\util\Page',
         'var_page'  => 'page',
         'list_rows' => 15,
     ],

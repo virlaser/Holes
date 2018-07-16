@@ -34,7 +34,7 @@ class Index extends Controller {
                 ->field('count(tag) as tagNum, tag')
                 ->group('tag')
                 ->order('tagNum desc')
-                ->paginate(6, true);
+                ->paginate(10, true);
             // 得到置顶的帖子
             $topContents = Db::name('content')
                 ->where([

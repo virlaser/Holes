@@ -47,7 +47,7 @@
         <tr>
             <td>{$tag.tag}</td>
             <td>{$tag.count}</td>
-            <td style="color: #6d5f5d">删除</td>
+            <td style="color: #6d5f5d" onclick="doDeleteTag('{$tag.tag}')">删除</td>
         </tr>
         {/volist}
     </table>
