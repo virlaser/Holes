@@ -49,34 +49,200 @@ class Manage extends Controller {
     public function doManage() {
         $user = Session::get('user');
         if($user) {
+            $contents = Db::name('content')
+                ->where([
+                    'verified' => 3,
+                    'is_delete' => 0
+                ])
+                ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
+                ->order('id desc')
+                ->paginate(20);
+            $this->assign('contents' ,$contents);
             return $this->fetch('index');
         } else {
             $this->redirect('/hole');
         }
     }
 
-    public function sortLike(Request $request) {
+    public function sortLike() {
         $user = Session::get('user');
+        if($user) {
+            $contents = Db::name('content')
+                ->where([
+                    'verified' => 3,
+                    'is_delete' => 0
+                ])
+                ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
+                ->order('like_num asc')
+                ->paginate(20);
+            $this->assign('flag', 'like');
+            $this->assign('contents', $contents);
+            return $this->fetch('index');
+        } else {
+            $this->redirect('/hole');
+        }
     }
 
-    public function sortDislike(Request $request) {
-        return ;
+    public function sortDislike() {
+        $user = Session::get('user');
+        if($user) {
+            $contents = Db::name('content')
+                ->where([
+                    'verified' => 3,
+                    'is_delete' => 0
+                ])
+                ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
+                ->order('dislike_num asc')
+                ->paginate(20);
+            $this->assign('flag', 'dislike');
+            $this->assign('contents', $contents);
+            return $this->fetch('index');
+        } else {
+            $this->redirect('/hole');
+        }
     }
 
-    public function sortComment(Request $request) {
-        return ;
+    public function sortComment() {
+        $user = Session::get('user');
+        if($user) {
+            $contents = Db::name('content')
+                ->where([
+                    'verified' => 3,
+                    'is_delete' => 0
+                ])
+                ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
+                ->order('comment_num asc')
+                ->paginate(20);
+            $this->assign('flag', 'comment');
+            $this->assign('contents', $contents);
+            return $this->fetch('index');
+        } else {
+            $this->redirect('/hole');
+        }
     }
 
-    public function sortReport(Request $request) {
-        return ;
+    public function sortReport() {
+        $user = Session::get('user');
+        if($user) {
+            $contents = Db::name('content')
+                ->where([
+                    'verified' => 3,
+                    'is_delete' => 0
+                ])
+                ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
+                ->order('report_num asc')
+                ->paginate(20);
+            $this->assign('flag', 'report');
+            $this->assign('contents', $contents);
+            return $this->fetch('index');
+        } else {
+            $this->redirect('/hole');
+        }
     }
 
-    public function sortFlag(Request $request) {
-        return ;
+    public function sortTop() {
+        $user = Session::get('user');
+        if($user) {
+            $contents = Db::name('content')
+                ->where([
+                    'verified' => 3,
+                    'is_delete' => 0,
+                    'flag' => 1
+                ])
+                ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
+                ->order('like_num asc')
+                ->paginate(20);
+            $this->assign('flag', 'top');
+            $this->assign('contents', $contents);
+            return $this->fetch('index');
+        } else {
+            $this->redirect('/hole');
+        }
     }
 
-    public function sortCheck(Request $request) {
-        return ;
+    public function sortTag() {
+        $user = Session::get('user');
+        if($user) {
+            $tags = Db::name('content')
+                ->where([
+                    'verified' => 3,
+                    'is_delete' => 0
+                ])
+                ->field('tag, count(*) as count')
+                ->order('count asc')
+                ->group('tag')
+                ->paginate(20);
+            $this->assign('tags', $tags);
+            $this->assign('flag', 'tag');
+            return $this->fetch('tag');
+        } else {
+            $this->redirect('/hole');
+        }
+    }
+
+    public function sortCheck() {
+        $user = Session::get('user');
+        if($user) {
+            $contents = Db::name('content')
+                ->where([
+                    'verified' => ['<', 3],
+                    'is_delete' => 0,
+                    'flag' => 0
+                ])
+                ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
+                ->order('id asc')
+                ->paginate(20);
+            $this->assign('flag', 'check');
+            $this->assign('contents', $contents);
+            return $this->fetch('index');
+        } else {
+            $this->redirect('/hole');
+        }
+    }
+
+    public function sortUserId() {
+        $user = Session::get('user');
+        if($user) {
+            $contents = Db::name('content')
+                ->where([
+                    'verified' => ['>', 2],
+                    'is_delete' => 0,
+                    'flag' => 0
+                ])
+                ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
+                ->order('userV asc')
+                ->paginate(20);
+            $this->assign('flag', 'userId');
+            $this->assign('contents', $contents);
+            return $this->fetch('index');
+        } else {
+            $this->redirect('/hole');
+        }
+    }
+
+    public function test() {
+        for($i=0;$i<1000000;$i++) {
+//            Db::name('content')
+//                ->insert([
+//                    'content' => md5('这是第'.$i.'条内容'),
+//                    'userT' => md5(rand(100, 10000)+$i),
+//                    'verified' => 3,
+//                    'tag' => 'test'.rand(1,10),
+//                    'like_num' => rand(100, 10000),
+//                    'dislike_num' => rand(10, 100),
+//                    'comment_num' => rand(100, 1000),
+//                    'report_num' => rand(10, 100)
+//                ]);
+//            Db::name('operate')
+//                ->insert([
+//                    'type' => rand(1,6),
+//                    'identity' => md5(rand(100, 10000)),
+//                    'from_user' => md5(rand(1000, 100000)),
+//                    'to_user' => md5(rand(1000, 100000)),
+//                    'object_id' => rand(1000, 100000)
+//                ]);
+        }
+        return '<h1>finished</h1>';
     }
 
 }
