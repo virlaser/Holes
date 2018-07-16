@@ -11,11 +11,24 @@
  Target Server Version : 50638
  File Encoding         : 65001
 
- Date: 22/06/2018 20:31:42
+ Date: 17/07/2018 00:27:02
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for hole_admin
+-- ----------------------------
+DROP TABLE IF EXISTS `hole_admin`;
+CREATE TABLE `hole_admin` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `admin` varchar(20) NOT NULL DEFAULT '' COMMENT '管理员',
+  `password` varchar(50) NOT NULL DEFAULT '' COMMENT '用户密码，md5',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for hole_comment
@@ -58,6 +71,19 @@ CREATE TABLE `hole_content` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Table structure for hole_log
+-- ----------------------------
+DROP TABLE IF EXISTS `hole_log`;
+CREATE TABLE `hole_log` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user` int(10) unsigned NOT NULL COMMENT '登录用户ID',
+  `type` tinyint(1) unsigned NOT NULL COMMENT '登录用户类型，1：普通用户，2：管理员',
+  `ip` varchar(50) NOT NULL DEFAULT '' COMMENT '登录用户IP',
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '用户登录时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- ----------------------------
 -- Table structure for hole_operate
 -- ----------------------------
 DROP TABLE IF EXISTS `hole_operate`;
@@ -81,13 +107,14 @@ DROP TABLE IF EXISTS `hole_user`;
 CREATE TABLE `hole_user` (
   `identity` varchar(50) NOT NULL DEFAULT '' COMMENT '用户加密标识',
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `nickname` varchar(10) NOT NULL DEFAULT '' COMMENT '用户昵称',
+  `nickname` varchar(20) NOT NULL DEFAULT '' COMMENT '用户昵称',
   `avatar` varchar(300) NOT NULL DEFAULT '' COMMENT '用户头像',
   `gender` tinyint(1) NOT NULL DEFAULT '0' COMMENT '用户性别，0：未知，1：男，2：女',
   `mail` varchar(50) NOT NULL DEFAULT '' COMMENT '用户的邮箱',
   `password` varchar(50) NOT NULL DEFAULT '' COMMENT '用户密码，md5',
   `activate` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0：未激活，1：激活',
   `captcha` varchar(50) NOT NULL DEFAULT '' COMMENT '用户找回密码验证码',
+  `ban` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '用户是否封禁',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
