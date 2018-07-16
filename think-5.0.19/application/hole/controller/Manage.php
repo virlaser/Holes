@@ -11,6 +11,7 @@ namespace app\hole\controller;
 
 use think\Controller;
 use think\Db;
+use think\Exception;
 use think\Request;
 use think\Session;
 
@@ -26,12 +27,18 @@ class Manage extends Controller {
         $user = $request->param('user');
         $password = $request->param('password');
         $password = md5($password);
-        $result = Db::name('admin')
-            ->where([
-                'admin' => $user,
-                'password' => $password
-            ])
-            ->find();
+        try {
+            $result = Db::name('admin')
+                ->where([
+                    'admin' => $user,
+                    'password' => $password
+                ])
+                ->find();
+        } catch(Exception $exception) {
+            $errorMessage = '系统错误，请稍后再试';
+            $this->assign('errorMessage', $errorMessage);
+            return $this->fetch('message/error');
+        }
         if($result) {
             Session::set('user', $user);
             $admin = Session::get('user');
@@ -49,14 +56,20 @@ class Manage extends Controller {
     public function doManage() {
         $user = Session::get('user');
         if($user) {
-            $contents = Db::name('content')
-                ->where([
-                    'verified' => 3,
-                    'is_delete' => 0
-                ])
-                ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
-                ->order('id desc')
-                ->paginate(20);
+            try {
+                $contents = Db::name('content')
+                    ->where([
+                        'verified' => 3,
+                        'is_delete' => 0
+                    ])
+                    ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
+                    ->order('id desc')
+                    ->paginate(20);
+            } catch (Exception $exception) {
+                $errorMessage = '系统错误，请稍后再试';
+                $this->assign('errorMessage', $errorMessage);
+                return $this->fetch('message/error');
+            }
             $this->assign('contents' ,$contents);
             return $this->fetch('index');
         } else {
@@ -64,17 +77,24 @@ class Manage extends Controller {
         }
     }
 
+    // 按照点赞数递增排列
     public function sortLike() {
         $user = Session::get('user');
         if($user) {
-            $contents = Db::name('content')
-                ->where([
-                    'verified' => 3,
-                    'is_delete' => 0
-                ])
-                ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
-                ->order('like_num asc')
-                ->paginate(20);
+            try {
+                $contents = Db::name('content')
+                    ->where([
+                        'verified' => 3,
+                        'is_delete' => 0
+                    ])
+                    ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
+                    ->order('like_num asc')
+                    ->paginate(20);
+            } catch (Exception $exception) {
+                $errorMessage = '系统错误，请稍后再试';
+                $this->assign('errorMessage', $errorMessage);
+                return $this->fetch('message/error');
+            }
             $this->assign('flag', 'like');
             $this->assign('contents', $contents);
             return $this->fetch('index');
@@ -83,17 +103,24 @@ class Manage extends Controller {
         }
     }
 
+    // 按照点踩数递增排列
     public function sortDislike() {
         $user = Session::get('user');
         if($user) {
-            $contents = Db::name('content')
-                ->where([
-                    'verified' => 3,
-                    'is_delete' => 0
-                ])
-                ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
-                ->order('dislike_num asc')
-                ->paginate(20);
+            try {
+                $contents = Db::name('content')
+                    ->where([
+                        'verified' => 3,
+                        'is_delete' => 0
+                    ])
+                    ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
+                    ->order('dislike_num asc')
+                    ->paginate(20);
+            } catch (Exception $exception) {
+                $errorMessage = '系统错误，请稍后再试';
+                $this->assign('errorMessage', $errorMessage);
+                return $this->fetch('message/error');
+            }
             $this->assign('flag', 'dislike');
             $this->assign('contents', $contents);
             return $this->fetch('index');
@@ -102,17 +129,24 @@ class Manage extends Controller {
         }
     }
 
+    // 按照评论数递增排列
     public function sortComment() {
         $user = Session::get('user');
         if($user) {
-            $contents = Db::name('content')
-                ->where([
-                    'verified' => 3,
-                    'is_delete' => 0
-                ])
-                ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
-                ->order('comment_num asc')
-                ->paginate(20);
+            try {
+                $contents = Db::name('content')
+                    ->where([
+                        'verified' => 3,
+                        'is_delete' => 0
+                    ])
+                    ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
+                    ->order('comment_num asc')
+                    ->paginate(20);
+            } catch (Exception $exception) {
+                $errorMessage = '系统错误，请稍后再试';
+                $this->assign('errorMessage', $errorMessage);
+                return $this->fetch('message/error');
+            }
             $this->assign('flag', 'comment');
             $this->assign('contents', $contents);
             return $this->fetch('index');
@@ -121,17 +155,24 @@ class Manage extends Controller {
         }
     }
 
+    // 按照举报数递增排列
     public function sortReport() {
         $user = Session::get('user');
         if($user) {
-            $contents = Db::name('content')
-                ->where([
-                    'verified' => 3,
-                    'is_delete' => 0
-                ])
-                ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
-                ->order('report_num asc')
-                ->paginate(20);
+            try {
+                $contents = Db::name('content')
+                    ->where([
+                        'verified' => 3,
+                        'is_delete' => 0
+                    ])
+                    ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
+                    ->order('report_num asc')
+                    ->paginate(20);
+            } catch (Exception $exception) {
+                $errorMessage = '系统错误，请稍后再试';
+                $this->assign('errorMessage', $errorMessage);
+                return $this->fetch('message/error');
+            }
             $this->assign('flag', 'report');
             $this->assign('contents', $contents);
             return $this->fetch('index');
@@ -140,18 +181,25 @@ class Manage extends Controller {
         }
     }
 
+    // 将置顶的帖子按照ID排列
     public function sortTop() {
         $user = Session::get('user');
         if($user) {
-            $contents = Db::name('content')
-                ->where([
-                    'verified' => 3,
-                    'is_delete' => 0,
-                    'flag' => 1
-                ])
-                ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
-                ->order('like_num asc')
-                ->paginate(20);
+            try {
+                $contents = Db::name('content')
+                    ->where([
+                        'verified' => 3,
+                        'is_delete' => 0,
+                        'flag' => 1
+                    ])
+                    ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
+                    ->order('like_num asc')
+                    ->paginate(20);
+            } catch (Exception $exception) {
+                $errorMessage = '系统错误，请稍后再试';
+                $this->assign('errorMessage', $errorMessage);
+                return $this->fetch('message/error');
+            }
             $this->assign('flag', 'top');
             $this->assign('contents', $contents);
             return $this->fetch('index');
@@ -160,19 +208,26 @@ class Manage extends Controller {
         }
     }
 
+    // 将标签按照出现的次数递增排列
     public function sortTag() {
         $user = Session::get('user');
         if($user) {
-            $tags = Db::name('content')
-                ->where([
-                    'verified' => ['>', 2],
-                    'is_delete' => 0,
-                    'tag' => ['NEQ', '']
-                ])
-                ->field('tag, count(*) as count')
-                ->order('count asc')
-                ->group('tag')
-                ->paginate(20);
+            try {
+                $tags = Db::name('content')
+                    ->where([
+                        'verified' => ['>', 2],
+                        'is_delete' => 0,
+                        'tag' => ['NEQ', '']
+                    ])
+                    ->field('tag, count(*) as count')
+                    ->order('count asc')
+                    ->group('tag')
+                    ->paginate(20);
+            } catch (Exception $exception) {
+                $errorMessage = '系统错误，请稍后再试';
+                $this->assign('errorMessage', $errorMessage);
+                return $this->fetch('message/error');
+            }
             $this->assign('tags', $tags);
             $this->assign('flag', 'tag');
             return $this->fetch('tag');
@@ -181,18 +236,25 @@ class Manage extends Controller {
         }
     }
 
+    // 将未审阅通过的帖子按照ID排列
     public function sortCheck() {
         $user = Session::get('user');
         if($user) {
-            $contents = Db::name('content')
-                ->where([
-                    'verified' => ['<', 3],
-                    'is_delete' => 0,
-                    'flag' => 0
-                ])
-                ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
-                ->order('id asc')
-                ->paginate(20);
+            try {
+                $contents = Db::name('content')
+                    ->where([
+                        'verified' => ['<', 3],
+                        'is_delete' => 0,
+                        'flag' => 0
+                    ])
+                    ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
+                    ->order('id asc')
+                    ->paginate(20);
+            } catch (Exception $exception) {
+                $errorMessage = '系统错误，请稍后再试';
+                $this->assign('errorMessage', $errorMessage);
+                return $this->fetch('message/error');
+            }
             $this->assign('flag', 'check');
             $this->assign('contents', $contents);
             return $this->fetch('index');
@@ -201,18 +263,25 @@ class Manage extends Controller {
         }
     }
 
+    // 将帖子按照登录用户的ID排列
     public function sortUserId() {
         $user = Session::get('user');
         if($user) {
-            $contents = Db::name('content')
-                ->where([
-                    'verified' => ['>', 2],
-                    'is_delete' => 0,
-                    'flag' => 0
-                ])
-                ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
-                ->order('userV asc')
-                ->paginate(20);
+            try {
+                $contents = Db::name('content')
+                    ->where([
+                        'verified' => ['>', 2],
+                        'is_delete' => 0,
+                        'flag' => 0
+                    ])
+                    ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
+                    ->order('userV asc')
+                    ->paginate(20);
+            } catch (Exception $exception) {
+                $errorMessage = '系统错误，请稍后再试';
+                $this->assign('errorMessage', $errorMessage);
+                return $this->fetch('message/error');
+            }
             $this->assign('flag', 'userId');
             $this->assign('contents', $contents);
             return $this->fetch('index');
@@ -221,23 +290,32 @@ class Manage extends Controller {
         }
     }
 
+    // 管理员删除帖子
     public function doDelete(Request $request) {
         $user = Session::get('user');
         $contentId = $request->param('contentId');
         if($user) {
-            Db::name('content')
-                ->where([
-                    'id' => $contentId
-                ])
-                ->update([
-                    'is_delete' => 1
-                ]);
-            Db::name('operate')
-                ->where([
-                    'type' => ['IN', [1, 2, 3, 4]],
-                    'object_id' => $contentId
-                ])
-                ->delete();
+            try {
+                Db::name('content')
+                    ->where([
+                        'id' => $contentId
+                    ])
+                    ->update([
+                        'is_delete' => 1
+                    ]);
+                Db::name('operate')
+                    ->where([
+                        'type' => ['IN', [1, 2, 3, 4]],
+                        'object_id' => $contentId
+                    ])
+                    ->delete();
+            } catch (Exception $exception){
+                $data = [
+                    'status' => 'fail',
+                    'message' => '系统错误，请稍后再试'
+                ];
+                return json($data);
+            }
             $data = [
                 'status' => 'success',
                 'message' => '删除成功'
@@ -252,17 +330,26 @@ class Manage extends Controller {
         }
     }
 
+    // 管理员封禁用户
     public function doBan(Request $request) {
         $user = Session::get('user');
         $userId = $request->param('userId');
         if($user) {
-            Db::name('user')
-                ->where([
-                    'id' => $userId
-                ])
-                ->update([
-                    'ban' => 1
-                ]);
+            try {
+                Db::name('user')
+                    ->where([
+                        'id' => $userId
+                    ])
+                    ->update([
+                        'ban' => 1
+                    ]);
+            } catch (Exception $exception) {
+                $data = [
+                    'status' => 'fail',
+                    'message' => '系统错误，请稍后再试'
+                ];
+                return json($data);
+            }
             $data = [
                 'status' => 'success',
                 'message' => '封禁成功'
@@ -277,40 +364,49 @@ class Manage extends Controller {
         }
     }
 
+    // 管理员对帖子置顶
     public function doTop(Request $request) {
         $user = Session::get('user');
         $contentId = $request->param('contentId');
         if($user) {
-            $flag = Db::name('content')
-                ->where([
-                    'id' => $contentId
-                ])
-                ->field('flag')
-                ->find();
-            if($flag['flag'] == 1) {
-                Db::name('content')
+            try {
+                $flag = Db::name('content')
                     ->where([
                         'id' => $contentId
                     ])
-                    ->update([
-                        'flag' => 0
-                    ]);
+                    ->field('flag')
+                    ->find();
+                if ($flag['flag'] == 1) {
+                    Db::name('content')
+                        ->where([
+                            'id' => $contentId
+                        ])
+                        ->update([
+                            'flag' => 0
+                        ]);
+                    $data = [
+                        'status' => 'success',
+                        'message' => '取消置顶成功'
+                    ];
+                    return json($data);
+                } else {
+                    Db::name('content')
+                        ->where([
+                            'id' => $contentId
+                        ])
+                        ->update([
+                            'flag' => 1
+                        ]);
+                    $data = [
+                        'status' => 'success',
+                        'message' => '置顶成功'
+                    ];
+                    return json($data);
+                }
+            } catch (Exception $exception) {
                 $data = [
-                    'status' => 'success',
-                    'message' => '取消置顶成功'
-                ];
-                return json($data);
-            } else {
-                Db::name('content')
-                    ->where([
-                        'id' => $contentId
-                    ])
-                    ->update([
-                        'flag' => 1
-                    ]);
-                $data = [
-                    'status' => 'success',
-                    'message' => '置顶成功'
+                    'status' => 'fail',
+                    'message' => '系统错误，请稍后再试'
                 ];
                 return json($data);
             }
@@ -323,17 +419,26 @@ class Manage extends Controller {
         }
     }
 
+    // 管理员删除标签
     public function doDeleteTag(Request $request) {
         $user = Session::get('user');
         $tag = $request->param('tag');
         if($user) {
-            Db::name('content')
-                ->where([
-                    'tag' => $tag
-                ])
-                ->update([
-                    'tag' => ''
-                ]);
+            try {
+                Db::name('content')
+                    ->where([
+                        'tag' => $tag
+                    ])
+                    ->update([
+                        'tag' => ''
+                    ]);
+            } catch (Exception $exception) {
+                $data = [
+                    'status' => 'fail',
+                    'message' => '系统错误，请稍后再试'
+                ];
+                return json($data);
+            }
             $data = [
                 'status' => 'success',
                 'message' => '删除标签成功'
@@ -346,31 +451,6 @@ class Manage extends Controller {
             ];
             return json($data);
         }
-    }
-
-    public function test() {
-        for($i=0;$i<1000000;$i++) {
-//            Db::name('content')
-//                ->insert([
-//                    'content' => md5('这是第'.$i.'条内容'),
-//                    'userT' => md5(rand(100, 10000)+$i),
-//                    'verified' => 3,
-//                    'tag' => 'test'.rand(1,10),
-//                    'like_num' => rand(100, 10000),
-//                    'dislike_num' => rand(10, 100),
-//                    'comment_num' => rand(100, 1000),
-//                    'report_num' => rand(10, 100)
-//                ]);
-//            Db::name('operate')
-//                ->insert([
-//                    'type' => rand(1,6),
-//                    'identity' => md5(rand(100, 10000)),
-//                    'from_user' => md5(rand(1000, 100000)),
-//                    'to_user' => md5(rand(1000, 100000)),
-//                    'object_id' => rand(1000, 100000)
-//                ]);
-        }
-        return '<h1>finished</h1>';
     }
 
 }
