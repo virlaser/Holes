@@ -76,4 +76,36 @@ return [
     'doUpload' => 'hole/user/doUpload',
     // 用户提交修改信息处理逻辑
     'doChange' => 'hole/user/doChange',
+    // 管理员登录页面
+    'manage' => 'hole/manage/adminLogin',
+    // 管理员登录逻辑
+    'doAdminLogin' => 'hole/manage/doLogin',
+    // 管理员管理页面
+    'doManage' => 'hole/manage/doManage',
+    // 测试页面
+    'test' => 'hole/manage/test',
+    // 管理页面按照帖子点赞数排序
+    'sortLike' => 'hole/manage/sortLike',
+    // 管理页面按照帖子点踩排序
+    'sortDislike' => 'hole/manage/sortDislike',
+    // 管理页面按照帖子评论排序
+    'sortComment' => 'hole/manage/sortComment',
+    // 管理页面按照帖子举报排序
+    'sortReport' => 'hole/manage/sortReport',
+    // 管理页面按照帖子置顶排列
+    'sortTop' => 'hole/manage/sortTop',
+    // 管理页面按照帖子标签排序
+    'sortTag' => 'hole/manage/sortTag',
+    // 管理页面按照需要审阅的帖子排列
+    'sortCheck' => 'hole/manage/sortCheck',
+    // 管理页面用户ID排列
+    'sortUserId' => 'hole/manage/sortUserId',
+    // 管理员删除帖子
+    'doDelete' => 'hole/manage/doDelete',
+    // 管理员封禁用户
+    'doBan' => 'hole/manage/doBan',
+    // 管理员置顶帖子
+    'doTop' => 'hole/manage/doTop',
+    // 管理员删除标签
+    'doDeleteTag' => 'hole/manage/doDeleteTag',
 ];

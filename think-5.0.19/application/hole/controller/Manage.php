@@ -165,8 +165,9 @@ class Manage extends Controller {
         if($user) {
             $tags = Db::name('content')
                 ->where([
-                    'verified' => 3,
-                    'is_delete' => 0
+                    'verified' => ['>', 2],
+                    'is_delete' => 0,
+                    'tag' => ['NEQ', '']
                 ])
                 ->field('tag, count(*) as count')
                 ->order('count asc')
@@ -217,6 +218,133 @@ class Manage extends Controller {
             return $this->fetch('index');
         } else {
             $this->redirect('/hole');
+        }
+    }
+
+    public function doDelete(Request $request) {
+        $user = Session::get('user');
+        $contentId = $request->param('contentId');
+        if($user) {
+            Db::name('content')
+                ->where([
+                    'id' => $contentId
+                ])
+                ->update([
+                    'is_delete' => 1
+                ]);
+            Db::name('operate')
+                ->where([
+                    'type' => ['IN', [1, 2, 3, 4]],
+                    'object_id' => $contentId
+                ])
+                ->delete();
+            $data = [
+                'status' => 'success',
+                'message' => '删除成功'
+            ];
+            return json($data);
+        } else {
+            $data = [
+                'status' => 'fail',
+                'message' => '权限错误'
+            ];
+            return json($data);
+        }
+    }
+
+    public function doBan(Request $request) {
+        $user = Session::get('user');
+        $userId = $request->param('userId');
+        if($user) {
+            Db::name('user')
+                ->where([
+                    'id' => $userId
+                ])
+                ->update([
+                    'ban' => 1
+                ]);
+            $data = [
+                'status' => 'success',
+                'message' => '封禁成功'
+            ];
+            return json($data);
+        } else {
+            $data = [
+                'status' => 'fail',
+                'message' => '权限错误'
+            ];
+            return json($data);
+        }
+    }
+
+    public function doTop(Request $request) {
+        $user = Session::get('user');
+        $contentId = $request->param('contentId');
+        if($user) {
+            $flag = Db::name('content')
+                ->where([
+                    'id' => $contentId
+                ])
+                ->field('flag')
+                ->find();
+            if($flag['flag'] == 1) {
+                Db::name('content')
+                    ->where([
+                        'id' => $contentId
+                    ])
+                    ->update([
+                        'flag' => 0
+                    ]);
+                $data = [
+                    'status' => 'success',
+                    'message' => '取消置顶成功'
+                ];
+                return json($data);
+            } else {
+                Db::name('content')
+                    ->where([
+                        'id' => $contentId
+                    ])
+                    ->update([
+                        'flag' => 1
+                    ]);
+                $data = [
+                    'status' => 'success',
+                    'message' => '置顶成功'
+                ];
+                return json($data);
+            }
+        } else {
+            $data = [
+                'status' => 'fail',
+                'message' => '权限错误'
+            ];
+            return json($data);
+        }
+    }
+
+    public function doDeleteTag(Request $request) {
+        $user = Session::get('user');
+        $tag = $request->param('tag');
+        if($user) {
+            Db::name('content')
+                ->where([
+                    'tag' => $tag
+                ])
+                ->update([
+                    'tag' => ''
+                ]);
+            $data = [
+                'status' => 'success',
+                'message' => '删除标签成功'
+            ];
+            return json($data);
+        } else {
+            $data = [
+                'status' => 'fail',
+                'message' => '权限错误'
+            ];
+            return json($data);
         }
     }
 
