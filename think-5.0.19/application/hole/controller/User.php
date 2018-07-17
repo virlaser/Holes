@@ -329,6 +329,7 @@ class User extends Controller {
         $userMail = $request->param('userMail');
         $userPassword = $request->param('userPassword');
         try {
+            common\log($userMail, 1);
             $user = Db::name('user')
                 ->where([
                     'mail' => $userMail,

@@ -43,7 +43,7 @@ function isLogin(Request $request) {
                     'message' => '登录认证信息错误',
                     // 如果用户本地登录标识被篡改导致查询不到用户信息，把用户当做未登录用户
                     'type' => 'userT',
-                    'user' => '',
+                    'user' => $userT?$userT:'',
                     'status' => 'fail'
                 ];
                 return $data;
@@ -333,4 +333,29 @@ function getInfoFlag($isLogin, $contents) {
         array_push($data, $e);
     }
     return $data;
+}
+
+function getIp() {
+    $ip = '';
+    //strcasecmp 比较两个字符，不区分大小写。返回0，>0，<0。
+    if(getenv('HTTP_CLIENT_IP') && strcasecmp(getenv('HTTP_CLIENT_IP'), 'unknown')) {
+        $ip = getenv('HTTP_CLIENT_IP');
+    } elseif(getenv('HTTP_X_FORWARDED_FOR') && strcasecmp(getenv('HTTP_X_FORWARDED_FOR'), 'unknown')) {
+        $ip = getenv('HTTP_X_FORWARDED_FOR');
+    } elseif(getenv('REMOTE_ADDR') && strcasecmp(getenv('REMOTE_ADDR'), 'unknown')) {
+        $ip = getenv('REMOTE_ADDR');
+    } elseif(isset($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'] && strcasecmp($_SERVER['REMOTE_ADDR'], 'unknown')) {
+        $ip = $_SERVER['REMOTE_ADDR'];
+    }
+    $res =  preg_match ( '/[\d\.]{7,15}/', $ip, $matches ) ? $matches [0] : '';
+    return $res;
+}
+
+function log($user, $type) {
+    Db::name('log')
+        ->insert([
+            'user' => $user,
+            'type' => $type,
+            'ip' => getIp()
+        ]);
 }

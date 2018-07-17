@@ -28,25 +28,26 @@ class Manage extends Controller {
         $password = $request->param('password');
         $password = md5($password);
         try {
+            \app\hole\common\log($user, 2);
             $result = Db::name('admin')
                 ->where([
                     'admin' => $user,
                     'password' => $password
                 ])
                 ->find();
+            if($result) {
+                Session::set('user', $user);
+                $admin = Session::get('user');
+                $this->assign('admin', $admin);
+                // 鉴权成功，重定向到管理页面
+                $this->redirect('/doManage');
+            } else {
+                $errorMessage = "用户名或密码错误";
+                $this->assign('errorMessage', $errorMessage);
+                return $this->fetch('message/error');
+            }
         } catch(Exception $exception) {
             $errorMessage = '系统错误，请稍后再试';
-            $this->assign('errorMessage', $errorMessage);
-            return $this->fetch('message/error');
-        }
-        if($result) {
-            Session::set('user', $user);
-            $admin = Session::get('user');
-            $this->assign('admin', $admin);
-            // 鉴权成功，重定向到管理页面
-            $this->redirect('/doManage');
-        } else {
-            $errorMessage = "用户名或密码错误";
             $this->assign('errorMessage', $errorMessage);
             return $this->fetch('message/error');
         }
@@ -65,13 +66,14 @@ class Manage extends Controller {
                     ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
                     ->order('id desc')
                     ->paginate(20);
+                $this->assign('flag', '');
+                $this->assign('contents' ,$contents);
+                return $this->fetch('index');
             } catch (Exception $exception) {
                 $errorMessage = '系统错误，请稍后再试';
                 $this->assign('errorMessage', $errorMessage);
                 return $this->fetch('message/error');
             }
-            $this->assign('contents' ,$contents);
-            return $this->fetch('index');
         } else {
             $this->redirect('/hole');
         }
@@ -90,14 +92,14 @@ class Manage extends Controller {
                     ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
                     ->order('like_num asc')
                     ->paginate(20);
+                $this->assign('flag', 'like');
+                $this->assign('contents', $contents);
+                return $this->fetch('index');
             } catch (Exception $exception) {
                 $errorMessage = '系统错误，请稍后再试';
                 $this->assign('errorMessage', $errorMessage);
                 return $this->fetch('message/error');
             }
-            $this->assign('flag', 'like');
-            $this->assign('contents', $contents);
-            return $this->fetch('index');
         } else {
             $this->redirect('/hole');
         }
@@ -116,14 +118,14 @@ class Manage extends Controller {
                     ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
                     ->order('dislike_num asc')
                     ->paginate(20);
+                $this->assign('flag', 'dislike');
+                $this->assign('contents', $contents);
+                return $this->fetch('index');
             } catch (Exception $exception) {
                 $errorMessage = '系统错误，请稍后再试';
                 $this->assign('errorMessage', $errorMessage);
                 return $this->fetch('message/error');
             }
-            $this->assign('flag', 'dislike');
-            $this->assign('contents', $contents);
-            return $this->fetch('index');
         } else {
             $this->redirect('/hole');
         }
@@ -142,14 +144,14 @@ class Manage extends Controller {
                     ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
                     ->order('comment_num asc')
                     ->paginate(20);
+                $this->assign('flag', 'comment');
+                $this->assign('contents', $contents);
+                return $this->fetch('index');
             } catch (Exception $exception) {
                 $errorMessage = '系统错误，请稍后再试';
                 $this->assign('errorMessage', $errorMessage);
                 return $this->fetch('message/error');
             }
-            $this->assign('flag', 'comment');
-            $this->assign('contents', $contents);
-            return $this->fetch('index');
         } else {
             $this->redirect('/hole');
         }
@@ -168,14 +170,14 @@ class Manage extends Controller {
                     ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
                     ->order('report_num asc')
                     ->paginate(20);
+                $this->assign('flag', 'report');
+                $this->assign('contents', $contents);
+                return $this->fetch('index');
             } catch (Exception $exception) {
                 $errorMessage = '系统错误，请稍后再试';
                 $this->assign('errorMessage', $errorMessage);
                 return $this->fetch('message/error');
             }
-            $this->assign('flag', 'report');
-            $this->assign('contents', $contents);
-            return $this->fetch('index');
         } else {
             $this->redirect('/hole');
         }
@@ -195,14 +197,14 @@ class Manage extends Controller {
                     ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
                     ->order('like_num asc')
                     ->paginate(20);
+                $this->assign('flag', 'top');
+                $this->assign('contents', $contents);
+                return $this->fetch('index');
             } catch (Exception $exception) {
                 $errorMessage = '系统错误，请稍后再试';
                 $this->assign('errorMessage', $errorMessage);
                 return $this->fetch('message/error');
             }
-            $this->assign('flag', 'top');
-            $this->assign('contents', $contents);
-            return $this->fetch('index');
         } else {
             $this->redirect('/hole');
         }
@@ -223,14 +225,14 @@ class Manage extends Controller {
                     ->order('count asc')
                     ->group('tag')
                     ->paginate(20);
+                $this->assign('tags', $tags);
+                $this->assign('flag', 'tag');
+                return $this->fetch('tag');
             } catch (Exception $exception) {
                 $errorMessage = '系统错误，请稍后再试';
                 $this->assign('errorMessage', $errorMessage);
                 return $this->fetch('message/error');
             }
-            $this->assign('tags', $tags);
-            $this->assign('flag', 'tag');
-            return $this->fetch('tag');
         } else {
             $this->redirect('/hole');
         }
@@ -250,14 +252,14 @@ class Manage extends Controller {
                     ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
                     ->order('id asc')
                     ->paginate(20);
+                $this->assign('flag', 'check');
+                $this->assign('contents', $contents);
+                return $this->fetch('index');
             } catch (Exception $exception) {
                 $errorMessage = '系统错误，请稍后再试';
                 $this->assign('errorMessage', $errorMessage);
                 return $this->fetch('message/error');
             }
-            $this->assign('flag', 'check');
-            $this->assign('contents', $contents);
-            return $this->fetch('index');
         } else {
             $this->redirect('/hole');
         }
@@ -277,14 +279,14 @@ class Manage extends Controller {
                     ->field('id, content, userV, userT, tag, like_num, dislike_num, comment_num, report_num')
                     ->order('userV asc')
                     ->paginate(20);
+                $this->assign('flag', 'userId');
+                $this->assign('contents', $contents);
+                return $this->fetch('index');
             } catch (Exception $exception) {
                 $errorMessage = '系统错误，请稍后再试';
                 $this->assign('errorMessage', $errorMessage);
                 return $this->fetch('message/error');
             }
-            $this->assign('flag', 'userId');
-            $this->assign('contents', $contents);
-            return $this->fetch('index');
         } else {
             $this->redirect('/hole');
         }
